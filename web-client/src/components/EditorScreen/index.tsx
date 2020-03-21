@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Heading, Text } from "grommet";
+import { PlayFill } from "grommet-icons";
 
 import Command from "./Command";
 
@@ -11,9 +12,21 @@ const EditorScreen: React.FC = () => {
     <Box direction="row" fill>
       {/* Commands */}
       <Box basis="350px" flex={false}>
-        <Text margin="small">Commands</Text>
-        <Box>
+        <Box direction="row" pad="small" justify="between">
+          <Text>Commands</Text> 
+        </Box>
+        <Box fill>
           <Command />
+          <Command />
+          <Command />
+          <Command />
+          <Command />
+          <Command />
+          <Command />
+        </Box>
+        <Box direction="row" pad="small" justify="between">
+          <Text>0/13 done</Text> 
+          <PlayFill color="status-ok" />
         </Box>
       </Box>
        
