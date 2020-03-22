@@ -16,7 +16,7 @@ type Selector = {
 
 type Command = {
   id: string,
-  parent: string,
+  run_after: string,
 }
 
 type WebOpenURLCommand = Command & {
@@ -37,6 +37,5 @@ type WebClick = Command & {
 }
 
 
-type Commands = WebOpenURLCommand;
-
-export default Commands;
+export type Commands = WebOpenURLCommand | WebClick;
+export type CommandIds = Commands["cmd"];

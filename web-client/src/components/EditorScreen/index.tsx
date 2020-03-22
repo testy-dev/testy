@@ -1,21 +1,21 @@
 import React from "react";
 
 import { Box, Heading, Text } from "grommet";
-import { PlayFill } from "grommet-icons";
+import { Play } from "grommet-icons";
 
-import Command from "./Command";
+import Command from "../Command";
 
 const EditorScreen: React.FC = () => {
   const [commands, setCommands] = React.useState<{}[]>([]);
 
   return (
     <Box direction="row" fill>
-      {/* Commands */}
+      {/* Steps */}
       <Box basis="350px" flex={false}>
         <Box direction="row" pad="small" justify="between">
-          <Text>Commands</Text> 
+          <Text>Steps</Text> 
         </Box>
-        <Box fill>
+        <Box fill overflow={{vertical: "scroll"}}>
           <Command />
           <Command />
           <Command />
@@ -26,7 +26,7 @@ const EditorScreen: React.FC = () => {
         </Box>
         <Box direction="row" pad="small" justify="between">
           <Text>0/13 done</Text> 
-          <PlayFill color="status-ok" />
+          <Play color="status-ok" />
         </Box>
       </Box>
        
