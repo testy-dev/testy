@@ -8,34 +8,33 @@ export enum Status {
   SYSTEM_FAIL = "system_fail",
 }
 
-type WithStatus<T> = T & {status: Status};
+type WithStatus<T> = T & { status: Status };
 
 type Selector = {
-  cssQuery: string,
-}
+  cssQuery: string;
+};
 
 type Command = {
-  id: string,
-  run_after: string,
-}
+  id: string;
+  run_after: string;
+};
 
 type WebOpenURLCommand = Command & {
-  cmd: "web-open-url",
+  cmd: "web-open-url";
   params: {
-    url: string,
-    width: number,
-    height: number,
-  }
-}
+    url: string;
+    width: number;
+    height: number;
+  };
+};
 
 type WebClick = Command & {
-  cmd: "web-click",
+  cmd: "web-click";
   params: {
-    selector: Selector,
-    maxWait: number, // ms 
-  }
-}
-
+    selector: Selector;
+    maxWait: number; // ms
+  };
+};
 
 export type Commands = WebOpenURLCommand | WebClick;
 export type CommandIds = Commands["cmd"];

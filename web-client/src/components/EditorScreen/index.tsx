@@ -13,9 +13,9 @@ const EditorScreen: React.FC = () => {
       {/* Steps */}
       <Box basis="350px" flex={false}>
         <Box direction="row" pad="small" justify="between">
-          <Text>Steps</Text> 
+          <Text>Steps</Text>
         </Box>
-        <Box fill overflow={{vertical: "scroll"}}>
+        <Box fill overflow={{ vertical: "scroll" }}>
           <Command />
           <Command />
           <Command />
@@ -25,17 +25,17 @@ const EditorScreen: React.FC = () => {
           <Command />
         </Box>
         <Box direction="row" pad="small" justify="between">
-          <Text>0/13 done</Text> 
+          <Text>0/13 done</Text>
           <Play color="status-ok" />
         </Box>
       </Box>
-       
+
       {/* Screenshot */}
       <Box flex="grow" background="light-5" justify="center" align="center">
         <Heading level={2}>Here you will be your website.</Heading>
       </Box>
     </Box>
-  )
+  );
 };
 
 export default EditorScreen;

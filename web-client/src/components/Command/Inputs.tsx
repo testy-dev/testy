@@ -1,6 +1,6 @@
 import React from "react";
 
-import {TextInput as GrommetTextInput} from "grommet";
+import { TextInput as GrommetTextInput } from "grommet";
 
 export const TextInput = GrommetTextInput;
 

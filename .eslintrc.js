@@ -1,31 +1,34 @@
-{
-  "parser": "@typescript-eslint/parser",
-  "extends": [
+module.exports = {
+  parser: "@typescript-eslint/parser",
+  extends: [
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
   ],
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
-    }
+  parserOptions: {
+    ecmaVersion: 2018,
+    sourceType: "module",
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-  "plugins": ["prettier", "react-hooks", "sort-imports-es6-autofix"],
-  "rules": {
+  plugins: ["prettier", "react-hooks", "sort-imports-es6-autofix"],
+  rules: {
     "@typescript-eslint/ban-ts-ignore": "warn",
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/interface-name-prefix": ["warn", { "prefixWithI": "always" }],
+    "@typescript-eslint/interface-name-prefix": [
+      "warn",
+      { prefixWithI: "always" },
+    ],
     "@typescript-eslint/no-unused-vars": [
       "error",
-      { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }
+      { ignoreRestSiblings: true, argsIgnorePattern: "^_" },
     ],
     "@typescript-eslint/no-use-before-define": "off",
     "arrow-body-style": "warn",
-    "complexity": ["warn", 50],
+    complexity: ["warn", 50],
     "no-unused-vars": "off",
     "prettier/prettier": "warn",
     "react-hooks/exhaustive-deps": "warn",
@@ -36,16 +39,16 @@
     "react/no-unescaped-entities": "off",
     "react/prefer-stateless-function": "warn",
     "react/prop-types": "off",
-    "sort-imports-es6-autofix/sort-imports-es6": "warn"
+    "sort-imports-es6-autofix/sort-imports-es6": "warn",
   },
-  "settings": {
-    "react": {
-      "version": "detect"
+  settings: {
+    react: {
+      version: "detect",
     },
     "import/resolver": {
-      "node": {
-        "extensions": [".ts", ".tsx", ".js", ".jsx"]
-      }
-    }
-  }
-}
+      node: {
+        extensions: [".ts", ".tsx", ".js", ".jsx"],
+      },
+    },
+  },
+};
