@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: CREATE TABLE "public"."organization_invite_user"("id" serial NOT NULL, "email"
+      text NOT NULL, PRIMARY KEY ("id") , UNIQUE ("email"));
+  type: run_sql
+- args:
+    name: organization_invite_user
+    schema: public
+  type: add_existing_table_or_view

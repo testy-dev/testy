@@ -1,0 +1,6 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: ALTER TABLE "public"."organization_invite_user" ADD COLUMN "organization_id"
+      integer NOT NULL;
+  type: run_sql

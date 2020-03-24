@@ -1,0 +1,12 @@
+- args:
+    name: invited_users
+    table:
+      name: organization
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: organization_id
+        table:
+          name: organization_invite_user
+          schema: public
+  type: create_array_relationship

@@ -1,0 +1,20 @@
+- args:
+    permission:
+      allow_upsert: true
+      check:
+        organization:
+          owner:
+            firebase_id:
+              _eq: X-Hasura-User-Id
+      columns:
+      - email
+      - organization_id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: organization_invite_user
+      schema: public
+  type: create_insert_permission

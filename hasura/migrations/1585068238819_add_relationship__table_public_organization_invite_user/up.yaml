@@ -1,0 +1,8 @@
+- args:
+    name: organization
+    table:
+      name: organization_invite_user
+      schema: public
+    using:
+      foreign_key_constraint_on: organization_id
+  type: create_object_relationship

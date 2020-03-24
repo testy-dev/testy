@@ -1,0 +1,5 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."organization_invite_user" drop constraint "organization_invite_user_organization_id_fkey";
+  type: run_sql

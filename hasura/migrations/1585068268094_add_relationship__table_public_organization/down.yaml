@@ -1,0 +1,6 @@
+- args:
+    relationship: invited_users
+    table:
+      name: organization
+      schema: public
+  type: drop_relationship
