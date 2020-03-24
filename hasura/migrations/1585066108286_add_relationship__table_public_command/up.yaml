@@ -1,0 +1,12 @@
+- args:
+    name: run_history
+    table:
+      name: command
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: command_id
+        table:
+          name: command_run_history
+          schema: public
+  type: create_array_relationship

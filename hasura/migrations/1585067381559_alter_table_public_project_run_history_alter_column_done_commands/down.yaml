@@ -1,0 +1,12 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: ALTER TABLE "public"."project_run_history" ALTER COLUMN "done_commands" TYPE
+      integer;
+  type: run_sql
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."project_run_history" rename column "commands_done"
+      to "done_commands";
+  type: run_sql

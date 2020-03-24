@@ -1,0 +1,8 @@
+- args:
+    name: command
+    table:
+      name: command_run_history
+      schema: public
+    using:
+      foreign_key_constraint_on: command_id
+  type: create_object_relationship

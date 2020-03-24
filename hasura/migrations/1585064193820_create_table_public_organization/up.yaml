@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: CREATE TABLE "public"."organization"("id" serial NOT NULL, "name" varchar
+      NOT NULL, PRIMARY KEY ("id") );
+  type: run_sql
+- args:
+    name: organization
+    schema: public
+  type: add_existing_table_or_view

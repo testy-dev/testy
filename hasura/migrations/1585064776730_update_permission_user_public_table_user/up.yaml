@@ -1,0 +1,16 @@
+- args:
+    permission:
+      columns:
+      - name
+      filter:
+        firebase_id:
+          _eq: X-Hasura-User-Id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: user
+      schema: public
+  type: create_update_permission

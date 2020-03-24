@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: |-
+      alter table "public"."organization"
+                 add constraint "organization_owner_fkey"
+                 foreign key ("owner")
+                 references "public"."user"
+                 ("id") on update restrict on delete restrict;
+  type: run_sql

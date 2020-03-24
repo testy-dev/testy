@@ -1,0 +1,6 @@
+- args:
+    relationship: command
+    table:
+      name: command_run_history
+      schema: public
+  type: drop_relationship

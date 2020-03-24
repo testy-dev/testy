@@ -1,0 +1,18 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  type: run_sql
+- args:
+    cascade: false
+    read_only: false
+    sql: CREATE TABLE "public"."command_run_history"("id" uuid NOT NULL DEFAULT gen_random_uuid(),
+      "command_id" uuid NOT NULL, "result" varchar NOT NULL, "created_at" timestamptz
+      NOT NULL DEFAULT now(), "running_time" integer NOT NULL, PRIMARY KEY ("id")
+      , FOREIGN KEY ("command_id") REFERENCES "public"."command"("id") ON UPDATE restrict
+      ON DELETE cascade);
+  type: run_sql
+- args:
+    name: command_run_history
+    schema: public
+  type: add_existing_table_or_view

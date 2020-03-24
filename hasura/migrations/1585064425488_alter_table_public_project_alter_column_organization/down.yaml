@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: ALTER TABLE "public"."project" ALTER COLUMN "organization" TYPE integer;
+  type: run_sql
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."project" rename column "organization_id" to "organization";
+  type: run_sql

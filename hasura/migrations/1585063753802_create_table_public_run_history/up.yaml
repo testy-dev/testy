@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: CREATE TABLE "public"."run_history"("id" serial NOT NULL, "run_by_user" integer
+      NOT NULL, "result" varchar NOT NULL, PRIMARY KEY ("id") );
+  type: run_sql
+- args:
+    name: run_history
+    schema: public
+  type: add_existing_table_or_view
