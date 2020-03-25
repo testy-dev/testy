@@ -92,21 +92,6 @@ tables:
           owner:
             firebase_id:
               _eq: X-Hasura-User-Id
-  update_permissions:
-  - role: user
-    permission:
-      columns:
-      - email
-      filter:
-        organization:
-          owner:
-            firebase_id:
-              _eq: X-Hasura-User-Id
-      check:
-        organization:
-          owner:
-            firebase_id:
-              _eq: X-Hasura-User-Id
   delete_permissions:
   - role: user
     permission:
@@ -115,6 +100,17 @@ tables:
           owner:
             firebase_id:
               _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: invite-user
+    definition:
+      enable_manual: true
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: http://example.com
 - table:
     schema: public
     name: project
@@ -174,3 +170,16 @@ tables:
         firebase_id:
           _eq: X-Hasura-User-Id
       check: null
+custom_types:
+  input_objects:
+  - name: SampleInput
+    fields:
+    - name: username
+      type: String!
+    - name: password
+      type: String!
+  objects:
+  - name: SampleOutput
+    fields:
+    - name: accessToken
+      type: String!

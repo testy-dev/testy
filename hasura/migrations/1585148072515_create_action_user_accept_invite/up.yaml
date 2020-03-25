@@ -1,0 +1,46 @@
+- args:
+    enums: []
+    input_objects:
+    - description: null
+      fields:
+      - description: null
+        name: username
+        type: String!
+      - description: null
+        name: password
+        type: String!
+      name: SampleInput
+    objects:
+    - description: null
+      fields:
+      - arguments: null
+        description: null
+        name: accessToken
+        type: String!
+      name: SampleOutput
+      relationships: null
+    - description: null
+      fields:
+      - description: null
+        name: organization_id
+        type: String
+      - description: null
+        name: invite_token
+        type: String
+      name: user_accept_invite_input
+    scalars: []
+  type: set_custom_types
+- args:
+    comment: null
+    definition:
+      arguments:
+      - description: null
+        name: arg1
+        type: user_accept_invite_input!
+      forward_client_headers: false
+      handler: http://localhost:3000
+      headers: []
+      kind: synchronous
+      output_type: user
+    name: user_accept_invite
+  type: create_action

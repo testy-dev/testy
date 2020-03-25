@@ -1,0 +1,36 @@
+{
+  "database": {
+    "rules": "firebase_rules_database.json"
+  },
+  "hosting": {
+    "public": "web-client/build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "firebase_rules_storage.rules"
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "database": {
+      "port": 9000
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "pubsub": {
+      "port": 8085
+    }
+  }
+}

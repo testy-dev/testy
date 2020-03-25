@@ -1,0 +1,3 @@
+- args:
+    name: actionName
+  type: drop_action
