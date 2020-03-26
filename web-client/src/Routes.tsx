@@ -9,6 +9,56 @@ import HomeScreen from "./components/HomeScreen";
 import LoginScreen from "./components/LoginScreen";
 import NotFoundScreen from "./components/NotFoundScreen";
 
+import { fetchQuery } from "./graphql";
+
+const waitForNewToken = async (user: firebase.User) => {
+  // Check if refresh is required.
+  const metadataRef = firebase
+    .database()
+    .ref("metadata/" + user.uid + "/refreshTime");
+  await new Promise(resolve => {
+    const handleUpdate = (data: firebase.database.DataSnapshot) => {
+      if (!data.exists) return;
+      metadataRef.off("value", handleUpdate);
+      resolve(data);
+    };
+    metadataRef.on("value", handleUpdate);
+  });
+  await user.getIdToken(true);
+};
+
+const createGqlUser = async () => {
+  // language=graphql
+  const query = `
+query getMe($firebase_id: String!) {
+    user(where: {firebase_id: {_eq: $firebase_id}}) {
+        id
+    }
+}`;
+  const me: any = await fetchQuery(query, {
+    firebase_id: firebase.auth().currentUser?.uid,
+  });
+  console.log("me", me);
+  if (me?.user?.[0]?.id !== null) {
+    // language=graphql
+    const query = `
+mutation MyMutation($name: String!, $firebase_id: String!) {
+  insert_user(objects: {name: $name, firebase_id: $firebase_id}) {
+    returning {
+      id
+      name
+      firebase_id
+    }
+  }
+}`;
+    const response = await fetchQuery(query, {
+      name: firebase.auth().currentUser?.displayName ?? "",
+      firebase_id: firebase.auth().currentUser?.uid,
+    });
+    console.log("create user response", response);
+  }
+};
+
 const Routes: React.FC = () => {
   const history = useHistory();
   const [authState, setAuthState] = React.useState<"loading" | "in" | "out">(
@@ -22,21 +72,11 @@ const Routes: React.FC = () => {
         const hasuraClaim =
           idTokenResult.claims["https://hasura.io/jwt/claims"];
 
-        if (hasuraClaim) {
-          setAuthState("in");
-        } else {
-          // Check if refresh is required.
-          const metadataRef = firebase
-            .database()
-            .ref("metadata/" + user.uid + "/refreshTime");
-
-          metadataRef.on("value", async data => {
-            if (!data.exists) return;
-            // Force refresh to pick up the latest custom claims changes.
-            await user.getIdToken(true);
-            setAuthState("in");
-          });
+        if (!hasuraClaim) {
+          await waitForNewToken(user);
         }
+        await createGqlUser();
+        setAuthState("in");
         if (history.location.pathname === "/login") history.push("/");
       } else {
         if (history.location.pathname !== "/login") history.push("/login");

@@ -4,6 +4,7 @@ import { Add } from "grommet-icons";
 import { Box, Button, Heading } from "grommet";
 import { graphql } from "@gqless/react";
 
+import { Me } from "../../graphql/extensions";
 import { query } from "../../graphql";
 import Logo from "../Logo";
 
@@ -24,6 +25,9 @@ const HomeScreen: React.FC = () => (
     {/* User */}
     <Box basis="350px" background="light-3" flex={false} align="center">
       <Heading level={2}>Me</Heading>
+      <Suspense fallback="Loading ...">
+        <MyProfile />
+      </Suspense>
     </Box>
   </Box>
 );
@@ -45,5 +49,15 @@ const Organizations = graphql(() => (
     ))}
   </Box>
 ));
+
+const MyProfile = graphql(() => {
+  const me = Me();
+  return (
+    <Box>
+      {me.id}
+      {me.name}
+    </Box>
+  );
+});
 
 export default HomeScreen;

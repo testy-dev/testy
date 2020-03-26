@@ -1,3 +1,7 @@
+import firebase from "firebase/app";
+
+import { query } from "../client";
+
 export const Query = {};
 
 /**
@@ -17,3 +21,16 @@ export const Query = {};
 //     console.log('follow', user.id)
 //   }
 // })
+
+export const Me = () => {
+  const user = firebase.auth().currentUser;
+  if (!user) return null;
+  return query.user({
+    where: {
+      // @ts-ignore
+      firebase_id: {
+        _eq: user.uid,
+      },
+    },
+  })[0];
+};

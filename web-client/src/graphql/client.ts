@@ -1,10 +1,12 @@
 import { Client, QueryFetcher } from "gqless";
-import { query_root, schema } from "./generated";
 import firebase from "firebase/app";
+
+import { query_root } from "./generated/types";
+import { schema } from "./generated";
 
 const endpoint = "http://localhost:8080/v1/graphql";
 
-const fetchQuery: QueryFetcher = async (query, variables) => {
+export const fetchQuery: QueryFetcher = async (query, variables) => {
   const token = firebase.auth().currentUser?.getIdToken();
   const response = await fetch(endpoint, {
     method: "POST",
