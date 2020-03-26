@@ -1,36 +1,44 @@
 import React from "react";
 
-import { Box, Heading, Text } from "grommet";
-import { Play } from "grommet-icons";
+import { Add } from "grommet-icons";
+import { Box, Button, Heading, Text } from "grommet";
 
-import Command from "../Command";
+import Logo from "../Logo";
 
 const HomeScreen: React.FC = () => (
   <Box direction="row" fill>
-    {/* Steps */}
-    <Box basis="350px" flex={false}>
-      <Box direction="row" pad="small" justify="between">
-        <Text>Steps</Text>
+    {/* Screenshot */}
+    <Box flex="grow" pad="medium">
+      <Logo />
+      <Box direction="row" align="center">
+        <Heading level={2}>Organizations</Heading>
+        <Button icon={<Add color="status-ok" />} />
       </Box>
-      <Box fill overflow={{ vertical: "scroll" }}>
-        <Command />
-        <Command />
-        <Command />
-        <Command />
-        <Command />
-        <Command />
-        <Command />
-      </Box>
-      <Box direction="row" pad="small" justify="between">
-        <Text>0/13 done</Text>
-        <Play color="status-ok" />
+      <Box direction="row-responsive">
+        <Organization>
+          {/*<Add size="large" />*/}
+          <Heading level={3} margin="small">
+            Horni dolni
+          </Heading>
+        </Organization>
       </Box>
     </Box>
 
-    {/* Screenshot */}
-    <Box flex="grow" background="light-5" justify="center" align="center">
-      <Heading level={2}>This is home screen</Heading>
+    {/* User */}
+    <Box basis="350px" background="light-3" flex={false} align="center">
+      <Heading level={2}>Me</Heading>
     </Box>
+  </Box>
+);
+
+const Organization: React.FC = ({ children }) => (
+  <Box
+    background="light-3"
+    pad="small"
+    margin={{ right: "small", bottom: "small" }}
+    round="small"
+  >
+    {children}
   </Box>
 );
 
