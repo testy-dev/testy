@@ -1,0 +1,4 @@
+{
+  "url": "http://localhost:8080/v1/graphql",
+  "outputDir": "src/graphql"
+}
