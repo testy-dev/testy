@@ -43,7 +43,7 @@ const LoginScreen: React.FC = () => {
         <Heading level={1}>Login</Heading>
       </Box>
       <Box width="medium">
-        <Form onSubmit={handleLogin}>
+        <Form onSubmit={handleLogin} aria-label="Login">
           <FormField label="E-mail">
             <TextInput
               type="email"
@@ -73,7 +73,13 @@ const LoginScreen: React.FC = () => {
         </Form>
       </Box>
       <Box direction="row" gap="medium">
-        <Google onClick={handleGoogle} color="plain" size="large" />
+        <Google
+          onClick={handleGoogle}
+          role="button"
+          aria-label="Login with Google account"
+          color="plain"
+          size="large"
+        />
         <Github color="plain" size="large" />
       </Box>
     </Box>

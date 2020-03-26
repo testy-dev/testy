@@ -5,6 +5,7 @@ import { Route, Switch, useHistory } from "react-router-dom";
 import firebase from "firebase/app";
 
 import EditorScreen from "./components/EditorScreen";
+import HomeScreen from "./components/HomeScreen";
 import LoginScreen from "./components/LoginScreen";
 import NotFoundScreen from "./components/NotFoundScreen";
 
@@ -65,7 +66,10 @@ const Routes: React.FC = () => {
 
   return (
     <Switch>
-      <Route path="/" exact component={EditorScreen} />
+      <Route path="/" exact component={HomeScreen} />
+      {/*<Route path="/:org" component={OrganizationScreen} />*/}
+      {/*<Route path="/:org/:project" component={ProjectScreen} />*/}
+      <Route path="/:org/:project/editor" component={EditorScreen} />
       <Route component={NotFoundScreen} />
     </Switch>
   );
