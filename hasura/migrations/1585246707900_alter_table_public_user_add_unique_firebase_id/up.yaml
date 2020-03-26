@@ -1,0 +1,6 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."user" add constraint "user_firebase_id_key" unique
+      ("firebase_id");
+  type: run_sql
