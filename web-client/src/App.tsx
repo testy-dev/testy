@@ -1,8 +1,15 @@
 import React from "react";
 
+import {
+  ApolloClient,
+  ApolloProvider,
+  HttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import { BrowserRouter } from "react-router-dom";
 import { Grommet, generate, grommet } from "grommet";
 import { deepMerge } from "grommet/utils";
+import { setContext } from "@apollo/link-context";
 
 import "firebase/auth";
 import "firebase/database";
@@ -13,13 +20,39 @@ import Routes from "./Routes";
 
 firebase.initializeApp(firebaseConfig);
 
+const httpLink = new HttpLink({
+  uri: "http://localhost:8080/v1/graphql",
+});
+
+const authLink = setContext(async (_, { headers }) => {
+  const user = firebase.auth().currentUser;
+  console.log("user", user);
+  if (user) {
+    const token = await user.getIdToken();
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    };
+  }
+  return {};
+});
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: authLink.concat(httpLink),
+});
+
 const theme = deepMerge(generate(20), grommet);
 
 const App: React.FC = () => (
   <Grommet full theme={theme}>
-    <BrowserRouter>
-      <Routes />
-    </BrowserRouter>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <Routes />
+      </BrowserRouter>
+    </ApolloProvider>
   </Grommet>
 );
 
