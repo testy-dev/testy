@@ -12,8 +12,8 @@ import Logo from "../Logo";
 const HomeScreen: React.FC = () => {
   const history = useHistory();
   const handleCreateOrganization = React.useCallback(
-    (orgID: number) => {
-      history.push(`/${orgID}`);
+    (orgSlug: string) => {
+      history.push(`/${orgSlug}`);
     },
     [history]
   );

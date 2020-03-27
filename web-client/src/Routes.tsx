@@ -32,9 +32,9 @@ const createGqlUser = async (uid: string, name: string) => {
   // language=graphql
   const query = `
     query getMe($firebase_id: String!) {
-        user(where: {firebase_id: {_eq: $firebase_id}}) {
-            id
-        }
+      user(where: {firebase_id: {_eq: $firebase_id}}) {
+        id
+      }
     }
   `;
   const me: any = await fetchQuery(query, {
@@ -43,19 +43,17 @@ const createGqlUser = async (uid: string, name: string) => {
   if (!me?.data?.user?.[0]?.id) {
     // language=graphql
     const query = `
-      mutation MyMutation($name: String!, $firebase_id: String!) {
-        insert_user(objects: {name: $name, firebase_id: $firebase_id}) {
+      mutation MyMutation($name: String!) {
+        insert_user(objects: {name: $name}) {
           returning {
             id
             name
-            firebase_id
           }
         }
       }
     `;
     const response = await fetchQuery(query, {
       name,
-      firebase_id: uid,
     });
     console.log("create user response", response);
   } else {

@@ -20,11 +20,10 @@ services:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-      HASURA_GRAPHQL_JWT_SECRET: '{"type":"RS256", "jwk_url":"https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com", "audience":"<firebase-project-id>", "issuer":"https://securetoken.google.com/<firebase-project-id>"
-    }'
+      HASURA_GRAPHQL_JWT_SECRET: '{"type":"RS256", "jwk_url":"https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com", "audience":"testyx", "issuer":"https://securetoken.google.com/testyx"}'
       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
       ## uncomment next line to set an admin secret
-      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_ADMIN_SECRET: "hoibo23m5nbasofiu"
 volumes:
   db_data:
 

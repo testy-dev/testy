@@ -7,12 +7,12 @@ import { schema } from "./generated";
 const endpoint = "http://localhost:8080/v1/graphql";
 
 export const fetchQuery: QueryFetcher = async (query, variables) => {
-  const token = firebase.auth().currentUser?.getIdToken();
+  const token = await firebase.auth().currentUser?.getIdToken();
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Barear ${token}` : "",
+      Authorization: token ? `Bearer ${token}` : "",
     },
     body: JSON.stringify({
       query,

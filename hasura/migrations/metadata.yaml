@@ -64,35 +64,44 @@ tables:
   insert_permissions:
   - role: user
     permission:
-      check: {}
-      set:
-        owner_id: x-hasura-user-id
+      check:
+        owner:
+          firebase_id:
+            _eq: X-Hasura-User-Id
       columns:
       - name
+      - owner_id
+      - slug
   select_permissions:
   - role: user
     permission:
       columns:
       - id
       - name
+      - owner_id
+      - slug
       filter:
-        owner_id:
-          _eq: X-Hasura-User-Id
+        owner:
+          firebase_id:
+            _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:
       columns:
       - name
+      - slug
       filter:
-        owner_id:
-          _eq: X-Hasura-User-Id
+        owner:
+          firebase_id:
+            _eq: X-Hasura-User-Id
       check: null
   delete_permissions:
   - role: user
     permission:
       filter:
-        owner_id:
-          _eq: X-Hasura-User-Id
+        owner:
+          firebase_id:
+            _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: organization_invite_user
@@ -193,6 +202,16 @@ tables:
         firebase_id: x-hasura-User-Id
       columns:
       - name
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - firebase_id
+      - id
+      - name
+      filter:
+        firebase_id:
+          _eq: X-Hasura-User-Id
   update_permissions:
   - role: user
     permission:

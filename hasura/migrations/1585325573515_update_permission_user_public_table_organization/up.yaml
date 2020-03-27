@@ -1,0 +1,25 @@
+- args:
+    role: user
+    table:
+      name: organization
+      schema: public
+  type: drop_insert_permission
+- args:
+    permission:
+      check:
+        owner:
+          firebase_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - name
+      - owner_id
+      - slug
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: organization
+      schema: public
+  type: create_insert_permission
