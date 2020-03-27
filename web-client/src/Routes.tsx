@@ -10,6 +10,7 @@ import LoginScreen from "./components/LoginScreen";
 import NotFoundScreen from "./components/NotFoundScreen";
 
 import { fetchQuery } from "./graphql";
+import UserID from "./components/UserID";
 
 const waitForNewToken = async (user: firebase.User) => {
   // Check if refresh is required.
@@ -27,35 +28,38 @@ const waitForNewToken = async (user: firebase.User) => {
   await user.getIdToken(true);
 };
 
-const createGqlUser = async () => {
+const createGqlUser = async (uid: string, name: string) => {
   // language=graphql
   const query = `
-query getMe($firebase_id: String!) {
-    user(where: {firebase_id: {_eq: $firebase_id}}) {
-        id
+    query getMe($firebase_id: String!) {
+        user(where: {firebase_id: {_eq: $firebase_id}}) {
+            id
+        }
     }
-}`;
+  `;
   const me: any = await fetchQuery(query, {
-    firebase_id: firebase.auth().currentUser?.uid,
+    firebase_id: uid,
   });
-  console.log("me", me);
-  if (me?.user?.[0]?.id !== null) {
+  if (!me?.data?.user?.[0]?.id) {
     // language=graphql
     const query = `
-mutation MyMutation($name: String!, $firebase_id: String!) {
-  insert_user(objects: {name: $name, firebase_id: $firebase_id}) {
-    returning {
-      id
-      name
-      firebase_id
-    }
-  }
-}`;
+      mutation MyMutation($name: String!, $firebase_id: String!) {
+        insert_user(objects: {name: $name, firebase_id: $firebase_id}) {
+          returning {
+            id
+            name
+            firebase_id
+          }
+        }
+      }
+    `;
     const response = await fetchQuery(query, {
-      name: firebase.auth().currentUser?.displayName ?? "",
-      firebase_id: firebase.auth().currentUser?.uid,
+      name,
+      firebase_id: uid,
     });
     console.log("create user response", response);
+  } else {
+    UserID.setUser(me?.data?.user?.[0]?.id);
   }
 };
 
@@ -75,7 +79,7 @@ const Routes: React.FC = () => {
         if (!hasuraClaim) {
           await waitForNewToken(user);
         }
-        await createGqlUser();
+        await createGqlUser(user.uid, user.displayName ?? "");
         setAuthState("in");
         if (history.location.pathname === "/login") history.push("/");
       } else {
