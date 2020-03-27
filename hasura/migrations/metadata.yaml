@@ -174,6 +174,51 @@ tables:
         table:
           schema: public
           name: project_run_history
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        organization:
+          owner:
+            firebase_id:
+              _eq: X-Hasura-User-Id
+      columns:
+      - name
+      - organization_id
+      - slug
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - name
+      - organization_id
+      - slug
+      filter:
+        organization:
+          owner:
+            firebase_id:
+              _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - name
+      - slug
+      filter:
+        organization:
+          owner:
+            firebase_id:
+              _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        organization:
+          owner:
+            firebase_id:
+              _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: project_run_history

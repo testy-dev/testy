@@ -366,6 +366,19 @@ type t_mutation_root = FieldsType<
     >;
 
     /**
+     * delete data from the table: "project"
+     */
+    delete_project: FieldsTypeArg<
+      { where: project_bool_exp },
+      t_project_mutation_response | null
+    >;
+
+    /**
+     * delete single row from the table: "project"
+     */
+    delete_project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
+
+    /**
      * insert data into the table: "organization"
      */
     insert_organization: FieldsTypeArg<
@@ -404,6 +417,28 @@ type t_mutation_root = FieldsType<
     >;
 
     /**
+     * insert data into the table: "project"
+     */
+    insert_project: FieldsTypeArg<
+      {
+        objects: project_insert_input[];
+        on_conflict?: project_on_conflict | null;
+      },
+      t_project_mutation_response | null
+    >;
+
+    /**
+     * insert a single row into the table: "project"
+     */
+    insert_project_one: FieldsTypeArg<
+      {
+        object: project_insert_input;
+        on_conflict?: project_on_conflict | null;
+      },
+      t_project | null
+    >;
+
+    /**
      * insert data into the table: "user"
      */
     insert_user: FieldsTypeArg<
@@ -436,6 +471,22 @@ type t_mutation_root = FieldsType<
         pk_columns: organization_pk_columns_input;
       },
       t_organization | null
+    >;
+
+    /**
+     * update data of the table: "project"
+     */
+    update_project: FieldsTypeArg<
+      { _set?: project_set_input | null; where: project_bool_exp },
+      t_project_mutation_response | null
+    >;
+
+    /**
+     * update single row of the table: "project"
+     */
+    update_project_by_pk: FieldsTypeArg<
+      { _set?: project_set_input | null; pk_columns: project_pk_columns_input },
+      t_project | null
     >;
 
     /**
@@ -499,6 +550,20 @@ type t_organization = FieldsType<
      */
     owner: t_user;
     owner_id: t_Int;
+
+    /**
+     * An array relationship
+     */
+    projects: FieldsTypeArg<
+      {
+        distinct_on?: project_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_order_by[] | null;
+        where?: project_bool_exp | null;
+      },
+      t_project[]
+    >;
     slug: t_String;
   },
   Extension<"organization">
@@ -526,6 +591,7 @@ export type organization_bool_exp = {
   name: String_comparison_exp | null;
   owner: user_bool_exp | null;
   owner_id: Int_comparison_exp | null;
+  projects: project_bool_exp | null;
   slug: String_comparison_exp | null;
 };
 
@@ -546,6 +612,7 @@ export type organization_insert_input = {
   name: string | null;
   owner: user_obj_rel_insert_input | null;
   owner_id: number | null;
+  projects: project_arr_rel_insert_input | null;
   slug: string | null;
 };
 
@@ -739,6 +806,147 @@ export type organization_set_input = {
 type t_organization_update_column = EnumType<"name" | "slug">;
 
 /**
+ * @name project
+ * @type OBJECT
+ */
+type t_project = FieldsType<
+  {
+    __typename: t_String<"project">;
+    id: t_Int;
+    name: t_String;
+
+    /**
+     * An object relationship
+     */
+    organization: t_organization;
+    organization_id: t_Int;
+    slug: t_String;
+  },
+  Extension<"project">
+>;
+
+/**
+ * @name project_arr_rel_insert_input
+ * @type INPUT_OBJECT
+ */
+export type project_arr_rel_insert_input = {
+  data: project_insert_input[];
+  on_conflict: project_on_conflict | null;
+};
+
+/**
+ * @name project_bool_exp
+ * @type INPUT_OBJECT
+ */
+export type project_bool_exp = {
+  _and: (project_bool_exp | null)[] | null;
+  _not: project_bool_exp | null;
+  _or: (project_bool_exp | null)[] | null;
+  id: Int_comparison_exp | null;
+  name: String_comparison_exp | null;
+  organization: organization_bool_exp | null;
+  organization_id: Int_comparison_exp | null;
+  slug: String_comparison_exp | null;
+};
+
+/**
+ * @name project_constraint
+ * @type ENUM
+ */
+type t_project_constraint = EnumType<
+  "project_organization_id_slug_key" | "project_pkey"
+>;
+
+/**
+ * @name project_insert_input
+ * @type INPUT_OBJECT
+ */
+export type project_insert_input = {
+  name: string | null;
+  organization: organization_obj_rel_insert_input | null;
+  organization_id: number | null;
+  slug: string | null;
+};
+
+/**
+ * @name project_mutation_response
+ * @type OBJECT
+ */
+type t_project_mutation_response = FieldsType<
+  {
+    __typename: t_String<"project_mutation_response">;
+
+    /**
+     * number of affected rows by the mutation
+     */
+    affected_rows: t_Int;
+
+    /**
+     * data of the affected rows by the mutation
+     */
+    returning: t_project[];
+  },
+  Extension<"project_mutation_response">
+>;
+
+/**
+ * @name project_obj_rel_insert_input
+ * @type INPUT_OBJECT
+ */
+export type project_obj_rel_insert_input = {
+  data: project_insert_input;
+  on_conflict: project_on_conflict | null;
+};
+
+/**
+ * @name project_on_conflict
+ * @type INPUT_OBJECT
+ */
+export type project_on_conflict = {
+  constraint: project_constraint;
+  update_columns: project_update_column[];
+  where: project_bool_exp | null;
+};
+
+/**
+ * @name project_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_order_by = {
+  id: order_by | null;
+  name: order_by | null;
+  organization: organization_order_by | null;
+  organization_id: order_by | null;
+  slug: order_by | null;
+};
+
+/**
+ * @name project_pk_columns_input
+ * @type INPUT_OBJECT
+ */
+export type project_pk_columns_input = { id: number };
+
+/**
+ * @name project_select_column
+ * @type ENUM
+ */
+type t_project_select_column = EnumType<
+  "id" | "name" | "organization_id" | "slug"
+>;
+
+/**
+ * @name project_set_input
+ * @type INPUT_OBJECT
+ */
+export type project_set_input = { name: string | null; slug: string | null };
+
+/**
+ * @name project_update_column
+ * @type ENUM
+ */
+type t_project_update_column = EnumType<"name" | "slug">;
+
+/**
  * @name query_root
  * @type OBJECT
  */
@@ -808,6 +1016,25 @@ type t_query_root = FieldsType<
       { id: number },
       t_organization_invite_user | null
     >;
+
+    /**
+     * fetch data from the table: "project"
+     */
+    project: FieldsTypeArg<
+      {
+        distinct_on?: project_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_order_by[] | null;
+        where?: project_bool_exp | null;
+      },
+      t_project[]
+    >;
+
+    /**
+     * fetch data from the table: "project" using primary key columns
+     */
+    project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
 
     /**
      * fetch data from the table: "user"
@@ -901,6 +1128,25 @@ type t_subscription_root = FieldsType<
       { id: number },
       t_organization_invite_user | null
     >;
+
+    /**
+     * fetch data from the table: "project"
+     */
+    project: FieldsTypeArg<
+      {
+        distinct_on?: project_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_order_by[] | null;
+        where?: project_bool_exp | null;
+      },
+      t_project[]
+    >;
+
+    /**
+     * fetch data from the table: "project" using primary key columns
+     */
+    project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
 
     /**
      * fetch data from the table: "user"
@@ -1274,6 +1520,36 @@ export type organization_select_column = TypeData<t_organization_select_column>;
  * @type ENUM
  */
 export type organization_update_column = TypeData<t_organization_update_column>;
+
+/**
+ * @name project
+ * @type OBJECT
+ */
+export type project = TypeData<t_project>;
+
+/**
+ * @name project_constraint
+ * @type ENUM
+ */
+export type project_constraint = TypeData<t_project_constraint>;
+
+/**
+ * @name project_mutation_response
+ * @type OBJECT
+ */
+export type project_mutation_response = TypeData<t_project_mutation_response>;
+
+/**
+ * @name project_select_column
+ * @type ENUM
+ */
+export type project_select_column = TypeData<t_project_select_column>;
+
+/**
+ * @name project_update_column
+ * @type ENUM
+ */
+export type project_update_column = TypeData<t_project_update_column>;
 
 /**
  * @name query_root

@@ -5,13 +5,13 @@ import { Box, Button, Form, FormField, Heading, Layer, Text } from "grommet";
 import slugify from "slugify";
 
 import { fetchQuery } from "../../graphql";
-import UserID from "../UserID";
 
 interface IProps {
+  orgId: number;
   onCreate: (slug: string) => void;
 }
 
-const CreateOrganization: React.FC<IProps> = ({ onCreate }) => {
+const CreateProject: React.FC<IProps> = ({ onCreate, orgId }) => {
   const [opened, setOpened] = React.useState<boolean>(false);
   const [error, setError] = React.useState("");
   const handleCreate = React.useCallback(
@@ -19,20 +19,22 @@ const CreateOrganization: React.FC<IProps> = ({ onCreate }) => {
       const slug = slugify(e.value.name);
       // language=graphql
       const query = `
-        mutation createOrganization($name: String!, $owner_id: Int!, $slug: String!) {
-            insert_organization_one(object: {name: $name, owner_id: $owner_id, slug: $slug}) {
+        mutation createProject($input: project_insert_input!) {
+            insert_project_one(object: $input) {
                 id
             }
         }
       `;
       const response = await fetchQuery(query, {
-        name: e.value.name,
-        owner_id: UserID.getUser(),
-        slug,
+        input: {
+          name: e.value.name,
+          organization_id: orgId,
+          slug,
+        },
       });
       if (response?.errors?.length) {
         setError(response.errors.map((e: any) => e.message).join());
-      } else if (response?.data?.insert_organization_one?.id) {
+      } else if (response?.data?.insert_project_one?.id) {
         await onCreate(slug);
       }
     },
@@ -51,8 +53,8 @@ const CreateOrganization: React.FC<IProps> = ({ onCreate }) => {
         >
           <Form onSubmit={handleCreate}>
             <Box pad="medium" gap="medium">
-              <Heading level={2}>Create Organization</Heading>
-              <FormField name="name" label="Organization name" />
+              <Heading level={2}>Create Project</Heading>
+              <FormField name="name" label="Project name" />
               {error && <Text color="status-error">{error}</Text>}
               <Button type="submit" label="Create" />
             </Box>
@@ -63,4 +65,4 @@ const CreateOrganization: React.FC<IProps> = ({ onCreate }) => {
   );
 };
 
-export default CreateOrganization;
+export default CreateProject;

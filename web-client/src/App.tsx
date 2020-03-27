@@ -44,7 +44,9 @@ const client = new ApolloClient({
   link: authLink.concat(httpLink),
 });
 
-const theme = deepMerge(generate(20), grommet);
+const theme = deepMerge(generate(20), grommet, {
+  global: { colors: { brand: "#0B74C2" } },
+});
 
 const App: React.FC = () => (
   <Grommet full theme={theme}>

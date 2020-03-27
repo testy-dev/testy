@@ -1,0 +1,5 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: alter table "public"."project" drop constraint "project_organization_id_slug_key";
+  type: run_sql

@@ -562,6 +562,34 @@ export const schema = {
             true
           );
         },
+        get delete_project() {
+          return new FieldNode(
+            schema.project_mutation_response,
+            new Arguments(
+              {
+                get where() {
+                  return new ArgumentsField(schema.project_bool_exp, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
+        get delete_project_by_pk() {
+          return new FieldNode(
+            schema.project,
+            new Arguments(
+              {
+                get id() {
+                  return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
         get insert_organization() {
           return new FieldNode(
             schema.organization_mutation_response,
@@ -639,6 +667,37 @@ export const schema = {
             true
           );
         },
+        get insert_project() {
+          return new FieldNode(
+            schema.project_mutation_response,
+            new Arguments({
+              get objects() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_insert_input, false),
+                  false
+                );
+              },
+              get on_conflict() {
+                return new ArgumentsField(schema.project_on_conflict, true);
+              },
+            }),
+            true
+          );
+        },
+        get insert_project_one() {
+          return new FieldNode(
+            schema.project,
+            new Arguments({
+              get object() {
+                return new ArgumentsField(schema.project_insert_input, false);
+              },
+              get on_conflict() {
+                return new ArgumentsField(schema.project_on_conflict, true);
+              },
+            }),
+            true
+          );
+        },
         get insert_user() {
           return new FieldNode(
             schema.user_mutation_response,
@@ -694,6 +753,37 @@ export const schema = {
               get pk_columns() {
                 return new ArgumentsField(
                   schema.organization_pk_columns_input,
+                  false
+                );
+              },
+            }),
+            true
+          );
+        },
+        get update_project() {
+          return new FieldNode(
+            schema.project_mutation_response,
+            new Arguments({
+              get _set() {
+                return new ArgumentsField(schema.project_set_input, true);
+              },
+              get where() {
+                return new ArgumentsField(schema.project_bool_exp, false);
+              },
+            }),
+            true
+          );
+        },
+        get update_project_by_pk() {
+          return new FieldNode(
+            schema.project,
+            new Arguments({
+              get _set() {
+                return new ArgumentsField(schema.project_set_input, true);
+              },
+              get pk_columns() {
+                return new ArgumentsField(
+                  schema.project_pk_columns_input,
                   false
                 );
               },
@@ -789,6 +879,35 @@ export const schema = {
         get owner_id() {
           return new FieldNode(schema.Int, undefined, false);
         },
+        get projects() {
+          return new FieldNode(
+            new ArrayNode(schema.project, false),
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(schema.project_bool_exp, true);
+              },
+            }),
+            false
+          );
+        },
         get slug() {
           return new FieldNode(schema.String, undefined, false);
         },
@@ -851,6 +970,9 @@ export const schema = {
         get owner_id() {
           return new InputNodeField(schema.Int_comparison_exp, true);
         },
+        get projects() {
+          return new InputNodeField(schema.project_bool_exp, true);
+        },
         get slug() {
           return new InputNodeField(schema.String_comparison_exp, true);
         },
@@ -878,6 +1000,9 @@ export const schema = {
         },
         get owner_id() {
           return new InputNodeField(schema.Int, true);
+        },
+        get projects() {
+          return new InputNodeField(schema.project_arr_rel_insert_input, true);
         },
         get slug() {
           return new InputNodeField(schema.String, true);
@@ -1155,6 +1280,209 @@ export const schema = {
   get organization_update_column() {
     return new EnumNode({ name: "organization_update_column" });
   },
+  get project() {
+    return new ObjectNode(
+      {
+        get id() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get name() {
+          return new FieldNode(schema.String, undefined, false);
+        },
+        get organization() {
+          return new FieldNode(schema.organization, undefined, false);
+        },
+        get organization_id() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get slug() {
+          return new FieldNode(schema.String, undefined, false);
+        },
+      },
+      { name: "project", extension: ((extensions as any) || {}).project }
+    );
+  },
+  get project_arr_rel_insert_input() {
+    return new InputNode(
+      {
+        get data() {
+          return new InputNodeField(
+            new ArrayNode(schema.project_insert_input, false),
+            false
+          );
+        },
+        get on_conflict() {
+          return new InputNodeField(schema.project_on_conflict, true);
+        },
+      },
+      { name: "project_arr_rel_insert_input" }
+    );
+  },
+  get project_bool_exp() {
+    return new InputNode(
+      {
+        get _and() {
+          return new InputNodeField(
+            new ArrayNode(schema.project_bool_exp, true),
+            true
+          );
+        },
+        get _not() {
+          return new InputNodeField(schema.project_bool_exp, true);
+        },
+        get _or() {
+          return new InputNodeField(
+            new ArrayNode(schema.project_bool_exp, true),
+            true
+          );
+        },
+        get id() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get name() {
+          return new InputNodeField(schema.String_comparison_exp, true);
+        },
+        get organization() {
+          return new InputNodeField(schema.organization_bool_exp, true);
+        },
+        get organization_id() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get slug() {
+          return new InputNodeField(schema.String_comparison_exp, true);
+        },
+      },
+      { name: "project_bool_exp" }
+    );
+  },
+  get project_constraint() {
+    return new EnumNode({ name: "project_constraint" });
+  },
+  get project_insert_input() {
+    return new InputNode(
+      {
+        get name() {
+          return new InputNodeField(schema.String, true);
+        },
+        get organization() {
+          return new InputNodeField(
+            schema.organization_obj_rel_insert_input,
+            true
+          );
+        },
+        get organization_id() {
+          return new InputNodeField(schema.Int, true);
+        },
+        get slug() {
+          return new InputNodeField(schema.String, true);
+        },
+      },
+      { name: "project_insert_input" }
+    );
+  },
+  get project_mutation_response() {
+    return new ObjectNode(
+      {
+        get affected_rows() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get returning() {
+          return new FieldNode(
+            new ArrayNode(schema.project, false),
+            undefined,
+            false
+          );
+        },
+      },
+      {
+        name: "project_mutation_response",
+        extension: ((extensions as any) || {}).project_mutation_response,
+      }
+    );
+  },
+  get project_obj_rel_insert_input() {
+    return new InputNode(
+      {
+        get data() {
+          return new InputNodeField(schema.project_insert_input, false);
+        },
+        get on_conflict() {
+          return new InputNodeField(schema.project_on_conflict, true);
+        },
+      },
+      { name: "project_obj_rel_insert_input" }
+    );
+  },
+  get project_on_conflict() {
+    return new InputNode(
+      {
+        get constraint() {
+          return new InputNodeField(schema.project_constraint, false);
+        },
+        get update_columns() {
+          return new InputNodeField(
+            new ArrayNode(schema.project_update_column, false),
+            false
+          );
+        },
+        get where() {
+          return new InputNodeField(schema.project_bool_exp, true);
+        },
+      },
+      { name: "project_on_conflict" }
+    );
+  },
+  get project_order_by() {
+    return new InputNode(
+      {
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get name() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get organization() {
+          return new InputNodeField(schema.organization_order_by, true);
+        },
+        get organization_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get slug() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_order_by" }
+    );
+  },
+  get project_pk_columns_input() {
+    return new InputNode(
+      {
+        get id() {
+          return new InputNodeField(schema.Int, false);
+        },
+      },
+      { name: "project_pk_columns_input" }
+    );
+  },
+  get project_select_column() {
+    return new EnumNode({ name: "project_select_column" });
+  },
+  get project_set_input() {
+    return new InputNode(
+      {
+        get name() {
+          return new InputNodeField(schema.String, true);
+        },
+        get slug() {
+          return new InputNodeField(schema.String, true);
+        },
+      },
+      { name: "project_set_input" }
+    );
+  },
+  get project_update_column() {
+    return new EnumNode({ name: "project_update_column" });
+  },
   get query_root() {
     return new ObjectNode(
       {
@@ -1285,6 +1613,49 @@ export const schema = {
         get organization_invite_user_by_pk() {
           return new FieldNode(
             schema.organization_invite_user,
+            new Arguments(
+              {
+                get id() {
+                  return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
+        get project() {
+          return new FieldNode(
+            new ArrayNode(schema.project, false),
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(schema.project_bool_exp, true);
+              },
+            }),
+            false
+          );
+        },
+        get project_by_pk() {
+          return new FieldNode(
+            schema.project,
             new Arguments(
               {
                 get id() {
@@ -1473,6 +1844,49 @@ export const schema = {
         get organization_invite_user_by_pk() {
           return new FieldNode(
             schema.organization_invite_user,
+            new Arguments(
+              {
+                get id() {
+                  return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
+        get project() {
+          return new FieldNode(
+            new ArrayNode(schema.project, false),
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(schema.project_bool_exp, true);
+              },
+            }),
+            false
+          );
+        },
+        get project_by_pk() {
+          return new FieldNode(
+            schema.project,
             new Arguments(
               {
                 get id() {
