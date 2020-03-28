@@ -1,14 +1,15 @@
 import React, { Suspense } from "react";
 
-import { Box, Heading, Text } from "grommet";
+import { Box, Button, Heading, Text } from "grommet";
 import { graphql } from "@gqless/react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import { gql, useQuery } from "@apollo/client";
 import { query } from "../../graphql";
 import Logo from "../Logo";
 
 const ProjectScreen: React.FC = () => {
+  const history = useHistory();
   const { orgSlug, projectSlug } = useParams<{
     orgSlug: string;
     projectSlug: string;
@@ -25,12 +26,20 @@ const ProjectScreen: React.FC = () => {
       </Box>
 
       {/* Screenshot */}
-      <Box flex="grow" background="light-3" pad="medium">
-        org {orgSlug}
-        project {projectSlug}
-        {/*<Suspense fallback="Loading ...">*/}
-        {/*  <Organizations />*/}
-        {/*</Suspense>*/}
+      <Box
+        flex="grow"
+        background="light-3"
+        pad="medium"
+        justify="center"
+        align="center"
+        gap="medium"
+      >
+        <Text size="large">Tree of commands</Text>
+        <Button
+          label="Open editor"
+          size="large"
+          onClick={() => history.push(`/${orgSlug}/${projectSlug}/editor`)}
+        />
       </Box>
     </Box>
   );

@@ -1,0 +1,22 @@
+- args:
+    permission:
+      allow_upsert: true
+      check:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - project_id
+      - run_after
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: command
+      schema: public
+  type: create_insert_permission

@@ -15,6 +15,57 @@ tables:
         table:
           schema: public
           name: command_run_history
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - project_id
+      - run_after
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - run_after
+      - project_id
+      - created_at
+      - updated_at
+      filter:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - project_id
+      - run_after
+      filter:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+      check: null
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
 - table:
     schema: public
     name: command_run_history

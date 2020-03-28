@@ -1,0 +1,13 @@
+- args:
+    permission:
+      filter:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: command
+      schema: public
+  type: create_delete_permission
