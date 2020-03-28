@@ -1,17 +1,17 @@
 // @ts-nocheck
 import * as extensions from "../extensions";
+import { lazyGetters } from "@gqless/utils";
 import {
-  Arguments,
-  ArgumentsField,
-  ArrayNode,
-  EnumNode,
-  FieldNode,
+  ScalarNode,
   InputNode,
   InputNodeField,
+  ArrayNode,
   ObjectNode,
-  ScalarNode,
+  FieldNode,
+  EnumNode,
+  Arguments,
+  ArgumentsField,
 } from "gqless";
-import { lazyGetters } from "@gqless/utils";
 
 export const schema = {
   get Boolean() {

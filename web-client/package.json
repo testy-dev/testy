@@ -52,6 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@gqless/cli": "^0.0.1-alpha.30"
+    "@gqless/cli": "^0.0.1-alpha.30",
+    "dotenv": "^8.2.0"
   }
 }

@@ -1,10 +1,9 @@
 import { Client, QueryFetcher } from "gqless";
 import firebase from "firebase/app";
 
-import { query_root } from "./generated/types";
-import { schema } from "./generated";
+import { query_root, schema } from "./generated";
 
-const endpoint = "http://localhost:8080/v1/graphql";
+const endpoint = process.env.REACT_APP_GRAPHQL_ENDPOINT || "";
 
 export const fetchQuery: QueryFetcher = async (query, variables) => {
   const token = await firebase.auth().currentUser?.getIdToken();

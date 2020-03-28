@@ -21,7 +21,7 @@ import Routes from "./Routes";
 firebase.initializeApp(firebaseConfig);
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:8080/v1/graphql",
+  uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
 });
 
 const authLink = setContext(async (_, { headers }) => {
