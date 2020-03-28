@@ -820,6 +820,34 @@ type t_project = FieldsType<
      */
     organization: t_organization;
     organization_id: t_Int;
+
+    /**
+     * An array relationship
+     */
+    run_history: FieldsTypeArg<
+      {
+        distinct_on?: project_run_history_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_run_history_order_by[] | null;
+        where?: project_run_history_bool_exp | null;
+      },
+      t_project_run_history[]
+    >;
+
+    /**
+     * An aggregated array relationship
+     */
+    run_history_aggregate: FieldsTypeArg<
+      {
+        distinct_on?: project_run_history_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_run_history_order_by[] | null;
+        where?: project_run_history_bool_exp | null;
+      },
+      t_project_run_history_aggregate
+    >;
     slug: t_String;
   },
   Extension<"project">
@@ -846,6 +874,7 @@ export type project_bool_exp = {
   name: String_comparison_exp | null;
   organization: organization_bool_exp | null;
   organization_id: Int_comparison_exp | null;
+  run_history: project_run_history_bool_exp | null;
   slug: String_comparison_exp | null;
 };
 
@@ -917,6 +946,7 @@ export type project_order_by = {
   name: order_by | null;
   organization: organization_order_by | null;
   organization_id: order_by | null;
+  run_history_aggregate: project_run_history_aggregate_order_by | null;
   slug: order_by | null;
 };
 
@@ -925,6 +955,445 @@ export type project_order_by = {
  * @type INPUT_OBJECT
  */
 export type project_pk_columns_input = { id: number };
+
+/**
+ * @name project_run_history
+ * @type OBJECT
+ */
+type t_project_run_history = FieldsType<
+  {
+    __typename: t_String<"project_run_history">;
+    commands_done: t_Int;
+    commands_failed: t_Int;
+    commands_total: t_Int;
+    created_at: t_timestamptz;
+    id: t_Int;
+
+    /**
+     * An object relationship
+     */
+    project: t_project;
+    project_id: t_Int;
+    run_by_user: t_Int;
+  },
+  Extension<"project_run_history">
+>;
+
+/**
+ * @name project_run_history_aggregate
+ * @type OBJECT
+ */
+type t_project_run_history_aggregate = FieldsType<
+  {
+    __typename: t_String<"project_run_history_aggregate">;
+    aggregate: t_project_run_history_aggregate_fields | null;
+    nodes: t_project_run_history[];
+  },
+  Extension<"project_run_history_aggregate">
+>;
+
+/**
+ * @name project_run_history_aggregate_fields
+ * @type OBJECT
+ */
+type t_project_run_history_aggregate_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_aggregate_fields">;
+    avg: t_project_run_history_avg_fields | null;
+    count: FieldsTypeArg<
+      {
+        columns?: project_run_history_select_column[] | null;
+        distinct?: boolean | null;
+      },
+      t_Int | null
+    >;
+    max: t_project_run_history_max_fields | null;
+    min: t_project_run_history_min_fields | null;
+    stddev: t_project_run_history_stddev_fields | null;
+    stddev_pop: t_project_run_history_stddev_pop_fields | null;
+    stddev_samp: t_project_run_history_stddev_samp_fields | null;
+    sum: t_project_run_history_sum_fields | null;
+    var_pop: t_project_run_history_var_pop_fields | null;
+    var_samp: t_project_run_history_var_samp_fields | null;
+    variance: t_project_run_history_variance_fields | null;
+  },
+  Extension<"project_run_history_aggregate_fields">
+>;
+
+/**
+ * @name project_run_history_aggregate_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_aggregate_order_by = {
+  avg: project_run_history_avg_order_by | null;
+  count: order_by | null;
+  max: project_run_history_max_order_by | null;
+  min: project_run_history_min_order_by | null;
+  stddev: project_run_history_stddev_order_by | null;
+  stddev_pop: project_run_history_stddev_pop_order_by | null;
+  stddev_samp: project_run_history_stddev_samp_order_by | null;
+  sum: project_run_history_sum_order_by | null;
+  var_pop: project_run_history_var_pop_order_by | null;
+  var_samp: project_run_history_var_samp_order_by | null;
+  variance: project_run_history_variance_order_by | null;
+};
+
+/**
+ * @name project_run_history_avg_fields
+ * @type OBJECT
+ */
+type t_project_run_history_avg_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_avg_fields">;
+    commands_done: t_Float | null;
+    commands_failed: t_Float | null;
+    commands_total: t_Float | null;
+    id: t_Float | null;
+    project_id: t_Float | null;
+    run_by_user: t_Float | null;
+  },
+  Extension<"project_run_history_avg_fields">
+>;
+
+/**
+ * @name project_run_history_avg_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_avg_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_bool_exp
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_bool_exp = {
+  _and: (project_run_history_bool_exp | null)[] | null;
+  _not: project_run_history_bool_exp | null;
+  _or: (project_run_history_bool_exp | null)[] | null;
+  commands_done: Int_comparison_exp | null;
+  commands_failed: Int_comparison_exp | null;
+  commands_total: Int_comparison_exp | null;
+  created_at: timestamptz_comparison_exp | null;
+  id: Int_comparison_exp | null;
+  project: project_bool_exp | null;
+  project_id: Int_comparison_exp | null;
+  run_by_user: Int_comparison_exp | null;
+};
+
+/**
+ * @name project_run_history_max_fields
+ * @type OBJECT
+ */
+type t_project_run_history_max_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_max_fields">;
+    commands_done: t_Int | null;
+    commands_failed: t_Int | null;
+    commands_total: t_Int | null;
+    created_at: t_timestamptz | null;
+    id: t_Int | null;
+    project_id: t_Int | null;
+    run_by_user: t_Int | null;
+  },
+  Extension<"project_run_history_max_fields">
+>;
+
+/**
+ * @name project_run_history_max_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_max_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  created_at: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_min_fields
+ * @type OBJECT
+ */
+type t_project_run_history_min_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_min_fields">;
+    commands_done: t_Int | null;
+    commands_failed: t_Int | null;
+    commands_total: t_Int | null;
+    created_at: t_timestamptz | null;
+    id: t_Int | null;
+    project_id: t_Int | null;
+    run_by_user: t_Int | null;
+  },
+  Extension<"project_run_history_min_fields">
+>;
+
+/**
+ * @name project_run_history_min_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_min_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  created_at: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  created_at: order_by | null;
+  id: order_by | null;
+  project: project_order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_pk_columns_input
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_pk_columns_input = { id: number };
+
+/**
+ * @name project_run_history_select_column
+ * @type ENUM
+ */
+type t_project_run_history_select_column = EnumType<
+  | "commands_done"
+  | "commands_failed"
+  | "commands_total"
+  | "created_at"
+  | "id"
+  | "project_id"
+  | "run_by_user"
+>;
+
+/**
+ * @name project_run_history_stddev_fields
+ * @type OBJECT
+ */
+type t_project_run_history_stddev_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_stddev_fields">;
+    commands_done: t_Float | null;
+    commands_failed: t_Float | null;
+    commands_total: t_Float | null;
+    id: t_Float | null;
+    project_id: t_Float | null;
+    run_by_user: t_Float | null;
+  },
+  Extension<"project_run_history_stddev_fields">
+>;
+
+/**
+ * @name project_run_history_stddev_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_stddev_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_stddev_pop_fields
+ * @type OBJECT
+ */
+type t_project_run_history_stddev_pop_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_stddev_pop_fields">;
+    commands_done: t_Float | null;
+    commands_failed: t_Float | null;
+    commands_total: t_Float | null;
+    id: t_Float | null;
+    project_id: t_Float | null;
+    run_by_user: t_Float | null;
+  },
+  Extension<"project_run_history_stddev_pop_fields">
+>;
+
+/**
+ * @name project_run_history_stddev_pop_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_stddev_pop_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_stddev_samp_fields
+ * @type OBJECT
+ */
+type t_project_run_history_stddev_samp_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_stddev_samp_fields">;
+    commands_done: t_Float | null;
+    commands_failed: t_Float | null;
+    commands_total: t_Float | null;
+    id: t_Float | null;
+    project_id: t_Float | null;
+    run_by_user: t_Float | null;
+  },
+  Extension<"project_run_history_stddev_samp_fields">
+>;
+
+/**
+ * @name project_run_history_stddev_samp_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_stddev_samp_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_sum_fields
+ * @type OBJECT
+ */
+type t_project_run_history_sum_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_sum_fields">;
+    commands_done: t_Int | null;
+    commands_failed: t_Int | null;
+    commands_total: t_Int | null;
+    id: t_Int | null;
+    project_id: t_Int | null;
+    run_by_user: t_Int | null;
+  },
+  Extension<"project_run_history_sum_fields">
+>;
+
+/**
+ * @name project_run_history_sum_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_sum_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_var_pop_fields
+ * @type OBJECT
+ */
+type t_project_run_history_var_pop_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_var_pop_fields">;
+    commands_done: t_Float | null;
+    commands_failed: t_Float | null;
+    commands_total: t_Float | null;
+    id: t_Float | null;
+    project_id: t_Float | null;
+    run_by_user: t_Float | null;
+  },
+  Extension<"project_run_history_var_pop_fields">
+>;
+
+/**
+ * @name project_run_history_var_pop_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_var_pop_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_var_samp_fields
+ * @type OBJECT
+ */
+type t_project_run_history_var_samp_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_var_samp_fields">;
+    commands_done: t_Float | null;
+    commands_failed: t_Float | null;
+    commands_total: t_Float | null;
+    id: t_Float | null;
+    project_id: t_Float | null;
+    run_by_user: t_Float | null;
+  },
+  Extension<"project_run_history_var_samp_fields">
+>;
+
+/**
+ * @name project_run_history_var_samp_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_var_samp_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
+
+/**
+ * @name project_run_history_variance_fields
+ * @type OBJECT
+ */
+type t_project_run_history_variance_fields = FieldsType<
+  {
+    __typename: t_String<"project_run_history_variance_fields">;
+    commands_done: t_Float | null;
+    commands_failed: t_Float | null;
+    commands_total: t_Float | null;
+    id: t_Float | null;
+    project_id: t_Float | null;
+    run_by_user: t_Float | null;
+  },
+  Extension<"project_run_history_variance_fields">
+>;
+
+/**
+ * @name project_run_history_variance_order_by
+ * @type INPUT_OBJECT
+ */
+export type project_run_history_variance_order_by = {
+  commands_done: order_by | null;
+  commands_failed: order_by | null;
+  commands_total: order_by | null;
+  id: order_by | null;
+  project_id: order_by | null;
+  run_by_user: order_by | null;
+};
 
 /**
  * @name project_select_column
@@ -1037,6 +1506,42 @@ type t_query_root = FieldsType<
     project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
 
     /**
+     * fetch data from the table: "project_run_history"
+     */
+    project_run_history: FieldsTypeArg<
+      {
+        distinct_on?: project_run_history_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_run_history_order_by[] | null;
+        where?: project_run_history_bool_exp | null;
+      },
+      t_project_run_history[]
+    >;
+
+    /**
+     * fetch aggregated fields from the table: "project_run_history"
+     */
+    project_run_history_aggregate: FieldsTypeArg<
+      {
+        distinct_on?: project_run_history_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_run_history_order_by[] | null;
+        where?: project_run_history_bool_exp | null;
+      },
+      t_project_run_history_aggregate
+    >;
+
+    /**
+     * fetch data from the table: "project_run_history" using primary key columns
+     */
+    project_run_history_by_pk: FieldsTypeArg<
+      { id: number },
+      t_project_run_history | null
+    >;
+
+    /**
      * fetch data from the table: "user"
      */
     user: FieldsTypeArg<
@@ -1147,6 +1652,42 @@ type t_subscription_root = FieldsType<
      * fetch data from the table: "project" using primary key columns
      */
     project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
+
+    /**
+     * fetch data from the table: "project_run_history"
+     */
+    project_run_history: FieldsTypeArg<
+      {
+        distinct_on?: project_run_history_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_run_history_order_by[] | null;
+        where?: project_run_history_bool_exp | null;
+      },
+      t_project_run_history[]
+    >;
+
+    /**
+     * fetch aggregated fields from the table: "project_run_history"
+     */
+    project_run_history_aggregate: FieldsTypeArg<
+      {
+        distinct_on?: project_run_history_select_column[] | null;
+        limit?: number | null;
+        offset?: number | null;
+        order_by?: project_run_history_order_by[] | null;
+        where?: project_run_history_bool_exp | null;
+      },
+      t_project_run_history_aggregate
+    >;
+
+    /**
+     * fetch data from the table: "project_run_history" using primary key columns
+     */
+    project_run_history_by_pk: FieldsTypeArg<
+      { id: number },
+      t_project_run_history | null
+    >;
 
     /**
      * fetch data from the table: "user"
@@ -1538,6 +2079,116 @@ export type project_constraint = TypeData<t_project_constraint>;
  * @type OBJECT
  */
 export type project_mutation_response = TypeData<t_project_mutation_response>;
+
+/**
+ * @name project_run_history
+ * @type OBJECT
+ */
+export type project_run_history = TypeData<t_project_run_history>;
+
+/**
+ * @name project_run_history_aggregate
+ * @type OBJECT
+ */
+export type project_run_history_aggregate = TypeData<
+  t_project_run_history_aggregate
+>;
+
+/**
+ * @name project_run_history_aggregate_fields
+ * @type OBJECT
+ */
+export type project_run_history_aggregate_fields = TypeData<
+  t_project_run_history_aggregate_fields
+>;
+
+/**
+ * @name project_run_history_avg_fields
+ * @type OBJECT
+ */
+export type project_run_history_avg_fields = TypeData<
+  t_project_run_history_avg_fields
+>;
+
+/**
+ * @name project_run_history_max_fields
+ * @type OBJECT
+ */
+export type project_run_history_max_fields = TypeData<
+  t_project_run_history_max_fields
+>;
+
+/**
+ * @name project_run_history_min_fields
+ * @type OBJECT
+ */
+export type project_run_history_min_fields = TypeData<
+  t_project_run_history_min_fields
+>;
+
+/**
+ * @name project_run_history_select_column
+ * @type ENUM
+ */
+export type project_run_history_select_column = TypeData<
+  t_project_run_history_select_column
+>;
+
+/**
+ * @name project_run_history_stddev_fields
+ * @type OBJECT
+ */
+export type project_run_history_stddev_fields = TypeData<
+  t_project_run_history_stddev_fields
+>;
+
+/**
+ * @name project_run_history_stddev_pop_fields
+ * @type OBJECT
+ */
+export type project_run_history_stddev_pop_fields = TypeData<
+  t_project_run_history_stddev_pop_fields
+>;
+
+/**
+ * @name project_run_history_stddev_samp_fields
+ * @type OBJECT
+ */
+export type project_run_history_stddev_samp_fields = TypeData<
+  t_project_run_history_stddev_samp_fields
+>;
+
+/**
+ * @name project_run_history_sum_fields
+ * @type OBJECT
+ */
+export type project_run_history_sum_fields = TypeData<
+  t_project_run_history_sum_fields
+>;
+
+/**
+ * @name project_run_history_var_pop_fields
+ * @type OBJECT
+ */
+export type project_run_history_var_pop_fields = TypeData<
+  t_project_run_history_var_pop_fields
+>;
+
+/**
+ * @name project_run_history_var_samp_fields
+ * @type OBJECT
+ */
+export type project_run_history_var_samp_fields = TypeData<
+  t_project_run_history_var_samp_fields
+>;
+
+/**
+ * @name project_run_history_variance_fields
+ * @type OBJECT
+ */
+export type project_run_history_variance_fields = TypeData<
+  t_project_run_history_variance_fields
+>;
 
 /**
  * @name project_select_column

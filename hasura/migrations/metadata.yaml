@@ -226,6 +226,24 @@ tables:
   - name: project
     using:
       foreign_key_constraint_on: project_id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - run_by_user
+      - project_id
+      - created_at
+      - commands_done
+      - commands_failed
+      - commands_total
+      filter:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+      allow_aggregations: true
 - table:
     schema: public
     name: user

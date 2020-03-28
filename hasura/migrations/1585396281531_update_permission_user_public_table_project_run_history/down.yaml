@@ -1,0 +1,6 @@
+- args:
+    role: user
+    table:
+      name: project_run_history
+      schema: public
+  type: drop_select_permission

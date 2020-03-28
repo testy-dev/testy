@@ -1,0 +1,29 @@
+- args:
+    role: user
+    table:
+      name: project_run_history
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: true
+      columns:
+      - id
+      - run_by_user
+      - project_id
+      - created_at
+      - commands_done
+      - commands_failed
+      - commands_total
+      computed_fields: []
+      filter:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: project_run_history
+      schema: public
+  type: create_select_permission

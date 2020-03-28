@@ -1,8 +1,8 @@
 import React, { Suspense } from "react";
 
 import { Box, Heading, Text } from "grommet";
+import { Link, useHistory } from "react-router-dom";
 import { graphql } from "@gqless/react";
-import { useHistory } from "react-router-dom";
 
 import { Me } from "../../graphql/extensions";
 import { query } from "../../graphql";
@@ -67,7 +67,9 @@ const Organizations = graphql(() => {
             </Text>
             <ul>
               {org.projects.map(p => (
-                <li key={p.id}>{p.name}</li>
+                <li key={p.id}>
+                  <Link to={`/${orgSlug}/${p.slug}`}>{p.name}</Link>
+                </li>
               ))}
             </ul>
           </Box>

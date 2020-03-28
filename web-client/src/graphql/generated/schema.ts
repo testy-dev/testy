@@ -1,17 +1,17 @@
 // @ts-nocheck
 import * as extensions from "../extensions";
-import { lazyGetters } from "@gqless/utils";
 import {
-  ScalarNode,
-  InputNode,
-  InputNodeField,
-  ArrayNode,
-  ObjectNode,
-  FieldNode,
-  EnumNode,
   Arguments,
   ArgumentsField,
+  ArrayNode,
+  EnumNode,
+  FieldNode,
+  InputNode,
+  InputNodeField,
+  ObjectNode,
+  ScalarNode,
 } from "gqless";
+import { lazyGetters } from "@gqless/utils";
 
 export const schema = {
   get Boolean() {
@@ -1295,6 +1295,70 @@ export const schema = {
         get organization_id() {
           return new FieldNode(schema.Int, undefined, false);
         },
+        get run_history() {
+          return new FieldNode(
+            new ArrayNode(schema.project_run_history, false),
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(
+                  schema.project_run_history_bool_exp,
+                  true
+                );
+              },
+            }),
+            false
+          );
+        },
+        get run_history_aggregate() {
+          return new FieldNode(
+            schema.project_run_history_aggregate,
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(
+                  schema.project_run_history_bool_exp,
+                  true
+                );
+              },
+            }),
+            false
+          );
+        },
         get slug() {
           return new FieldNode(schema.String, undefined, false);
         },
@@ -1347,6 +1411,9 @@ export const schema = {
         },
         get organization_id() {
           return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get run_history() {
+          return new InputNodeField(schema.project_run_history_bool_exp, true);
         },
         get slug() {
           return new InputNodeField(schema.String_comparison_exp, true);
@@ -1447,6 +1514,12 @@ export const schema = {
         get organization_id() {
           return new InputNodeField(schema.order_by, true);
         },
+        get run_history_aggregate() {
+          return new InputNodeField(
+            schema.project_run_history_aggregate_order_by,
+            true
+          );
+        },
         get slug() {
           return new InputNodeField(schema.order_by, true);
         },
@@ -1462,6 +1535,870 @@ export const schema = {
         },
       },
       { name: "project_pk_columns_input" }
+    );
+  },
+  get project_run_history() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get created_at() {
+          return new FieldNode(schema.timestamptz, undefined, false);
+        },
+        get id() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get project() {
+          return new FieldNode(schema.project, undefined, false);
+        },
+        get project_id() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Int, undefined, false);
+        },
+      },
+      {
+        name: "project_run_history",
+        extension: ((extensions as any) || {}).project_run_history,
+      }
+    );
+  },
+  get project_run_history_aggregate() {
+    return new ObjectNode(
+      {
+        get aggregate() {
+          return new FieldNode(
+            schema.project_run_history_aggregate_fields,
+            undefined,
+            true
+          );
+        },
+        get nodes() {
+          return new FieldNode(
+            new ArrayNode(schema.project_run_history, false),
+            undefined,
+            false
+          );
+        },
+      },
+      {
+        name: "project_run_history_aggregate",
+        extension: ((extensions as any) || {}).project_run_history_aggregate,
+      }
+    );
+  },
+  get project_run_history_aggregate_fields() {
+    return new ObjectNode(
+      {
+        get avg() {
+          return new FieldNode(
+            schema.project_run_history_avg_fields,
+            undefined,
+            true
+          );
+        },
+        get count() {
+          return new FieldNode(
+            schema.Int,
+            new Arguments({
+              get columns() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_select_column, true),
+                  true
+                );
+              },
+              get distinct() {
+                return new ArgumentsField(schema.Boolean, true);
+              },
+            }),
+            true
+          );
+        },
+        get max() {
+          return new FieldNode(
+            schema.project_run_history_max_fields,
+            undefined,
+            true
+          );
+        },
+        get min() {
+          return new FieldNode(
+            schema.project_run_history_min_fields,
+            undefined,
+            true
+          );
+        },
+        get stddev() {
+          return new FieldNode(
+            schema.project_run_history_stddev_fields,
+            undefined,
+            true
+          );
+        },
+        get stddev_pop() {
+          return new FieldNode(
+            schema.project_run_history_stddev_pop_fields,
+            undefined,
+            true
+          );
+        },
+        get stddev_samp() {
+          return new FieldNode(
+            schema.project_run_history_stddev_samp_fields,
+            undefined,
+            true
+          );
+        },
+        get sum() {
+          return new FieldNode(
+            schema.project_run_history_sum_fields,
+            undefined,
+            true
+          );
+        },
+        get var_pop() {
+          return new FieldNode(
+            schema.project_run_history_var_pop_fields,
+            undefined,
+            true
+          );
+        },
+        get var_samp() {
+          return new FieldNode(
+            schema.project_run_history_var_samp_fields,
+            undefined,
+            true
+          );
+        },
+        get variance() {
+          return new FieldNode(
+            schema.project_run_history_variance_fields,
+            undefined,
+            true
+          );
+        },
+      },
+      {
+        name: "project_run_history_aggregate_fields",
+        extension: ((extensions as any) || {})
+          .project_run_history_aggregate_fields,
+      }
+    );
+  },
+  get project_run_history_aggregate_order_by() {
+    return new InputNode(
+      {
+        get avg() {
+          return new InputNodeField(
+            schema.project_run_history_avg_order_by,
+            true
+          );
+        },
+        get count() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get max() {
+          return new InputNodeField(
+            schema.project_run_history_max_order_by,
+            true
+          );
+        },
+        get min() {
+          return new InputNodeField(
+            schema.project_run_history_min_order_by,
+            true
+          );
+        },
+        get stddev() {
+          return new InputNodeField(
+            schema.project_run_history_stddev_order_by,
+            true
+          );
+        },
+        get stddev_pop() {
+          return new InputNodeField(
+            schema.project_run_history_stddev_pop_order_by,
+            true
+          );
+        },
+        get stddev_samp() {
+          return new InputNodeField(
+            schema.project_run_history_stddev_samp_order_by,
+            true
+          );
+        },
+        get sum() {
+          return new InputNodeField(
+            schema.project_run_history_sum_order_by,
+            true
+          );
+        },
+        get var_pop() {
+          return new InputNodeField(
+            schema.project_run_history_var_pop_order_by,
+            true
+          );
+        },
+        get var_samp() {
+          return new InputNodeField(
+            schema.project_run_history_var_samp_order_by,
+            true
+          );
+        },
+        get variance() {
+          return new InputNodeField(
+            schema.project_run_history_variance_order_by,
+            true
+          );
+        },
+      },
+      { name: "project_run_history_aggregate_order_by" }
+    );
+  },
+  get project_run_history_avg_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_avg_fields",
+        extension: ((extensions as any) || {}).project_run_history_avg_fields,
+      }
+    );
+  },
+  get project_run_history_avg_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_avg_order_by" }
+    );
+  },
+  get project_run_history_bool_exp() {
+    return new InputNode(
+      {
+        get _and() {
+          return new InputNodeField(
+            new ArrayNode(schema.project_run_history_bool_exp, true),
+            true
+          );
+        },
+        get _not() {
+          return new InputNodeField(schema.project_run_history_bool_exp, true);
+        },
+        get _or() {
+          return new InputNodeField(
+            new ArrayNode(schema.project_run_history_bool_exp, true),
+            true
+          );
+        },
+        get commands_done() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get created_at() {
+          return new InputNodeField(schema.timestamptz_comparison_exp, true);
+        },
+        get id() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get project() {
+          return new InputNodeField(schema.project_bool_exp, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.Int_comparison_exp, true);
+        },
+      },
+      { name: "project_run_history_bool_exp" }
+    );
+  },
+  get project_run_history_max_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get created_at() {
+          return new FieldNode(schema.timestamptz, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_max_fields",
+        extension: ((extensions as any) || {}).project_run_history_max_fields,
+      }
+    );
+  },
+  get project_run_history_max_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get created_at() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_max_order_by" }
+    );
+  },
+  get project_run_history_min_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get created_at() {
+          return new FieldNode(schema.timestamptz, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_min_fields",
+        extension: ((extensions as any) || {}).project_run_history_min_fields,
+      }
+    );
+  },
+  get project_run_history_min_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get created_at() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_min_order_by" }
+    );
+  },
+  get project_run_history_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get created_at() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project() {
+          return new InputNodeField(schema.project_order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_order_by" }
+    );
+  },
+  get project_run_history_pk_columns_input() {
+    return new InputNode(
+      {
+        get id() {
+          return new InputNodeField(schema.Int, false);
+        },
+      },
+      { name: "project_run_history_pk_columns_input" }
+    );
+  },
+  get project_run_history_select_column() {
+    return new EnumNode({ name: "project_run_history_select_column" });
+  },
+  get project_run_history_stddev_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_stddev_fields",
+        extension: ((extensions as any) || {})
+          .project_run_history_stddev_fields,
+      }
+    );
+  },
+  get project_run_history_stddev_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_stddev_order_by" }
+    );
+  },
+  get project_run_history_stddev_pop_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_stddev_pop_fields",
+        extension: ((extensions as any) || {})
+          .project_run_history_stddev_pop_fields,
+      }
+    );
+  },
+  get project_run_history_stddev_pop_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_stddev_pop_order_by" }
+    );
+  },
+  get project_run_history_stddev_samp_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_stddev_samp_fields",
+        extension: ((extensions as any) || {})
+          .project_run_history_stddev_samp_fields,
+      }
+    );
+  },
+  get project_run_history_stddev_samp_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_stddev_samp_order_by" }
+    );
+  },
+  get project_run_history_sum_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Int, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_sum_fields",
+        extension: ((extensions as any) || {}).project_run_history_sum_fields,
+      }
+    );
+  },
+  get project_run_history_sum_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_sum_order_by" }
+    );
+  },
+  get project_run_history_var_pop_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_var_pop_fields",
+        extension: ((extensions as any) || {})
+          .project_run_history_var_pop_fields,
+      }
+    );
+  },
+  get project_run_history_var_pop_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_var_pop_order_by" }
+    );
+  },
+  get project_run_history_var_samp_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_var_samp_fields",
+        extension: ((extensions as any) || {})
+          .project_run_history_var_samp_fields,
+      }
+    );
+  },
+  get project_run_history_var_samp_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_var_samp_order_by" }
+    );
+  },
+  get project_run_history_variance_fields() {
+    return new ObjectNode(
+      {
+        get commands_done() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_failed() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get commands_total() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get project_id() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+        get run_by_user() {
+          return new FieldNode(schema.Float, undefined, true);
+        },
+      },
+      {
+        name: "project_run_history_variance_fields",
+        extension: ((extensions as any) || {})
+          .project_run_history_variance_fields,
+      }
+    );
+  },
+  get project_run_history_variance_order_by() {
+    return new InputNode(
+      {
+        get commands_done() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_failed() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get commands_total() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get project_id() {
+          return new InputNodeField(schema.order_by, true);
+        },
+        get run_by_user() {
+          return new InputNodeField(schema.order_by, true);
+        },
+      },
+      { name: "project_run_history_variance_order_by" }
     );
   },
   get project_select_column() {
@@ -1656,6 +2593,84 @@ export const schema = {
         get project_by_pk() {
           return new FieldNode(
             schema.project,
+            new Arguments(
+              {
+                get id() {
+                  return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
+        get project_run_history() {
+          return new FieldNode(
+            new ArrayNode(schema.project_run_history, false),
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(
+                  schema.project_run_history_bool_exp,
+                  true
+                );
+              },
+            }),
+            false
+          );
+        },
+        get project_run_history_aggregate() {
+          return new FieldNode(
+            schema.project_run_history_aggregate,
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(
+                  schema.project_run_history_bool_exp,
+                  true
+                );
+              },
+            }),
+            false
+          );
+        },
+        get project_run_history_by_pk() {
+          return new FieldNode(
+            schema.project_run_history,
             new Arguments(
               {
                 get id() {
@@ -1887,6 +2902,84 @@ export const schema = {
         get project_by_pk() {
           return new FieldNode(
             schema.project,
+            new Arguments(
+              {
+                get id() {
+                  return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
+        get project_run_history() {
+          return new FieldNode(
+            new ArrayNode(schema.project_run_history, false),
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(
+                  schema.project_run_history_bool_exp,
+                  true
+                );
+              },
+            }),
+            false
+          );
+        },
+        get project_run_history_aggregate() {
+          return new FieldNode(
+            schema.project_run_history_aggregate,
+            new Arguments({
+              get distinct_on() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_select_column, true),
+                  true
+                );
+              },
+              get limit() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get offset() {
+                return new ArgumentsField(schema.Int, true);
+              },
+              get order_by() {
+                return new ArgumentsField(
+                  new ArrayNode(schema.project_run_history_order_by, true),
+                  true
+                );
+              },
+              get where() {
+                return new ArgumentsField(
+                  schema.project_run_history_bool_exp,
+                  true
+                );
+              },
+            }),
+            false
+          );
+        },
+        get project_run_history_by_pk() {
+          return new FieldNode(
+            schema.project_run_history,
             new Arguments(
               {
                 get id() {

@@ -8,6 +8,7 @@ import EditorScreen from "./components/EditorScreen";
 import HomeScreen from "./components/HomeScreen";
 import LoginScreen from "./components/LoginScreen";
 import NotFoundScreen from "./components/NotFoundScreen";
+import ProjectScreen from "./components/ProjectScreen";
 
 import { fetchQuery } from "./graphql";
 import UserID from "./components/UserID";
@@ -110,8 +111,8 @@ const Routes: React.FC = () => {
     <Switch>
       <Route path="/" exact component={HomeScreen} />
       {/*<Route path="/:orgSlug" component={OrganizationScreen} />*/}
-      {/*<Route path="/:org/:project" component={ProjectScreen} />*/}
-      <Route path="/:org/:project/editor" component={EditorScreen} />
+      <Route path="/:orgSlug/:projectSlug" exact component={ProjectScreen} />
+      <Route path="/:orgSlug/:projectSlug/editor" component={EditorScreen} />
       <Route component={NotFoundScreen} />
     </Switch>
   );
