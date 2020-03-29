@@ -4,6 +4,7 @@ import { Box, Heading, Text } from "grommet";
 import { Play } from "grommet-icons";
 
 import Command from "../Command";
+import Logo from "../Logo";
 
 const EditorScreen: React.FC = () => {
   const [commands, setCommands] = React.useState<{}[]>([]);
@@ -11,11 +12,12 @@ const EditorScreen: React.FC = () => {
   return (
     <Box direction="row" fill>
       {/* Steps */}
-      <Box basis="350px" flex={false}>
-        <Box direction="row" pad="small" justify="between">
+      <Box basis="400px" flex={false}>
+        <Box direction="row" pad="small" justify="between" align="center">
+          <Logo />
           <Text>Steps</Text>
         </Box>
-        <Box fill overflow={{ vertical: "scroll" }}>
+        <Box fill overflow={{ vertical: "auto" }}>
           <Command />
           <Command />
           <Command />

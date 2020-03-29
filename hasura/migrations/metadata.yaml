@@ -4,10 +4,20 @@ tables:
     schema: public
     name: command
   object_relationships:
+  - name: parent
+    using:
+      foreign_key_constraint_on: parent_id
   - name: project
     using:
       foreign_key_constraint_on: project_id
   array_relationships:
+  - name: children
+    using:
+      foreign_key_constraint_on:
+        column: parent_id
+        table:
+          schema: public
+          name: command
   - name: run_history
     using:
       foreign_key_constraint_on:
@@ -27,13 +37,13 @@ tables:
       columns:
       - id
       - project_id
-      - run_after
+      - parent_id
   select_permissions:
   - role: user
     permission:
       columns:
       - id
-      - run_after
+      - parent_id
       - project_id
       - created_at
       - updated_at
@@ -49,7 +59,7 @@ tables:
     permission:
       columns:
       - project_id
-      - run_after
+      - parent_id
       filter:
         project:
           organization:

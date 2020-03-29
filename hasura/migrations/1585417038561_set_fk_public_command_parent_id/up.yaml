@@ -1,0 +1,10 @@
+- args:
+    cascade: false
+    read_only: false
+    sql: |-
+      alter table "public"."command"
+                 add constraint "command_parent_id_fkey"
+                 foreign key ("parent_id")
+                 references "public"."command"
+                 ("id") on update restrict on delete set null;
+  type: run_sql
