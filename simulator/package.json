@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "yarn rollup -c rollup.config.js -w",
-    "build": "yarn rollup -c rollup.config.js"
+    "build": "parcel build src/browser.ts && parcel build src/server.ts --target node --bundle-node-modules"
   },
   "dependencies": {
     "@types/ws": "^7.2.3",

@@ -1,8 +1,7 @@
 import WebSocket from "ws";
 
 it("test", () => {
-  cy.log("server", WebSocket);
-  const server = new WebSocket.Server({ port: 8080 });
+  const ws = new WebSocket("ws://localhost:8082");
 
   class Monitoring {
     private ws: WebSocket;
@@ -34,13 +33,14 @@ it("test", () => {
     args: any[];
   }
 
-  server.on("connection", ws => {
+  ws.on("open", ws => {
     const monitoring = new Monitoring(ws, 1000);
     monitoring.start();
 
     cy.visit("https://seznam.cz").screenshot("image");
 
     ws.on("message", async (_, data: Message) => {
+      cy.log("incoming message", data);
       // await runCommand(data, ws);
       if (data?.library === "cypress") {
         cy[data.command].apply(data.args);
@@ -52,10 +52,8 @@ it("test", () => {
     };
   });
 
-  server.on("close", () => {
+  ws.on("close", () => {
     console.log("Connection closed, exit 0");
     process.exit(0);
-
-    server.close();
   });
 });
