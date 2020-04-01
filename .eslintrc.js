@@ -18,10 +18,7 @@ module.exports = {
     "@typescript-eslint/ban-ts-ignore": "warn",
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/interface-name-prefix": [
-      "warn",
-      { prefixWithI: "always" },
-    ],
+    "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       { ignoreRestSiblings: true, argsIgnorePattern: "^_" },
