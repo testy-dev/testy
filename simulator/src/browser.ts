@@ -1,5 +1,3 @@
-import WebSocket from "ws";
-
 it("test", () => {
   const ws = new WebSocket("ws://localhost:8082");
 
@@ -33,27 +31,25 @@ it("test", () => {
     args: any[];
   }
 
-  ws.on("open", ws => {
+  ws.onopen = function ProcessConnection() {
     const monitoring = new Monitoring(ws, 1000);
     monitoring.start();
 
     cy.visit("https://seznam.cz").screenshot("image");
 
-    ws.on("message", async (_, data: Message) => {
+    this.onmessage = async event => {
+      const data = event.data;
       cy.log("incoming message", data);
       // await runCommand(data, ws);
       if (data?.library === "cypress") {
         cy[data.command].apply(data.args);
       }
-    });
-
-    ws.onclose = () => {
-      monitoring.stop();
     };
-  });
 
-  ws.on("close", () => {
-    console.log("Connection closed, exit 0");
-    process.exit(0);
-  });
+    this.onclose = () => {
+      monitoring.stop();
+      console.log("Connection closed, exit 0");
+      throw new Error("Connection closed, exit tests");
+    };
+  };
 });

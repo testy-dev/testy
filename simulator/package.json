@@ -1,25 +1,26 @@
 {
   "name": "simulator",
   "version": "1.0.0",
-  "main": "build/index.js",
+  "server": "dist/server.js",
+  "browser": "dist/browser.js",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn run start-browser\" \"yarn run start-server\"",
-    "start-browser": "parcel src/browser.ts",
-    "start-server": "parcel src/server.ts --target node --bundle-node-modules",
-    "build": "parcel build src/browser.ts && parcel build src/server.ts --target node --bundle-node-modules"
+    "start-browser": "parcel watch src/browser.ts --target browser --no-hmr",
+    "start-server": "parcel watch src/server.ts --target server",
+    "build": "parcel build src/browser.ts --target browser && parcel build src/server.ts --target server"
   },
   "dependencies": {
     "@types/ws": "^7.2.3",
     "concurrently": "^5.1.0",
     "cypress": "^4.2.0",
     "grpc": "^1.24.2",
-    "parcel-bundler": "^1.12.4",
     "uuid": "^7.0.2",
     "ws": "^7.2.3"
   },
   "devDependencies": {
+    "parcel": "next",
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-typescript": "^4.0.0",
@@ -27,5 +28,21 @@
     "rollup": "^2.3.2",
     "tslib": "^1.11.1",
     "typescript": "^3.8.3"
+  },
+  "browserslist": ["last 2 Chrome versions"],
+  "targets": {
+    "server": {
+      "engines": {
+        "node": "^12.0.0"
+      },
+      "outputFormat": "commonjs",
+      "includeNodeModules": true,
+      "isLibrary": false
+    },
+    "browser": {
+      "includeNodeModules": true,
+      "isLibrary": false,
+      "outputFormat": "global"
+    }
   }
 }
