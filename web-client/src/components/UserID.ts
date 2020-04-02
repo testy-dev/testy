@@ -1,4 +1,4 @@
-export default class {
+class UserID {
   private static userID = 0;
   public static getUser() {
     return this.userID;
@@ -7,3 +7,5 @@ export default class {
     this.userID = value;
   }
 }
+
+export default UserID;
