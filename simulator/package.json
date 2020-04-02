@@ -8,7 +8,7 @@
   "scripts": {
     "start": "concurrently \"yarn run start-browser\" \"yarn run start-server\"",
     "start-browser": "parcel watch src/browser.ts --target browser --no-hmr",
-    "start-server": "parcel watch src/server.ts --target server",
+    "start-server": "parcel watch src/server.ts --target server --no-hmr",
     "build": "parcel build src/browser.ts --target browser && parcel build src/server.ts --target server"
   },
   "dependencies": {
