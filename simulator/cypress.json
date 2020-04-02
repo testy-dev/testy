@@ -1,5 +1,5 @@
 {
-  "testFiles": "index.js",
-  "integrationFolder": "./build",
+  "testFiles": "browser.js",
+  "integrationFolder": "./dist",
   "video": false
 }
