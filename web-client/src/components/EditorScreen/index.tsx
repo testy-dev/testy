@@ -28,7 +28,11 @@ const EditorScreen: React.FC = () => {
   const handleOpenurl = React.useCallback(() => {
     if (socket)
       socket.send(
-        JSON.stringify({ command: "visit", args: ["https://google.com"] })
+        JSON.stringify({
+          library: "cypress",
+          command: "visit",
+          args: ["https://google.com"],
+        })
       );
   }, []);
 

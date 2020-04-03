@@ -9,4 +9,4 @@ services:
     - .:/app
     ports:
     - 8081:8081
-    entrypoint: yarn run concurrently -n server,browser --kill-others "node /app/dist/server.js" "DEBUG=cypress:* cypress run --browser chrome /app/dist/browser.js"
+    entrypoint: yarn run concurrently -n server,browser --kill-others "node /app/dist/server.js" "cypress run --browser chrome /app/dist/browser.js"

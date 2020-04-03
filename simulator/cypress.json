@@ -1,5 +1,6 @@
 {
   "testFiles": "browser.js",
   "integrationFolder": "./dist",
-  "video": false
+  "video": false,
+  "defaultCommandTimeout": 1000000000
 }

@@ -3156,6 +3156,13 @@ cssstyle@^1.1.1:
   dependencies:
     cssom "0.3.x"
 
+cypress-terminal-report@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/cypress-terminal-report/-/cypress-terminal-report-1.1.0.tgz#8a4fa0d031bdf9e58aedd0ed043e2526aa652628"
+  integrity sha512-Y72t2FA5Kn+c8MTBeD5zhJ8CVwz092vCZG0kmL78AQnJYzASiRaqrMYKH+ccaXFNLoVjLx7ZwvH4sp7dPHHAcw==
+  dependencies:
+    chalk "^3.0.0"
+
 cypress@^4.2.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/cypress/-/cypress-4.3.0.tgz#74694c2407846119368a6aecc456b3ee1a8ee32b"
