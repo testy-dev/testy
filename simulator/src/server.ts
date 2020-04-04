@@ -16,7 +16,7 @@ privateWss.on("connection", ws => {
       publicWs.send(data);
     } else {
       console.log("Cannot forward private -> public", data);
-      ws.send(JSON.stringify({ connection_status: "INCOMPLETE" }));
+      // ws.send(JSON.stringify({ connection_status: "INCOMPLETE" }));
     }
   });
 });
@@ -32,7 +32,7 @@ publicWss.on("connection", ws => {
       privateWs.send(data);
     } else {
       console.log("Cannot forward public -> private", data);
-      ws.send(JSON.stringify({ connection_status: "INCOMPLETE" }));
+      // ws.send(JSON.stringify({ connection_status: "INCOMPLETE" }));
     }
   });
 });
