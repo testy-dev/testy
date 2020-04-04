@@ -30,8 +30,8 @@ const EditorScreen: React.FC = () => {
       socket.send(
         JSON.stringify({
           library: "cypress",
-          command: "visit",
-          args: ["https://google.com"],
+          command: "screenshot",
+          args: [],
         })
       );
   }, []);

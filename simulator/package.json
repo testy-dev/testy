@@ -9,6 +9,7 @@
     "start": "concurrently \"yarn run start-browser\" \"yarn run start-server\"",
     "start-browser": "parcel watch src/browser.ts --target browser --no-hmr",
     "start-server": "parcel watch src/server.ts --target server --no-hmr",
+    "run-locally": "concurrently -n server,browser --kill-others \"node dist/server.js\" \"cypress run --browser chrome dist/browser.js\"",
     "build": "parcel build src/browser.ts --target browser && parcel build src/server.ts --target server"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "concurrently": "^5.1.0",
     "cypress": "^4.2.0",
     "cypress-terminal-report": "^1.1.0",
+    "cypress-wait-until": "^1.6.1",
     "grpc": "^1.24.2",
     "uuid": "^7.0.2",
     "ws": "^7.2.3"

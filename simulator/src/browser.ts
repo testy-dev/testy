@@ -50,12 +50,14 @@ it("test", function(done) {
       const urlRequest = cy.url().then(url => {
         send({ url: url });
       });
+      cy.url().as("url");
+      cy.get("@url").then(url => send({ url }));
       const screenRequest = cy.screenshot({
         afterScreenshot(element) {
           send({ message: "screenshot", element });
         },
       });
-      send({ message: "updates", urlRequest, screenRequest });
+      send({ message: "updates", urlRequest, screenRequest, url: this.url });
     }, 4000);
 
     for (let i = 0; i < 3; i++) {
@@ -68,7 +70,6 @@ it("test", function(done) {
         },
       });
       send({ message: "updates", urlRequest, screenRequest });
-      expect(true).equals(true);
     }
 
     // cy.visit("https://seznam.cz").screenshot();
