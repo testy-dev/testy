@@ -25,17 +25,6 @@ const EditorScreen: React.FC = () => {
     };
   }, [incomingMessages, setIncomingMessages]);
 
-  const handleOpenurl = React.useCallback(() => {
-    if (socket)
-      socket.send(
-        JSON.stringify({
-          library: "cypress",
-          command: "screenshot",
-          args: [],
-        })
-      );
-  }, []);
-
   return (
     <Box direction="row" fill>
       {/* Steps */}
@@ -47,7 +36,32 @@ const EditorScreen: React.FC = () => {
         <Box fill overflow={{ vertical: "auto" }}>
           <Command />
           <Command />
-          <Button label="open url command" onClick={handleOpenurl} />
+          <Button
+            label="open url command"
+            onClick={() => {
+              socket &&
+                socket.send(
+                  JSON.stringify({
+                    library: "cypress",
+                    command: "visit",
+                    args: ["https://aimarket.pl/"],
+                  })
+                );
+            }}
+          />
+          <Button
+            label="screenshot"
+            onClick={() => {
+              socket &&
+                socket.send(
+                  JSON.stringify({
+                    library: "cypress",
+                    command: "screenshot",
+                    args: [],
+                  })
+                );
+            }}
+          />
         </Box>
         <Box direction="row" pad="small" justify="between">
           <Text>0/13 done</Text>

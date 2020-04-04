@@ -31,10 +31,15 @@
 //   args: any[];
 // }
 
-// it("check asope", () => {
-//   cy.visit("https://asope.cz");
-//   cy.get("#head-navi a").contains("Domů");
-//   expect(true).to.equals(true);
+// it("check urls", () => {
+//   [
+//     "https://aimarket.pl",
+//     "https://asope.cz",
+//     "https://zive.cz",
+//     "https://seznam.cz",
+//   ].map(url => {
+//     cy.visit(url);
+//   });
 // });
 
 it("test2", function() {
@@ -51,30 +56,29 @@ it("test2", function() {
       try {
         const data = JSON.parse(event.data);
         commands.push(data);
-        cy.log(data);
       } catch (e) {
         console.error("Cannot JSON parse message input", event, e);
       }
     };
 
-    monitoringInterval = setInterval(() => {
-      send({ message: "trigger_monitoring" });
-      commands.push({
-        library: "cypress",
-        command: "url",
-        args: [],
-      });
-      commands.push({
-        library: "cypress",
-        command: "screenshot",
-        args: [],
-      });
-    }, 3000);
+    // monitoringInterval = setInterval(() => {
+    //   send({ message: "trigger_monitoring" });
+    //   commands.push({
+    //     library: "cypress",
+    //     command: "url",
+    //     args: [],
+    //   });
+    //   commands.push({
+    //     library: "cypress",
+    //     command: "screenshot",
+    //     args: [],
+    //   });
+    // }, 3000);
 
     // todo exit on close connection
-    // ws.onclose = () => {
-    //   clearInterval(monitoringInterval);
-    // };
+    ws.onclose = () => {
+      clearInterval(monitoringInterval);
+    };
   };
 
   cy.waitUntil(
@@ -85,14 +89,8 @@ it("test2", function() {
       if (command) {
         send({ message: "Command to execute", command });
         if (command?.library === "cypress") {
-          const response = cy[command.command].apply(command.args);
+          const response = cy[command.command].apply(this, command.args);
           send({ message: "response", command, response });
-          cy.screenshot({
-            afterScreenshot(element) {
-              send({ message: "screenshot", element });
-            },
-          });
-          send({ message: "after_screenshot" });
         }
       }
       return false;
