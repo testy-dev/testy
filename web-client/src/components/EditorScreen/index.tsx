@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Heading, Text } from "grommet";
+import { Box, Button, Heading, Image, Text } from "grommet";
 import { Play } from "grommet-icons";
 
 import Command from "../Command";
@@ -15,15 +15,21 @@ const EditorScreen: React.FC = () => {
     []
   );
 
+  const [screenshot, setScreenshot] = React.useState<string | undefined>();
+
   React.useEffect(() => {
     if (!socket) {
       socket = new WebSocket("ws://localhost:8081");
     }
     socket.onmessage = event => {
       console.log(event);
+      const data = JSON.parse(event.data);
+      if (data.message === "update_screenshot") {
+        setScreenshot(data.content);
+      }
       setIncomingMessages([...incomingMessages, event]);
     };
-  }, [incomingMessages, setIncomingMessages]);
+  }, [incomingMessages, setIncomingMessages, setScreenshot]);
 
   return (
     <Box direction="row" fill>
@@ -71,7 +77,11 @@ const EditorScreen: React.FC = () => {
 
       {/* Screenshot */}
       <Box flex="grow" background="light-5" justify="center" align="center">
-        <Heading level={2}>Here you will be your website.</Heading>
+        {screenshot ? (
+          <Image src={screenshot} />
+        ) : (
+          <Heading level={2}>Here you will be your website.</Heading>
+        )}
       </Box>
     </Box>
   );

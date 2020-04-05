@@ -1,4 +1,6 @@
+import { readFileSync } from "fs";
 import WebSocket, { Server } from "ws";
+import chokidar from "chokidar";
 
 const publicWss = new Server({ port: 8081 });
 const privateWss = new Server({ port: 8082 });
@@ -8,7 +10,7 @@ let privateWs: WebSocket | null = null;
 
 privateWss.on("connection", ws => {
   console.log("Opened private connection");
-  if (!privateWs) privateWs = ws;
+  privateWs = ws;
 
   ws.on("message", data => {
     if (publicWs && data) {
@@ -24,7 +26,7 @@ privateWss.on("connection", ws => {
 publicWss.on("connection", ws => {
   console.log("Opened public connection");
   ws.send("Welcome!");
-  if (!publicWs) publicWs = ws;
+  publicWs = ws;
 
   ws.on("message", data => {
     if (privateWs && data) {
@@ -37,6 +39,29 @@ publicWss.on("connection", ws => {
   });
 });
 
-const exit = () => process.exit(0);
-publicWss.on("close", exit);
-privateWss.on("close", exit);
+// const exit = () => process.exit(0);
+// publicWss.on("close", exit);
+// privateWss.on("close", exit);
+
+chokidar
+  .watch("cypress/screenshots", { ignoreInitial: true })
+  .on("addDir", dir => {
+    chokidar.watch(dir).on("add", (path, stats) => {
+      console.log("Add screenshot " + path);
+      const base64Image = readFileSync(path, { encoding: "base64" });
+      publicWs.send(
+        JSON.stringify({
+          message: "update_screenshot",
+          content: `data:image/png;base64,${base64Image}`,
+          stats,
+        })
+      );
+      console.log({
+        message: "update_screenshot",
+        content: "base64 image ...",
+        stats,
+      });
+    });
+  });
+
+console.log("Server initialization completed");

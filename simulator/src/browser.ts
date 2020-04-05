@@ -42,7 +42,7 @@
 //   });
 // });
 
-it("test2", function() {
+it("test", function() {
   const ws = new WebSocket("ws://localhost:8082");
   const send = data => ws.send(JSON.stringify(data));
 
