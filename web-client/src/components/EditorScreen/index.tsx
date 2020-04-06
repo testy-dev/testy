@@ -78,7 +78,7 @@ const EditorScreen: React.FC = () => {
       {/* Screenshot */}
       <Box flex="grow" background="light-5" justify="center" align="center">
         {screenshot ? (
-          <Image src={screenshot} />
+          <Image src={screenshot} fit="contain" />
         ) : (
           <Heading level={2}>Here you will be your website.</Heading>
         )}
