@@ -3,7 +3,7 @@ import React from "react";
 import { Box, Button, Heading, Image, Text } from "grommet";
 import { Play } from "grommet-icons";
 
-import Command from "../Command";
+import List from "./List";
 import Logo from "../Logo";
 
 let socket: WebSocket | null;
@@ -40,8 +40,7 @@ const EditorScreen: React.FC = () => {
           <Text>Steps</Text>
         </Box>
         <Box fill overflow={{ vertical: "auto" }}>
-          <Command />
-          <Command />
+          <List />
           <Button
             label="open url command"
             onClick={() => {

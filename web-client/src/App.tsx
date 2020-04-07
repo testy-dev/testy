@@ -15,6 +15,7 @@ import "firebase/auth";
 import "firebase/database";
 import firebase from "firebase/app";
 
+import { CommandsProvider } from "./components/state/commands";
 import { firebaseConfig } from "./config";
 import Routes from "./Routes";
 
@@ -52,7 +53,9 @@ const App: React.FC = () => (
   <Grommet full theme={theme}>
     <ApolloProvider client={client}>
       <BrowserRouter>
-        <Routes />
+        <CommandsProvider>
+          <Routes />
+        </CommandsProvider>
       </BrowserRouter>
     </ApolloProvider>
   </Grommet>

@@ -54,6 +54,8 @@
   },
   "devDependencies": {
     "@gqless/cli": "^0.0.1-alpha.30",
+    "@parcel/transformer-typescript-tsc": "^2.0.0-alpha.3",
+    "@parcel/validator-typescript": "^2.0.0-alpha.3",
     "dotenv": "^8.2.0",
     "parcel": "^2.0.0-alpha.3.2"
   }

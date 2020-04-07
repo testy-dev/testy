@@ -4,7 +4,7 @@ import { Box, Select } from "grommet";
 import { Close, Duplicate, Play } from "grommet-icons";
 
 import { CommandIds, Commands, Status } from "../commands";
-import Params from "./Params";
+import Parameters from "./Parameters";
 
 interface CommandProps {
   command: Commands;
@@ -73,7 +73,7 @@ const OpenedCommand: React.FC<OpenedCommandProps> = ({ onClose }) => {
       </Box>
       {!!cmd && (
         <Box direction="row" justify="stretch" align="baseline">
-          <Params cmd={cmd} />
+          <Parameters cmd={cmd} />
         </Box>
       )}
     </Box>

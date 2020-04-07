@@ -3,7 +3,7 @@ import React from "react";
 
 const SimulatorContext = React.createContext(null);
 
-export const SimulatorProvider = ({ children }) => {
+export const SimulatorProvider: React.FC = ({ children }) => {
   const store = useLocalStore(() => ({
     _ws: null as null | WebSocket,
     incomingMessages: [] as any[],
