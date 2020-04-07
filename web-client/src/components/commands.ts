@@ -1,6 +1,6 @@
 export enum Status {
-  NOT_PLANNED = "not_planned",
-  WAITING = "waiting",
+  NONE = "none",
+  IN_QUEUE = "in_queue",
   IN_PROGRESS = "in_progress",
   DONE = "done",
   FAIL = "fail",
@@ -14,27 +14,22 @@ type Selector = {
   cssQuery: string;
 };
 
-type Command = {
+interface Command<Action extends string, Parameters extends {}> {
   id: string;
-  run_after: string;
-};
+  parent: string | null;
+  status: Status;
+  action: Action;
+  parameters: Parameters;
+}
 
-type WebOpenURLCommand = Command & {
-  cmd: "web-open-url";
-  params: {
-    url: string;
-    width: number;
-    height: number;
-  };
-};
-
-type WebClick = Command & {
-  cmd: "web-click";
-  params: {
+type WebOpenURLCommand = Command<"web-open-url", { url: string }>;
+type WebClick = Command<
+  "web-click",
+  {
     selector: Selector;
     maxWait: number; // ms
-  };
-};
+  }
+>;
 
-export type Commands = WebOpenURLCommand | WebClick;
-export type CommandIds = Commands["cmd"];
+export type AllCommands = WebOpenURLCommand | WebClick;
+export type CommandActions = AllCommands["action"];

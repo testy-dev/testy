@@ -1,24 +1,15 @@
 import React from "react";
 
-import { observable } from "mobx";
+import { AllCommands } from "../commands";
 import { useLocalStore } from "mobx-react-lite";
 
-interface CommandParameters {
-  [key: string]: number | string | CommandParameters;
-}
-
-interface Command {
-  parent: string;
-  parameters: CommandParameters;
-}
-
 const CommandsContext = React.createContext<{
-  commands: Map<string, Command>;
+  commands: AllCommands[];
 } | null>(null);
 
 export const CommandsProvider: React.FC = ({ children }) => {
   const store = useLocalStore(() => ({
-    commands: observable.map(),
+    commands: [],
   }));
   return (
     <CommandsContext.Provider value={store}>

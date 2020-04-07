@@ -27,7 +27,8 @@
     "react-scripts": "^3.4.1",
     "slugify": "^1.4.0",
     "styled-components": "^5.0.1",
-    "typescript": "~3.8.3"
+    "typescript": "~3.8.3",
+    "uuid": "^7.0.3"
   },
   "scripts": {
     "start": "parcel public/index.html",
@@ -56,6 +57,7 @@
     "@gqless/cli": "^0.0.1-alpha.30",
     "@parcel/transformer-typescript-tsc": "^2.0.0-alpha.3",
     "@parcel/validator-typescript": "^2.0.0-alpha.3",
+    "@types/uuid": "^7.0.2",
     "dotenv": "^8.2.0",
     "parcel": "^2.0.0-alpha.3.2"
   }
