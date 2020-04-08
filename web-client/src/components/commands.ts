@@ -29,5 +29,16 @@ type WebClick = Command<
   }
 >;
 
+export type Commands = {
+  "web-open-url": Command<"web-open-url", { url: string }>;
+  "web-click": Command<
+    "web-click",
+    {
+      selector: Selector;
+      maxWait: number; // ms
+    }
+  >;
+};
+
 export type AllCommands = WebOpenURLCommand | WebClick;
 export type CommandActions = AllCommands["action"];

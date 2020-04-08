@@ -1,10 +1,10 @@
 import React from "react";
 
 import { Box, Text } from "grommet";
+import { useObserver } from "mobx-react-lite";
 
 import { AllCommands } from "../commands";
-import { useObserver } from "mobx-react-lite";
-import params from "./commandDefinitions";
+import commandDefinitions, { CommandParameter } from "./commandDefinitions";
 
 interface ParamsProps {
   command: AllCommands;
@@ -12,11 +12,13 @@ interface ParamsProps {
 
 const Parameters: React.FC<ParamsProps> = ({ command }) =>
   useObserver(() => {
-    const actionParameters = params[command.action];
+    const actionParameters = commandDefinitions[command.action];
     return (
       <Box gap="xsmall" flex="grow">
-        {Object.keys(actionParameters).map(key => {
-          const Component = actionParameters[key].component;
+        {(Object.keys(actionParameters) as Array<
+          keyof typeof actionParameters
+        >).map(key => {
+          const Parameter = actionParameters[key] as CommandParameter;
           return (
             <Box
               key={key}
@@ -25,8 +27,8 @@ const Parameters: React.FC<ParamsProps> = ({ command }) =>
               align="center"
               gap="small"
             >
-              <Text>{actionParameters[key].label}</Text>
-              <Component value={command.parameters[key]} />
+              <Text>{Parameter.label}</Text>
+              <Parameter.component />
             </Box>
           );
         })}
