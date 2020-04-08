@@ -28,7 +28,11 @@ const Parameters: React.FC<ParamsProps> = ({ command }) =>
               gap="small"
             >
               <Text>{Parameter.label}</Text>
-              <Parameter.component />
+              <Parameter.component
+                value={command.parameters[key]}
+                // @ts-ignore
+                onChange={v => (command.parameters[key] = v)}
+              />
             </Box>
           );
         })}

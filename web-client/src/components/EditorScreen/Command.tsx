@@ -4,7 +4,10 @@ import { Box, Select } from "grommet";
 import { Close, Duplicate, Play } from "grommet-icons";
 
 import { AllCommands } from "../commands";
-import { commandTitleGenerator } from "./commandDefinitions";
+import {
+  commandStatusColors,
+  commandTitleGenerator,
+} from "./commandDefinitions";
 import { useObserver } from "mobx-react-lite";
 import Parameters from "./Parameters";
 
@@ -32,7 +35,11 @@ interface OpenedCommandProps extends CommandProps {
 const OpenedCommand: React.FC<OpenedCommandProps> = ({ onClose, command }) => (
   <Box
     direction="column"
-    border={{ side: "left", size: "5px", color: "red" }}
+    border={{
+      side: "left",
+      size: "5px",
+      color: commandStatusColors[command.status],
+    }}
     pad="small"
     flex={false}
     background="light-2"
@@ -68,7 +75,11 @@ interface ClosedCommandProps extends CommandProps {
 const ClosedCommand: React.FC<ClosedCommandProps> = ({ onClick, command }) => (
   <Box
     direction="column"
-    border={{ side: "left", size: "5px", color: "red" }}
+    border={{
+      side: "left",
+      size: "5px",
+      color: commandStatusColors[command.status],
+    }}
     pad="xsmall"
     flex={false}
   >
