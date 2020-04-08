@@ -1,8 +1,8 @@
-import { CommandIds } from "../commands";
+import { CommandActions } from "../commands";
 import { NumberInput, SelectorInput, TextInput } from "./inputs";
 
 type CommandDefinitions = {
-  [cmd in CommandIds]: {
+  [cmd in CommandActions]: {
     [param: string]: {
       component: React.FunctionComponent | React.ComponentClass;
       label: string;
@@ -21,6 +21,13 @@ const commandDefinitions: CommandDefinitions = {
     selector: { component: SelectorInput, label: "Selector" },
     maxWait: { component: NumberInput, label: "Max waiting time" },
   },
+};
+
+export const commandTitleGenerator: {
+  [action in CommandActions]: (params: any) => string;
+} = {
+  "web-open-url": params => `Open url ${params?.url}`,
+  "web-click": params => `Click to ${params?.selector}`,
 };
 
 export default commandDefinitions;

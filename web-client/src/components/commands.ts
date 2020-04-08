@@ -8,8 +8,6 @@ export enum Status {
   SYSTEM_FAIL = "system_fail",
 }
 
-type WithStatus<T> = T & { status: Status };
-
 type Selector = {
   cssQuery: string;
 };

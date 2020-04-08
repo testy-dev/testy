@@ -4,6 +4,8 @@ import { Box, Select } from "grommet";
 import { Close, Duplicate, Play } from "grommet-icons";
 
 import { AllCommands } from "../commands";
+import { commandTitleGenerator } from "./commandDefinitions";
+import { useObserver } from "mobx-react-lite";
 import Parameters from "./Parameters";
 
 interface CommandProps {
@@ -54,7 +56,7 @@ const OpenedCommand: React.FC<OpenedCommandProps> = ({ onClose, command }) => (
       </Box>
     </Box>
     <Box direction="row" justify="stretch" align="baseline">
-      <Parameters cmd={command.action} />
+      <Parameters command={command} />
     </Box>
   </Box>
 );
@@ -63,7 +65,7 @@ interface ClosedCommandProps extends CommandProps {
   onClick: () => void;
 }
 
-const ClosedCommand: React.FC<ClosedCommandProps> = ({ onClick }) => (
+const ClosedCommand: React.FC<ClosedCommandProps> = ({ onClick, command }) => (
   <Box
     direction="column"
     border={{ side: "left", size: "5px", color: "red" }}
@@ -71,7 +73,9 @@ const ClosedCommand: React.FC<ClosedCommandProps> = ({ onClick }) => (
     flex={false}
   >
     <Box direction="row" onClick={onClick}>
-      Open URL / https://google.com
+      {useObserver(() =>
+        commandTitleGenerator[command.action](command.parameters)
+      )}
     </Box>
   </Box>
 );

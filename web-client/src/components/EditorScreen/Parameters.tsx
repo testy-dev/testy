@@ -2,37 +2,36 @@ import React from "react";
 
 import { Box, Text } from "grommet";
 
-import { CommandIds } from "../commands";
+import { AllCommands } from "../commands";
+import { useObserver } from "mobx-react-lite";
 import params from "./commandDefinitions";
 
 interface ParamsProps {
-  cmd: CommandIds;
+  command: AllCommands;
 }
 
-const Parameters: React.FC<ParamsProps> = ({ cmd }) => {
-  const activeParams = params[cmd];
-  const items = [];
-  for (const paramKey in activeParams) {
-    const param = activeParams[paramKey];
-    const Component = param.component;
-    items.push(
-      <Box
-        key={paramKey}
-        direction="row"
-        justify="stretch"
-        align="center"
-        gap="small"
-      >
-        <Text>{param.label}</Text>
-        <Component />
+const Parameters: React.FC<ParamsProps> = ({ command }) =>
+  useObserver(() => {
+    const actionParameters = params[command.action];
+    return (
+      <Box gap="xsmall" flex="grow">
+        {Object.keys(actionParameters).map(key => {
+          const Component = actionParameters[key].component;
+          return (
+            <Box
+              key={key}
+              direction="row"
+              justify="stretch"
+              align="center"
+              gap="small"
+            >
+              <Text>{actionParameters[key].label}</Text>
+              <Component value={command.parameters[key]} />
+            </Box>
+          );
+        })}
       </Box>
     );
-  }
-  return (
-    <Box gap="xsmall" flex="grow">
-      {items}
-    </Box>
-  );
-};
+  });
 
 export default Parameters;
