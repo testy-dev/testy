@@ -1,5 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: ALTER TABLE "public"."project_run_history" DROP COLUMN "project_id";
-  type: run_sql

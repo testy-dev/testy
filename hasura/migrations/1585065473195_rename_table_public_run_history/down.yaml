@@ -1,5 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: alter table "public"."project_run_history" rename to "run_history";
-  type: run_sql

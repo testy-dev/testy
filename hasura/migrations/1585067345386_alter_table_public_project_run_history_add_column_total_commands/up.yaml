@@ -1,6 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: ALTER TABLE "public"."project_run_history" ADD COLUMN "total_commands" integer
-      NOT NULL;
-  type: run_sql

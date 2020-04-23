@@ -1,7 +1,0 @@
-- args:
-    action: actionName
-    definition:
-      select:
-        filter: {}
-    role: user
-  type: create_action_permission

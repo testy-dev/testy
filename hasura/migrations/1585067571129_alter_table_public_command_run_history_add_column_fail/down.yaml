@@ -1,5 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: ALTER TABLE "public"."command_run_history" DROP COLUMN "fail";
-  type: run_sql

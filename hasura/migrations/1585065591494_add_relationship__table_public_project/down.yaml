@@ -1,6 +1,0 @@
-- args:
-    relationship: run_history
-    table:
-      name: project
-      schema: public
-  type: drop_relationship

@@ -1,4 +1,0 @@
-- args:
-    action: actionName
-    role: user
-  type: drop_action_permission

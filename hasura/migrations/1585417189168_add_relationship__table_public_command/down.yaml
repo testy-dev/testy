@@ -1,6 +1,0 @@
-- args:
-    relationship: children
-    table:
-      name: command
-      schema: public
-  type: drop_relationship

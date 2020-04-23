@@ -1,6 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: alter table "public"."project" add constraint "project_organization_id_slug_key"
-      unique ("organization_id", "slug");
-  type: run_sql

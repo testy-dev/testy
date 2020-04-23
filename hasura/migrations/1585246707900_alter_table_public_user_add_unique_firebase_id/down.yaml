@@ -1,5 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: alter table "public"."user" drop constraint "user_firebase_id_key";
-  type: run_sql

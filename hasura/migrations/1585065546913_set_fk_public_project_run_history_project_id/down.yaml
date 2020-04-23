@@ -1,5 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: alter table "public"."project_run_history" drop constraint "project_run_history_project_id_fkey";
-  type: run_sql

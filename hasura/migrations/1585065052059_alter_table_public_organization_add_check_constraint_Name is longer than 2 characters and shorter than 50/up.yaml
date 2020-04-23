@@ -1,7 +1,0 @@
-- args:
-    cascade: false
-    read_only: false
-    sql: alter table "public"."organization" add constraint "Name is longer than 2
-      characters and shorter than 50" check (char_length(name) > 2 && char_length(name)
-      <= 50);
-  type: run_sql
