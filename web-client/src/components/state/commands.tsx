@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AllCommands } from "../commands";
+import { AllCommands } from "shared";
 import { useLocalStore } from "mobx-react-lite";
 
 const CommandsContext = React.createContext<{

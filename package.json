@@ -1,9 +1,9 @@
 {
   "private": true,
   "license": "UNLICENSED",
+  "workspaces": ["functions", "web-client", "shared"],
   "scripts": {
-    "stats": "cloc --exclude-dir=node_modules,lib,out,dist,build .",
-    "install": "yarn --cwd web-client install"
+    "stats": "cloc --exclude-dir=node_modules,lib,out,dist,build ."
   },
   "dependencies": {
     "typescript": "^3.8.3"
