@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import "firebase/auth";
-import * as firebase from "firebase";
+import * as firebase from "firebase/app";
 
 import "../../assets/styles/styles.scss";
 import { ActionWithPayload, Block, RecState } from "../../types";
@@ -12,6 +12,7 @@ import Body from "./Body";
 import Footer from "./Footer";
 import Header from "./Header";
 import Login from "./Login";
+import SelectProject from "./SelectProject";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -19,6 +20,9 @@ const App: React.FC = () => {
   const [recStatus, setRecStatus] = React.useState<RecState>("off");
   const [codeBlocks, setCodeBlocks] = React.useState<Block[]>([]);
   const [isValidTab, setIsValidTab] = React.useState<boolean>(true);
+  const [activeProject, setActiveProject] = React.useState<
+    string | undefined
+  >();
 
   const authState = useFirebaseAuthState();
 
@@ -89,14 +93,18 @@ const App: React.FC = () => {
 
   return (
     <div id="App">
-      <Header />
+      <Header activeProject={activeProject} />
       {authState === "in" ? (
-        <Body
-          codeBlocks={codeBlocks}
-          recStatus={recStatus}
-          isValidTab={isValidTab}
-          destroyBlock={destroyBlock}
-          moveBlock={moveBlock}
+        // <Body
+        //   codeBlocks={codeBlocks}
+        //   recStatus={recStatus}
+        //   isValidTab={isValidTab}
+        //   destroyBlock={destroyBlock}
+        //   moveBlock={moveBlock}
+        // />
+        <SelectProject
+          activeProject={activeProject}
+          onChangeProject={setActiveProject}
         />
       ) : authState === "loading" ? (
         "loading"
