@@ -25,7 +25,13 @@ export interface ActionWithPayload {
   payload?: any;
 }
 
+export interface Command {
+  command: "visit" | "click" | "dblclick" | "type" | "submit";
+  selector?: string;
+  parameter?: string;
+}
+
 export interface Block {
-  value: string;
+  value: Command;
   id: string;
 }

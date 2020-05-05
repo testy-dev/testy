@@ -131,6 +131,8 @@ const App: React.FC = () => {
         isValidTab={isValidTab}
         recStatus={recStatus}
         handleToggle={handleToggle}
+        triggerUpload={() => null}
+        countOfCommands={codeBlocks.length}
       />
     </div>
   );

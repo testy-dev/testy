@@ -4,56 +4,63 @@
  * Each time the user records, this function will generate a cy.visit command that will
  * store the current url, as well each subsequest user interaction with the browser.
  */
+import { Command, ParsedEvent } from "../types";
 import { EventType } from "../constants";
-import { ParsedEvent } from "../types";
 
 /**
  * Helper functions that handle each action type.
  * @param event
  */
 
-function handleClick(event: ParsedEvent): string {
-  return `cy.get('${event.selector}').click();`;
+function handleClick(event: ParsedEvent): Command {
+  return { command: "click", selector: event.selector };
 }
 
-function handleKeydown(event: ParsedEvent): string | null {
-  switch (event.key) {
-    case "Backspace":
-      return `cy.get('${event.selector}').type('{backspace}');`;
-    case "Escape":
-      return `cy.get('${event.selector}').type('{esc}');`;
-    case "ArrowUp":
-      return `cy.get('${event.selector}').type('{uparrow}');`;
-    case "ArrowRight":
-      return `cy.get('${event.selector}').type('{rightarrow}');`;
-    case "ArrowDown":
-      return `cy.get('${event.selector}').type('{downarrow}');`;
-    case "ArrowLeft":
-      return `cy.get('${event.selector}').type('{leftarrow}');`;
-    default:
-      return `cy.get('${event.selector}').type('${event.key}');`;
-  }
+const SpecialKeys = new Map([
+  ["Backspace", "backspace"],
+  ["Escape", "esc"],
+  ["ArrowUp", "uparrow"],
+  ["ArrowRight", "rightarrow"],
+  ["ArrowDown", "downarrow"],
+  ["ArrowLeft", "leftarrow"],
+]);
+
+function handleKeydown(event: ParsedEvent): Command | null {
+  const key = event.key;
+  return {
+    command: "type",
+    selector: event.selector,
+    parameter: SpecialKeys.has(key) ? "{" + SpecialKeys.get(key) + "}" : key,
+  };
 }
 
-function handleChange(event: ParsedEvent): string {
+function handleChange(event: ParsedEvent): Command {
   if (event.inputType === "checkbox" || event.inputType === "radio")
     return null;
-  return `cy.get('${event.selector}').type('${event.value.replace(
-    /'/g,
-    "\\'"
-  )}');`;
+
+  return {
+    command: "type",
+    selector: event.selector,
+    parameter: event.value.replace(/'/g, "\\'"),
+  };
 }
 
-function handleDoubleclick(event: ParsedEvent): string {
-  return `cy.get('${event.selector}').dblclick();`;
+function handleDoubleclick(event: ParsedEvent): Command {
+  return {
+    command: "dblclick",
+    selector: event.selector,
+  };
 }
 
-function handleSubmit(event: ParsedEvent): string {
-  return `cy.get('${event.selector}').submit();`;
+function handleSubmit(event: ParsedEvent): Command {
+  return {
+    command: "submit",
+    selector: event.selector,
+  };
 }
 
 export default {
-  createBlock: (event: ParsedEvent): string => {
+  createBlock: (event: ParsedEvent): Command => {
     switch (event.action) {
       case EventType.CLICK:
         return handleClick(event);
@@ -69,5 +76,5 @@ export default {
         throw new Error(`Unhandled event: ${event.action}`);
     }
   },
-  createVisit: (url: string): string => `cy.visit('${url}');`,
+  createVisit: (url: string): Command => ({ command: "visit", parameter: url }),
 };

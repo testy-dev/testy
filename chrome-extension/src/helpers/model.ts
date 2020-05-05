@@ -1,4 +1,4 @@
-import { Block, RecState } from "../types";
+import { Block, Command, RecState } from "../types";
 import { generate } from "shortid";
 
 export default class Model {
@@ -59,7 +59,7 @@ export default class Model {
    * Adds a codeblock to the array of code blocks and updates Chrome local storage.
    * @param block
    */
-  pushBlock(block: string): Promise<Block> {
+  pushBlock(block: Command): Promise<Block> {
     return new Promise((resolve, reject) => {
       const newBlock: Block = {
         value: block,
