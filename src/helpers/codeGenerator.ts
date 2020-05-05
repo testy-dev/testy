@@ -4,8 +4,8 @@
  * Each time the user records, this function will generate a cy.visit command that will
  * store the current url, as well each subsequest user interaction with the browser.
  */
-import { ParsedEvent } from '../types';
-import { EventType } from '../constants';
+import { EventType } from "../constants";
+import { ParsedEvent } from "../types";
 
 /**
  * Helper functions that handle each action type.
@@ -18,26 +18,30 @@ function handleClick(event: ParsedEvent): string {
 
 function handleKeydown(event: ParsedEvent): string | null {
   switch (event.key) {
-    case 'Backspace':
+    case "Backspace":
       return `cy.get('${event.selector}').type('{backspace}');`;
-    case 'Escape':
+    case "Escape":
       return `cy.get('${event.selector}').type('{esc}');`;
-    case 'ArrowUp':
+    case "ArrowUp":
       return `cy.get('${event.selector}').type('{uparrow}');`;
-    case 'ArrowRight':
+    case "ArrowRight":
       return `cy.get('${event.selector}').type('{rightarrow}');`;
-    case 'ArrowDown':
+    case "ArrowDown":
       return `cy.get('${event.selector}').type('{downarrow}');`;
-    case 'ArrowLeft':
+    case "ArrowLeft":
       return `cy.get('${event.selector}').type('{leftarrow}');`;
     default:
-      return null;
+      return `cy.get('${event.selector}').type('${event.key}');`;
   }
 }
 
 function handleChange(event: ParsedEvent): string {
-  if (event.inputType === 'checkbox' || event.inputType === 'radio') return null;
-  return `cy.get('${event.selector}').type('${event.value.replace(/'/g, "\\'")}');`;
+  if (event.inputType === "checkbox" || event.inputType === "radio")
+    return null;
+  return `cy.get('${event.selector}').type('${event.value.replace(
+    /'/g,
+    "\\'"
+  )}');`;
 }
 
 function handleDoubleclick(event: ParsedEvent): string {

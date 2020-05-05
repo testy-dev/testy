@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { RecState, Block } from '../../types';
+import * as React from "react";
+import { Block, RecState } from "../../types";
 
-import CodeDisplay from './CodeDisplay';
-import LandingBox from './LandingBox';
+import CodeDisplay from "./CodeDisplay";
+import LandingBox from "./LandingBox";
 
 export interface BodyProps {
-  isValidTab: boolean,
-  recStatus: RecState,
-  codeBlocks: Block[],
-  destroyBlock: (index: number) => void,
-  moveBlock: (dragIdx: number, dropIdx: number) => void,
+  isValidTab: boolean;
+  recStatus: RecState;
+  codeBlocks: Block[];
+  destroyBlock: (index: number) => void;
+  moveBlock: (dragIdx: number, dropIdx: number) => void;
 }
 
 export default ({
@@ -20,7 +20,13 @@ export default ({
   moveBlock,
 }: BodyProps) => (
   <div id="body">
-    {recStatus === 'off' && <LandingBox isValidTab={isValidTab} />}
-    {recStatus !== 'off' && <CodeDisplay codeBlocks={codeBlocks} destroyBlock={destroyBlock} moveBlock={moveBlock} />}
+    {recStatus === "off" && <LandingBox isValidTab={isValidTab} />}
+    {recStatus !== "off" && (
+      <CodeDisplay
+        codeBlocks={codeBlocks}
+        destroyBlock={destroyBlock}
+        moveBlock={moveBlock}
+      />
+    )}
   </div>
 );

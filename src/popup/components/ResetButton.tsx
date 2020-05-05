@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { ControlAction } from '../../constants';
+import * as React from "react";
+import { ControlAction } from "../../constants";
 
 export interface ResetButtonProps {
-  handleToggle: (action: ControlAction) => void,
+  handleToggle: (action: ControlAction) => void;
 }
 
 export default ({ handleToggle }: ResetButtonProps) => (

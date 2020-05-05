@@ -5,8 +5,9 @@ module.exports = {
     webextensions: true,
   },
   extends: [
-    'airbnb-typescript',
-    'plugin:import/typescript',
+    "../.eslintrc.js",
+    // 'airbnb-typescript',
+    // 'plugin:import/typescript',
   ],
   globals: {
     Atomics: 'readonly',

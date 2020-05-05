@@ -1,14 +1,15 @@
-import * as React from 'react';
-import ToggleButton from './ToggleButton';
-import ResetButton from './ResetButton';
-import ClipboardButton from './ClipboardButton';
-import { ControlAction } from '../../constants';
+import * as React from "react";
+
+import { ControlAction } from "../../constants";
+import ClipboardButton from "./ClipboardButton";
+import ResetButton from "./ResetButton";
+import ToggleButton from "./ToggleButton";
 
 export interface FooterProps {
-  isValidTab: boolean,
-  recStatus: string,
-  handleToggle: (action: ControlAction) => void,
-  copyToClipboard: () => Promise<void>,
+  isValidTab: boolean;
+  recStatus: string;
+  handleToggle: (action: ControlAction) => void;
+  copyToClipboard: () => Promise<void>;
 }
 
 export default ({
@@ -16,10 +17,16 @@ export default ({
   recStatus,
   handleToggle,
   copyToClipboard,
-} : FooterProps) => (
+}: FooterProps) => (
   <div id="footer">
-    <ToggleButton recStatus={recStatus} handleToggle={handleToggle} isValidTab={isValidTab} />
-    {recStatus === 'paused' && <ResetButton handleToggle={handleToggle} />}
-    {recStatus === 'paused' && <ClipboardButton copyToClipboard={copyToClipboard} />}
+    <ToggleButton
+      recStatus={recStatus}
+      handleToggle={handleToggle}
+      isValidTab={isValidTab}
+    />
+    {recStatus === "paused" && <ResetButton handleToggle={handleToggle} />}
+    {recStatus === "paused" && (
+      <ClipboardButton copyToClipboard={copyToClipboard} />
+    )}
   </div>
 );

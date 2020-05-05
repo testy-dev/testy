@@ -1,47 +1,59 @@
-import * as React from 'react';
-import Header from './Header';
-import Info from './Info';
-import Footer from './Footer';
-import Body from './Body';
-import { RecState, Block, ActionWithPayload } from '../../types';
-import { ControlAction } from '../../constants';
-import '../../assets/styles/styles.scss';
+import * as React from "react";
+
+import "firebase/auth";
+import firebase from "firebase/app";
+
+import "../../assets/styles/styles.scss";
+import { ActionWithPayload, Block, RecState } from "../../types";
+import { ControlAction } from "../../constants";
+import Body from "./Body";
+import Footer from "./Footer";
+import Header from "./Header";
+import Info from "./Info";
 
 export default () => {
-  const [recStatus, setRecStatus] = React.useState<RecState>('off');
+  const [recStatus, setRecStatus] = React.useState<RecState>("off");
   const [codeBlocks, setCodeBlocks] = React.useState<Block[]>([]);
-  const [shouldInfoDisplay, setShouldInfoDisplay] = React.useState<boolean>(false);
+  const [shouldInfoDisplay, setShouldInfoDisplay] = React.useState<boolean>(
+    false
+  );
   const [isValidTab, setIsValidTab] = React.useState<boolean>(true);
 
+  const [userId, setUserId] = React.useState<string | null>(null);
+
   const startRecording = (): void => {
-    setRecStatus('on');
+    setRecStatus("on");
   };
   const stopRecording = (): void => {
-    setRecStatus('paused');
+    setRecStatus("paused");
   };
   const resetRecording = (): void => {
-    setRecStatus('off');
+    setRecStatus("off");
     setCodeBlocks([]);
   };
 
   React.useEffect((): void => {
-    chrome.storage.local.get(['status', 'codeBlocks'], result => {
+    chrome.storage.local.get(["status", "codeBlocks"], result => {
       if (result.codeBlocks) setCodeBlocks(result.codeBlocks);
-      if (result.status === 'on') setRecStatus('on');
-      else if (result.status === 'paused') setRecStatus('paused');
+      if (result.status === "on") setRecStatus("on");
+      else if (result.status === "paused") setRecStatus("paused");
     });
     chrome.tabs.query({ active: true, currentWindow: true }, activeTab => {
-      if (activeTab[0].url.startsWith('chrome://')) setIsValidTab(false);
+      if (activeTab[0].url.startsWith("chrome://")) setIsValidTab(false);
     });
   }, []);
 
-  React.useEffect((): () => void => {
-    function handleMessageFromBackground({ type, payload }: ActionWithPayload): void {
+  React.useEffect((): (() => void) => {
+    function handleMessageFromBackground({
+      type,
+      payload,
+    }: ActionWithPayload): void {
       setShouldInfoDisplay(false);
       if (type === ControlAction.START && isValidTab) startRecording();
       else if (type === ControlAction.STOP) stopRecording();
       else if (type === ControlAction.RESET) resetRecording();
-      else if (type === ControlAction.PUSH) setCodeBlocks(blocks => [...blocks, payload]);
+      else if (type === ControlAction.PUSH)
+        setCodeBlocks(blocks => [...blocks, payload]);
     }
     chrome.runtime.onMessage.addListener(handleMessageFromBackground);
     return () => {
@@ -63,9 +75,9 @@ export default () => {
 
   const copyToClipboard = async (): Promise<void> => {
     try {
-      let toBeCopied: string = '';
+      let toBeCopied = "";
       for (let i = 0; i !== codeBlocks.length; i += 1) {
-        toBeCopied += codeBlocks[i].value.concat('\n');
+        toBeCopied += codeBlocks[i].value.concat("\n");
       }
       await navigator.clipboard.writeText(toBeCopied);
     } catch (error) {
@@ -94,21 +106,21 @@ export default () => {
 
   return (
     <div id="App">
-      <Header shouldInfoDisplay={shouldInfoDisplay} toggleInfoDisplay={toggleInfoDisplay} />
-      {
-        (shouldInfoDisplay
-          ? <Info />
-          : (
-            <Body
-              codeBlocks={codeBlocks}
-              recStatus={recStatus}
-              isValidTab={isValidTab}
-              destroyBlock={destroyBlock}
-              moveBlock={moveBlock}
-            />
-          )
-        )
-      }
+      <Header
+        shouldInfoDisplay={shouldInfoDisplay}
+        toggleInfoDisplay={toggleInfoDisplay}
+      />
+      {shouldInfoDisplay ? (
+        <Info />
+      ) : (
+        <Body
+          codeBlocks={codeBlocks}
+          recStatus={recStatus}
+          isValidTab={isValidTab}
+          destroyBlock={destroyBlock}
+          moveBlock={moveBlock}
+        />
+      )}
       <Footer
         isValidTab={isValidTab}
         recStatus={recStatus}

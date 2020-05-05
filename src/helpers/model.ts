@@ -1,5 +1,5 @@
-import { generate } from 'shortid';
-import { RecState, Block } from '../types';
+import { Block, RecState } from "../types";
+import { generate } from "shortid";
 
 export default class Model {
   status: RecState;
@@ -16,20 +16,23 @@ export default class Model {
    */
   sync(): Promise<void> {
     return new Promise((resolve, reject) => {
-      chrome.storage.local.get(['status', 'codeBlocks'], result => {
+      chrome.storage.local.get(["status", "codeBlocks"], result => {
         if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
         else {
-          if (result.status === 'on' || result.status === 'paused') {
-            this.status = 'paused';
+          if (result.status === "on" || result.status === "paused") {
+            this.status = "paused";
             this.processedCode = result.codeBlocks || [];
           } else {
-            this.status = 'off';
+            this.status = "off";
             this.processedCode = [];
           }
-          chrome.storage.local.set({ status: this.status, codeBlocks: this.processedCode }, () => {
-            if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-            else resolve();
-          });
+          chrome.storage.local.set(
+            { status: this.status, codeBlocks: this.processedCode },
+            () => {
+              if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+              else resolve();
+            }
+          );
         }
       });
     });
@@ -40,12 +43,15 @@ export default class Model {
    */
   reset(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.status = 'off';
+      this.status = "off";
       this.processedCode = [];
-      chrome.storage.local.set({ status: this.status, codeBlocks: this.processedCode }, () => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else resolve();
-      });
+      chrome.storage.local.set(
+        { status: this.status, codeBlocks: this.processedCode },
+        () => {
+          if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+          else resolve();
+        }
+      );
     });
   }
 

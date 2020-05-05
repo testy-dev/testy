@@ -1,19 +1,18 @@
-import * as React from 'react';
+import * as React from "react";
 
-​const ASPECT_RATIO = 436 / 527;
+const ASPECT_RATIO = 436 / 527;
 
 type Props = {
-  size?: number,
-  primary?: string,
-  secondary?: string,
-  stroke?: string,
+  size?: number;
+  primary?: string;
+  secondary?: string;
+  stroke?: string;
 };
-
 
 const CypressCone = ({
   size = 120,
-  primary = '#6AAE8F',
-  secondary = '#319e6b',
+  primary = "#6AAE8F",
+  secondary = "#319e6b",
   stroke = primary,
 }: Props) => (
   <svg height={size * ASPECT_RATIO} width={size} viewBox="0 0 436 527">

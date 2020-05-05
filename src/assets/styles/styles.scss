@@ -3,7 +3,7 @@ $primary-color: #333;
 $primary-background-color: #fff8dc;
 $max-height: 600px;
 $max-width: 800px;
-$cypress-green:  rgb(49, 158, 107);
+$cypress-green: rgb(31, 31, 31);
 $pale-green: rgb(248,251,249);
 
 body {
@@ -124,7 +124,7 @@ body {
   flex-direction: column;
   align-items: flex-start;
   flex-grow: 1;
-  padding: 20;
+  padding: 20px;
   overflow-wrap: break-word;
 }
 

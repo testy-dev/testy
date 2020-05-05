@@ -1,7 +1,7 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface ClipboardButtonProps {
-  copyToClipboard: () => Promise<void>,
+  copyToClipboard: () => Promise<void>;
 }
 
 export default ({ copyToClipboard }: ClipboardButtonProps) => {
@@ -18,7 +18,7 @@ export default ({ copyToClipboard }: ClipboardButtonProps) => {
   return (
     <div id="copy-wrap">
       <button type="button" id="copy" className="button" onClick={handleClick}>
-        {success ? 'Copied!' : 'Copy to Clipboard'}
+        {success ? "Copied!" : "Copy to Clipboard"}
       </button>
     </div>
   );

@@ -1,17 +1,19 @@
-import * as React from 'react';
-import CodeBlock from './CodeBlock';
-import { Block } from '../../types';
+import * as React from "react";
+import { Block } from "../../types";
+import CodeBlock from "./CodeBlock";
 
 export interface CodeDisplayProps {
-  codeBlocks: Block[],
-  destroyBlock: (index: number) => void,
-  moveBlock: (dragIdx: number, dropIdx: number) => void,
+  codeBlocks: Block[];
+  destroyBlock: (index: number) => void;
+  moveBlock: (dragIdx: number, dropIdx: number) => void;
 }
 
 export default ({ codeBlocks, destroyBlock, moveBlock }: CodeDisplayProps) => {
   const [dragOriginIdx, setDragOriginIdx] = React.useState<number>(-1);
   const [draggedIdx, setDraggedIdx] = React.useState<number>(-1);
-  const [modifiedCodeBlocks, setModifiedCodeBlocks] = React.useState<Block[]>([]);
+  const [modifiedCodeBlocks, setModifiedCodeBlocks] = React.useState<Block[]>(
+    []
+  );
 
   React.useEffect(() => {
     setModifiedCodeBlocks([...codeBlocks]);
@@ -52,7 +54,7 @@ export default ({ codeBlocks, destroyBlock, moveBlock }: CodeDisplayProps) => {
   const blocks = modifiedCodeBlocks.map((block, idx) => (
     <CodeBlock
       key={block.id}
-      dragStatus={idx === draggedIdx ? 'drag-origin' : 'code-block'}
+      dragStatus={idx === draggedIdx ? "drag-origin" : "code-block"}
       text={block.value}
       index={idx}
       destroyBlock={destroyBlock}
@@ -63,9 +65,5 @@ export default ({ codeBlocks, destroyBlock, moveBlock }: CodeDisplayProps) => {
     />
   ));
 
-  return (
-    <ul id="code-display">
-      {blocks}
-    </ul>
-  );
+  return <ul id="code-display">{blocks}</ul>;
 };

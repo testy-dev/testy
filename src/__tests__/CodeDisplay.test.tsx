@@ -1,24 +1,24 @@
-import * as React from 'react';
-import { shallow } from 'enzyme';
-import CodeDisplay, { CodeDisplayProps } from '../popup/components/CodeDisplay';
-import CodeBlock from '../popup/components/CodeBlock';
-import '../setupTests';
+import "../setupTests";
+import * as React from "react";
+import { shallow } from "enzyme";
+import CodeBlock from "../popup/components/CodeBlock";
+import CodeDisplay, { CodeDisplayProps } from "../popup/components/CodeDisplay";
 
-describe('CodeDisplay', () => {
+describe("CodeDisplay", () => {
   let wrapper;
   const props: CodeDisplayProps = {
     codeBlocks: [
       {
-        id: 'id1',
-        value: 'value1',
+        id: "id1",
+        value: "value1",
       },
       {
-        id: 'id2',
-        value: 'value2',
+        id: "id2",
+        value: "value2",
       },
       {
-        id: 'id3',
-        value: 'value3',
+        id: "id3",
+        value: "value3",
       },
     ],
     destroyBlock: jest.fn(),
@@ -28,7 +28,7 @@ describe('CodeDisplay', () => {
     wrapper = shallow(<CodeDisplay {...props} />);
   });
 
-  it('Should render an array of CodeBlocks', () => {
+  it("Should render an array of CodeBlocks", () => {
     expect(wrapper).toMatchSnapshot();
     // expect(wrapper.html()).toBe(false);
     // expect(wrapper.exists(CodeBlock)).toBe(true);
@@ -37,5 +37,5 @@ describe('CodeDisplay', () => {
     // for (let i = 0; i !== props.codeBlocks.length; i += 1) {
     //   expect(blocks[i].key()).toBe(props.codeBlocks[i].id);
     // }
-  })
+  });
 });

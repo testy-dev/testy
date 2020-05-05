@@ -1,8 +1,8 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface InfoButtonProps {
-  toggleInfoDisplay: () => void,
-  shouldInfoDisplay: boolean,
+  toggleInfoDisplay: () => void;
+  shouldInfoDisplay: boolean;
 }
 
 export default ({ shouldInfoDisplay, toggleInfoDisplay }: InfoButtonProps) => {
@@ -12,7 +12,7 @@ export default ({ shouldInfoDisplay, toggleInfoDisplay }: InfoButtonProps) => {
   return (
     <>
       <button type="button" className="button" onClick={handleClick}>
-        {shouldInfoDisplay ? 'Recording Menu' : 'Info'}
+        {shouldInfoDisplay ? "Recording Menu" : "Info"}
       </button>
     </>
   );

@@ -6,30 +6,29 @@
  * back to the popup for display to the user.
  */
 
-import codeGenerator from '../helpers/codeGenerator';
-import {
-  ActionWithPayload,
-  ParsedEvent,
-  Session,
-} from '../types';
-import Model from '../helpers/model';
-import { ControlAction } from '../constants';
+import { ActionWithPayload, ParsedEvent, Session } from "../types";
+import { ControlAction } from "../constants";
+import Model from "../helpers/model";
+import codeGenerator from "../helpers/codeGenerator";
 
 const model = new Model();
 
 const session: Session = {
   isPending: false,
-  lastURL: '',
-  originalHost: '',
+  lastURL: "",
+  originalHost: "",
   activePort: null,
 };
 
 /**
  * Controls the flow of execution by enforcing synchronicity.
  * @param cb
- * @param args
+ * @param cmd
  */
-function control(cb: (...args: any) => Promise<void>, cmd?: string | ActionWithPayload): void {
+function control(
+  cb: (...args: any) => Promise<void>,
+  cmd?: string | ActionWithPayload
+): void {
   if (session.isPending) return;
   session.isPending = true;
   cb(cmd)
@@ -46,14 +45,17 @@ function control(cb: (...args: any) => Promise<void>, cmd?: string | ActionWithP
  * we want to ensure that this navagation is occuring in the top-level frame.
  */
 function injectEventRecorder(
-  details?: chrome.webNavigation.WebNavigationFramedCallbackDetails,
+  details?: chrome.webNavigation.WebNavigationFramedCallbackDetails
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     if (!details || details.frameId === 0) {
-      chrome.tabs.executeScript({ file: '/content-scripts/eventRecorder.js' }, () => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else resolve();
-      });
+      chrome.tabs.executeScript(
+        { file: "/content-scripts/eventRecorder.js" },
+        () => {
+          if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+          else resolve();
+        }
+      );
     } else resolve();
   });
 }
@@ -63,9 +65,10 @@ function injectEventRecorder(
  * @param details
  */
 function ejectEventRecorder(
-  details?: chrome.webNavigation.WebNavigationParentedCallbackDetails,
+  details?: chrome.webNavigation.WebNavigationParentedCallbackDetails
 ): void {
-  if (session.activePort && (!details || details.frameId === 0)) session.activePort.disconnect();
+  if (session.activePort && (!details || details.frameId === 0))
+    session.activePort.disconnect();
 }
 
 /**
@@ -75,8 +78,7 @@ function ejectEventRecorder(
 function handleEvents(event: ParsedEvent): void {
   const block = codeGenerator.createBlock(event);
   if (block !== null) {
-    model.pushBlock(block)
-      .catch(err => new Error(err));
+    model.pushBlock(block).catch(err => new Error(err));
   }
 }
 
@@ -86,12 +88,13 @@ function handleEvents(event: ParsedEvent): void {
 let stopRecording: () => Promise<void>;
 
 function checkForBadNavigation(
-  details: chrome.webNavigation.WebNavigationTransitionCallbackDetails,
+  details: chrome.webNavigation.WebNavigationTransitionCallbackDetails
 ): void {
-  if (details.frameId === 0
-    && (!details.url.includes(session.originalHost)
-      || details.transitionQualifiers.includes('forward_back')
-      || details.transitionQualifiers.includes('from_address_bar'))
+  if (
+    details.frameId === 0 &&
+    (!details.url.includes(session.originalHost) ||
+      details.transitionQualifiers.includes("forward_back") ||
+      details.transitionQualifiers.includes("from_address_bar"))
   ) {
     control(stopRecording);
   }
@@ -101,15 +104,17 @@ function handleFirstConnection(): void {
   session.originalHost = session.activePort.name;
   chrome.webNavigation.onBeforeNavigate.addListener(ejectEventRecorder);
   chrome.webNavigation.onCommitted.addListener(checkForBadNavigation);
-  chrome.webNavigation.onDOMContentLoaded.addListener(
-    injectEventRecorder,
-    { url: [{ hostEquals: session.originalHost }] },
-  );
+  chrome.webNavigation.onDOMContentLoaded.addListener(injectEventRecorder, {
+    url: [{ hostEquals: session.originalHost }],
+  });
   if (session.lastURL !== session.activePort.sender.url) {
     const visitBlock = codeGenerator.createVisit(session.activePort.sender.url);
     session.lastURL = session.activePort.sender.url;
-    model.pushBlock(visitBlock)
-      .then(block => chrome.runtime.sendMessage({ type: ControlAction.PUSH, payload: block }))
+    model
+      .pushBlock(visitBlock)
+      .then(block =>
+        chrome.runtime.sendMessage({ type: ControlAction.PUSH, payload: block })
+      )
       .catch(err => new Error(err));
   }
 }
@@ -125,7 +130,7 @@ function handleFirstConnection(): void {
 function handleNewConnection(portToEventRecorder: chrome.runtime.Port): void {
   session.activePort = portToEventRecorder;
   session.activePort.onMessage.addListener(handleEvents);
-  if (model.status !== 'on') handleFirstConnection();
+  if (model.status !== "on") handleFirstConnection();
 }
 
 /**
@@ -134,39 +139,40 @@ function handleNewConnection(portToEventRecorder: chrome.runtime.Port): void {
 function startRecording(): Promise<void> {
   return new Promise((resolve, reject) => {
     injectEventRecorder()
-      .then(() => model.updateStatus('on'))
+      .then(() => model.updateStatus("on"))
       .then(() => {
-        chrome.browserAction.setIcon({ path: 'cypressconeREC.png' });
+        chrome.browserAction.setIcon({ path: "cypressconeREC.png" });
         resolve();
       })
       .catch(err => reject(err));
   });
 }
 
-stopRecording = () => (
+stopRecording = () =>
   new Promise((resolve, reject) => {
     ejectEventRecorder();
     chrome.webNavigation.onDOMContentLoaded.removeListener(injectEventRecorder);
     chrome.webNavigation.onCommitted.removeListener(checkForBadNavigation);
     chrome.webNavigation.onBeforeNavigate.removeListener(ejectEventRecorder);
-    model.updateStatus('paused')
+    model
+      .updateStatus("paused")
       .then(() => {
         session.activePort = null;
         session.originalHost = null;
-        chrome.browserAction.setIcon({ path: 'cypressconeICON.png' });
+        chrome.browserAction.setIcon({ path: "cypressconeICON.png" });
         resolve();
       })
       .catch(err => reject(err));
-  })
-);
+  });
 
 /**
  * Clears localstorage and resets recording status; clears last URL.
  */
 function resetRecording(): Promise<void> {
   return new Promise((resolve, reject) => {
-    session.lastURL = '';
-    model.reset()
+    session.lastURL = "";
+    model
+      .reset()
       .then(() => resolve())
       .catch(err => {
         reject(err);
@@ -180,8 +186,9 @@ function resetRecording(): Promise<void> {
 function cleanUp(): Promise<void> {
   return new Promise((resolve, reject) => {
     ejectEventRecorder();
-    chrome.browserAction.setIcon({ path: 'cypressconeICON.png' });
-    model.sync()
+    chrome.browserAction.setIcon({ path: "cypressconeICON.png" });
+    model
+      .sync()
       .then(() => resolve())
       .catch(err => reject(err));
   });
@@ -223,11 +230,13 @@ function handleControlAction(action: ControlAction): Promise<void> {
 function handleMessage({ type, payload }: ActionWithPayload): Promise<void> {
   return new Promise((resolve, reject) => {
     if (type === ControlAction.DELETE) {
-      model.deleteBlock(payload)
+      model
+        .deleteBlock(payload)
         .then(() => resolve())
         .catch(err => reject(err));
     } else if (type === ControlAction.MOVE) {
-      model.moveBlock(payload.dragIdx, payload.dropIdx)
+      model
+        .moveBlock(payload.dragIdx, payload.dropIdx)
         .then(() => resolve())
         .catch(err => reject(err));
     } else {
@@ -245,10 +254,12 @@ function handleMessage({ type, payload }: ActionWithPayload): Promise<void> {
 function handleQuickKeys(command: string): Promise<void> {
   return new Promise((resolve, reject) => {
     let action: ControlAction;
-    if (command === 'start-recording') {
-      if (model.status === 'off' || model.status === 'paused') action = ControlAction.START;
-      else if (model.status === 'on') action = ControlAction.STOP;
-    } else if (command === 'reset-recording' && model.status === 'paused') action = ControlAction.RESET;
+    if (command === "start-recording") {
+      if (model.status === "off" || model.status === "paused")
+        action = ControlAction.START;
+      else if (model.status === "on") action = ControlAction.STOP;
+    } else if (command === "reset-recording" && model.status === "paused")
+      action = ControlAction.RESET;
     if (action) {
       handleControlAction(action)
         .then(() => {
@@ -265,8 +276,12 @@ function handleQuickKeys(command: string): Promise<void> {
  */
 function initialize(): void {
   chrome.runtime.onConnect.addListener(handleNewConnection);
-  chrome.runtime.onMessage.addListener(message => control(handleMessage, message));
-  chrome.commands.onCommand.addListener(command => control(handleQuickKeys, command));
+  chrome.runtime.onMessage.addListener(message =>
+    control(handleMessage, message)
+  );
+  chrome.commands.onCommand.addListener(command =>
+    control(handleQuickKeys, command)
+  );
   control(cleanUp);
 }
 

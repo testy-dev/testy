@@ -81,6 +81,7 @@
   },
   "dependencies": {
     "@medv/finder": "^1.1.2",
+    "firebase": "^7.14.2",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "shortid": "^2.2.15"
