@@ -1,7 +1,7 @@
 {
   "private": true,
   "license": "UNLICENSED",
-  "workspaces": ["functions", "web-client", "shared"],
+  "workspaces": ["functions", "web-client", "shared", "chrome-extension"],
   "scripts": {
     "stats": "cloc --exclude-dir=node_modules,lib,out,dist,build ."
   },
