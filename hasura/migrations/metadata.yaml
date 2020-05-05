@@ -35,18 +35,24 @@ tables:
               firebase_id:
                 _eq: X-Hasura-User-Id
       columns:
+      - command
       - id
-      - project_id
+      - parameter
       - parent_id
+      - project_id
+      - selector
   select_permissions:
   - role: user
     permission:
       columns:
-      - id
-      - parent_id
       - project_id
+      - command
+      - parameter
+      - selector
       - created_at
       - updated_at
+      - id
+      - parent_id
       filter:
         project:
           organization:
@@ -58,8 +64,12 @@ tables:
   - role: user
     permission:
       columns:
-      - project_id
+      - command
+      - id
+      - parameter
       - parent_id
+      - project_id
+      - selector
       filter:
         project:
           organization:

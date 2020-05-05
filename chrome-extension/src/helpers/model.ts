@@ -1,5 +1,5 @@
 import { Block, Command, RecState } from "../types";
-import { generate } from "shortid";
+import { v4 as generate } from "uuid";
 
 export default class Model {
   status: RecState;

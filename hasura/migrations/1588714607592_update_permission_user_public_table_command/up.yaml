@@ -1,0 +1,27 @@
+- args:
+    role: user
+    table:
+      name: command
+      schema: public
+  type: drop_update_permission
+- args:
+    permission:
+      columns:
+      - command
+      - id
+      - parameter
+      - parent_id
+      - project_id
+      - selector
+      filter:
+        project:
+          organization:
+            owner:
+              firebase_id:
+                _eq: X-Hasura-User-Id
+      set: {}
+    role: user
+    table:
+      name: command
+      schema: public
+  type: create_update_permission
