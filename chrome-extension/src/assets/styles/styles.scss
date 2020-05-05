@@ -1,0 +1,242 @@
+$font-stack: Helvetica, sans-serif;
+$primary-color: #333;
+$primary-background-color: #fff8dc;
+$max-height: 600px;
+$max-width: 800px;
+$cypress-green: rgb(31, 31, 31);
+$pale-green: rgb(248,251,249);
+
+body {
+  height: $max-height * .9;
+  width: $max-width * .9;
+  font: 100% $font-stack;
+  color: $primary-color;
+  background-color: $primary-background-color;
+  overscroll-behavior-y: none;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+#App {
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  min-height: 100vh;
+}
+
+#header {
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  background-color: $cypress-green;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#body {
+  background-color: $pale-green;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 20px;
+}
+
+#title {
+  color: $pale-green;
+  font-size: 22px;
+  margin-left: 10px;
+  font-weight: 200;
+}
+
+#infobox {
+  background-color: $pale-green;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  padding: 20px;
+}
+
+#footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0px;
+  background-color: $cypress-green;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+
+  & #toggle-wrap {
+    display:flex;
+    justify-content: flex-start;
+  }
+
+  & #reset-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  & #copy-wrap {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  & #toggle {
+    align-self: flex-start;
+  }
+  & #reset {
+    align-self: center;
+  }
+  & #copy {
+    align-self: flex-end;
+  }
+}
+
+/**
+ * Conditionally rendered body content.
+ */
+
+#landing-box, #active-box {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+#code-display {
+  margin: 60px 0px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1;
+  padding: 20px;
+  overflow-wrap: break-word;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  width: 98.5%;
+  border: 1px solid gainsboro;
+  border-radius: 2px;
+  padding: 5px;
+
+  & button {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s ease-out 75ms, opacity 300ms;
+  }
+
+  &:hover {
+    cursor: grab;
+
+    & span {
+      opacity: .7;
+    }
+    & mark {
+      align-self: flex-start;
+    }
+    & button {
+      visibility: visible;
+      opacity: 1;
+      transition: visibility 0s linear 0s, opacity 300ms;
+    }
+  }
+}
+
+li.drag-origin {
+  background-color: gainsboro;
+
+  & mark {
+    background-color: gainsboro;
+  }
+}
+
+li.code-block {
+  background-color: $pale-green;
+}
+
+.delete {
+  background-color: rgba(49, 158, 107, 0.7);
+  align-self: center;
+  padding: 2px;
+  margin: 2px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 400;
+  color: $pale-green;
+  line-height: 8px;
+
+  &:hover {
+    background-color: $cypress-green;
+    color: $pale-green;
+    transition: all 0.15s ease 0s;
+  }
+}
+
+mark {
+  color: $cypress-green;
+  background-color: $pale-green;
+}
+
+/**
+ * Classes.
+ */
+
+.button {
+  background-color: $cypress-green;
+  border: 1px solid $pale-green;
+  margin: 10px;
+  padding: 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 400;
+  color: $pale-green;
+  line-height: 8px;
+
+  &:hover {
+    background-color: $pale-green;
+    color: $cypress-green;
+    transition: all 0.15s ease 0s;
+  }
+}
+
+.disabled-button {
+  background-color: rgb(106, 174, 143);
+  border: 1px solid $pale-green;
+  margin: 10px;
+  padding: 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 400;
+  color: $pale-green;
+  line-height: 8px;
+}
+
+.text {
+  color: black;
+  font-size: 14px;
+  margin-left: 10px;
+  padding-top: 15px;
+}
+
+.white-text {
+  color: $pale-green;
+  font-size: 14px;
+  margin-left: 10px;
+}

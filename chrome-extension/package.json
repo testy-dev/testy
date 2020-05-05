@@ -1,0 +1,89 @@
+{
+  "name": "cypress-recorder",
+  "version": "1.0.2",
+  "description": "Records a user session and generates cypress code for automation and testing purposes.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx tsc --noEmit && npx parcel ./src/popup/index.html ./src/background/background.ts ./src/content-scripts/eventRecorder.ts",
+    "build": "npx tsc --noEmit && npx parcel build ./src/popup/index.html ./src/background/background.ts ./src/content-scripts/eventRecorder.ts",
+    "test": "jest --verbose",
+    "clean": "rm -rf dist .cache && mkdir dist && cp ./src/manifest.json dist && cp -r ./src/assets/images/. dist",
+    "tsc": "npx tsc --noEmit",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "contributors": [
+    {
+      "name": "Abbey Campbell",
+      "email": "campbellabbeya@gmail.com",
+      "url": "https://github.com/abbeycampbell"
+    },
+    {
+      "name": "Adam Stover",
+      "email": "adam.jacob.stover@gmail.com",
+      "url": "https://github.com/adam-stover"
+    },
+    {
+      "name": "Brad Morgan",
+      "email": "bkmorgan3@gmail.com",
+      "url": "https://github.com/bkmorgan3"
+    },
+    {
+      "name": "Ken Sakuma",
+      "email": "gxcadr@gmail.com",
+      "url": "https://github.com/gxcad"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KabaLabs/Cypress-Recorder"
+  },
+  "license": "ISC",
+  "jest": {
+    "preset": "ts-jest",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "moduleNameMapper": {
+      "\\.(scss)$": "<rootDir>/src/__mocks__/styleMock.ts"
+    },
+    "testMatch": [
+      "**/__tests__/*.(test|spec).(ts|tsx|js)"
+    ]
+  },
+  "devDependencies": {
+    "@types/chrome": "0.0.89",
+    "@types/enzyme": "^3.10.3",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.12",
+    "@types/react": "^16.9.5",
+    "@types/react-dom": "^16.9.1",
+    "@types/shortid": "0.0.29",
+    "@typescript-eslint/eslint-plugin": "^2.3.3",
+    "@typescript-eslint/parser": "^2.3.3",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb-typescript": "^5.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "jest": "^24.9.0",
+    "jest-enzyme": "^7.1.1",
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.23.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "@medv/finder": "^1.1.2",
+    "firebase": "^7.14.2",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "shortid": "^2.2.15"
+  }
+}
