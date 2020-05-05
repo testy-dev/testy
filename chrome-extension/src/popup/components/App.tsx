@@ -24,6 +24,13 @@ const App: React.FC = () => {
     string | undefined
   >();
 
+  React.useEffect(() => {
+    chrome.storage.local.get("activeProject", items => {
+      if (items.activeProject !== activeProject)
+        chrome.storage.local.set({ activeProject });
+    });
+  }, [activeProject]);
+
   const authState = useFirebaseAuthState();
 
   const startRecording = (): void => {
@@ -38,11 +45,15 @@ const App: React.FC = () => {
   };
 
   React.useEffect((): void => {
-    chrome.storage.local.get(["status", "codeBlocks"], result => {
-      if (result.codeBlocks) setCodeBlocks(result.codeBlocks);
-      if (result.status === "on") setRecStatus("on");
-      else if (result.status === "paused") setRecStatus("paused");
-    });
+    chrome.storage.local.get(
+      ["status", "codeBlocks", "activeProject"],
+      result => {
+        if (result.codeBlocks) setCodeBlocks(result.codeBlocks);
+        if (result.status === "on") setRecStatus("on");
+        else if (result.status === "paused") setRecStatus("paused");
+        if (result.activeProject) setActiveProject(result.activeProject);
+      }
+    );
     chrome.tabs.query({ active: true, currentWindow: true }, activeTab => {
       if (activeTab[0].url.startsWith("chrome://")) setIsValidTab(false);
     });
@@ -95,17 +106,20 @@ const App: React.FC = () => {
     <div id="App">
       <Header activeProject={activeProject} />
       {authState === "in" ? (
-        // <Body
-        //   codeBlocks={codeBlocks}
-        //   recStatus={recStatus}
-        //   isValidTab={isValidTab}
-        //   destroyBlock={destroyBlock}
-        //   moveBlock={moveBlock}
-        // />
-        <SelectProject
-          activeProject={activeProject}
-          onChangeProject={setActiveProject}
-        />
+        !activeProject ? (
+          <SelectProject
+            activeProject={activeProject}
+            onChangeProject={setActiveProject}
+          />
+        ) : (
+          <Body
+            codeBlocks={codeBlocks}
+            recStatus={recStatus}
+            isValidTab={isValidTab}
+            destroyBlock={destroyBlock}
+            moveBlock={moveBlock}
+          />
+        )
       ) : authState === "loading" ? (
         "loading"
       ) : (
