@@ -1,25 +1,26 @@
 import * as React from "react";
 
 import "firebase/auth";
-import firebase from "firebase/app";
+import * as firebase from "firebase";
 
 import "../../assets/styles/styles.scss";
 import { ActionWithPayload, Block, RecState } from "../../types";
 import { ControlAction } from "../../constants";
+import { firebaseConfig } from "../config";
+import { useFirebaseAuthState } from "../hooks";
 import Body from "./Body";
 import Footer from "./Footer";
 import Header from "./Header";
-import Info from "./Info";
+import Login from "./Login";
 
-export default () => {
+firebase.initializeApp(firebaseConfig);
+
+const App: React.FC = () => {
   const [recStatus, setRecStatus] = React.useState<RecState>("off");
   const [codeBlocks, setCodeBlocks] = React.useState<Block[]>([]);
-  const [shouldInfoDisplay, setShouldInfoDisplay] = React.useState<boolean>(
-    false
-  );
   const [isValidTab, setIsValidTab] = React.useState<boolean>(true);
 
-  const [userId, setUserId] = React.useState<string | null>(null);
+  const authState = useFirebaseAuthState();
 
   const startRecording = (): void => {
     setRecStatus("on");
@@ -48,7 +49,6 @@ export default () => {
       type,
       payload,
     }: ActionWithPayload): void {
-      setShouldInfoDisplay(false);
       if (type === ControlAction.START && isValidTab) startRecording();
       else if (type === ControlAction.STOP) stopRecording();
       else if (type === ControlAction.RESET) resetRecording();
@@ -62,27 +62,10 @@ export default () => {
   }, []);
 
   const handleToggle = (action: ControlAction): void => {
-    if (shouldInfoDisplay) setShouldInfoDisplay(false);
     if (action === ControlAction.START) startRecording();
     else if (action === ControlAction.STOP) stopRecording();
     else if (action === ControlAction.RESET) resetRecording();
     chrome.runtime.sendMessage({ type: action });
-  };
-
-  const toggleInfoDisplay = (): void => {
-    setShouldInfoDisplay(should => !should);
-  };
-
-  const copyToClipboard = async (): Promise<void> => {
-    try {
-      let toBeCopied = "";
-      for (let i = 0; i !== codeBlocks.length; i += 1) {
-        toBeCopied += codeBlocks[i].value.concat("\n");
-      }
-      await navigator.clipboard.writeText(toBeCopied);
-    } catch (error) {
-      throw new Error(error);
-    }
   };
 
   const destroyBlock = (index: number): void => {
@@ -106,13 +89,8 @@ export default () => {
 
   return (
     <div id="App">
-      <Header
-        shouldInfoDisplay={shouldInfoDisplay}
-        toggleInfoDisplay={toggleInfoDisplay}
-      />
-      {shouldInfoDisplay ? (
-        <Info />
-      ) : (
+      <Header />
+      {authState === "in" ? (
         <Body
           codeBlocks={codeBlocks}
           recStatus={recStatus}
@@ -120,13 +98,20 @@ export default () => {
           destroyBlock={destroyBlock}
           moveBlock={moveBlock}
         />
+      ) : authState === "loading" ? (
+        "loading"
+      ) : (
+        <div id="body">
+          <Login />
+        </div>
       )}
       <Footer
         isValidTab={isValidTab}
         recStatus={recStatus}
         handleToggle={handleToggle}
-        copyToClipboard={copyToClipboard}
       />
     </div>
   );
 };
+
+export default App;
