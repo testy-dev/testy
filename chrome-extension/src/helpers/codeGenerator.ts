@@ -27,6 +27,7 @@ const SpecialKeys = new Map([
 
 function handleKeydown(event: ParsedEvent): Command | null {
   const key = event.key;
+  if (key.length > 1 && !SpecialKeys.has(key)) return null; // Ignore tab, ctrl, shift, ...
   return {
     command: "type",
     selector: event.selector,
