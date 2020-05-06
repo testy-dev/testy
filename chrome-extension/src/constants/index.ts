@@ -14,4 +14,5 @@ export enum ControlAction {
   DELETE = "deleteBlock",
   MOVE = "moveBlock",
   PUSH = "pushBlock",
+  HIGHLIGHT = "highlight",
 }

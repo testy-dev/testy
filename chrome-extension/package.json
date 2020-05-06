@@ -4,8 +4,8 @@
   "description": "Records a user session and generates cypress code for automation and testing purposes.",
   "main": "index.js",
   "scripts": {
-    "start": "npx tsc --noEmit && npx parcel ./src/popup/index.html ./src/background/background.ts ./src/content-scripts/eventRecorder.ts",
-    "build": "npx tsc --noEmit && npx parcel build ./src/popup/index.html ./src/background/background.ts ./src/content-scripts/eventRecorder.ts",
+    "start": "npx tsc --noEmit && npx parcel ./src/popup/index.html ./src/background.ts ./src/recorder/contentScript.ts ./src/highlighter/contentScript.ts",
+    "build": "npx tsc --noEmit && npx parcel build ./src/popup/index.html src/background.ts ./src/recorder/contentScript.ts ./src/highlighter/contentScript.ts",
     "test": "jest --verbose",
     "clean": "rm -rf dist .cache && mkdir dist && cp ./src/manifest.json dist && cp -r ./src/assets/images/. dist",
     "tsc": "npx tsc --noEmit",

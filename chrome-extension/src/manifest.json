@@ -24,7 +24,7 @@
   "author": "Abbey Campbell, Adam Stover, Brad Morgan, Ken Sakuma",
   "background": {
     "scripts": [
-      "./background/background.js"
+      "./background.js"
     ],
     "persistent": false
   },

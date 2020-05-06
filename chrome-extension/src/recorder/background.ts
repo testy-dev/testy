@@ -274,7 +274,7 @@ function handleQuickKeys(command: string): Promise<void> {
 /**
  * Initializes the extension.
  */
-function initialize(): void {
+export default function initialize(): void {
   chrome.runtime.onConnect.addListener(handleNewConnection);
   chrome.runtime.onMessage.addListener(message =>
     control(handleMessage, message)
@@ -284,5 +284,3 @@ function initialize(): void {
   );
   control(cleanUp);
 }
-
-initialize();
