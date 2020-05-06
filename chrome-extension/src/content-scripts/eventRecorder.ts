@@ -14,7 +14,7 @@ let port: chrome.runtime.Port;
  * @param event
  * @returns {ParsedEvent}
  */
-function parseEvent(event: Event): ParsedEvent {
+function parseEvent(event: Event): ParsedEvent | null {
   let selector: string;
   if ((event.target as Element).hasAttribute("data-cy"))
     selector = `[data-cy=${(event.target as Element).getAttribute("data-cy")}]`;
@@ -40,6 +40,14 @@ function parseEvent(event: Event): ParsedEvent {
   if (parsedEvent.tag === "INPUT")
     parsedEvent.inputType = (event.target as HTMLInputElement).type;
   if (event.type === "keydown") parsedEvent.key = (event as KeyboardEvent).key;
+
+  const selection = document.getSelection();
+  if (selection.toString() !== "")
+    parsedEvent.selectedText = selection.toString();
+
+  // This event will be processed by mouseup
+  if (event.type === "click" && selection.toString() !== "") return;
+
   return parsedEvent;
 }
 
@@ -48,7 +56,10 @@ function parseEvent(event: Event): ParsedEvent {
  * @param event
  */
 function handleEvent(event: Event): void {
-  if (event.isTrusted === true) port.postMessage(parseEvent(event));
+  if (event.isTrusted === true) {
+    const parsedEvent = parseEvent(event);
+    if (parsedEvent) port.postMessage(parsedEvent);
+  }
 }
 
 /**

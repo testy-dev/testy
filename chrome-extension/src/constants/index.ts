@@ -4,6 +4,7 @@ export enum EventType {
   DBCLICK = "dbclick",
   KEYDOWN = "keydown",
   SUBMIT = "submit",
+  MOUSEUP = "mouseup",
 }
 
 export enum ControlAction {

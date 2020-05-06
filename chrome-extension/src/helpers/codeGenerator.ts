@@ -59,6 +59,15 @@ function handleSubmit(event: ParsedEvent): Command {
   };
 }
 
+function handleSelect(event: ParsedEvent): Command | null {
+  if (!event.selectedText) return null;
+  return {
+    command: "check-contains-text",
+    selector: event.selector,
+    parameter: event.selectedText,
+  };
+}
+
 export default {
   createBlock: (event: ParsedEvent): Command => {
     switch (event.action) {
@@ -72,6 +81,8 @@ export default {
         return handleDoubleclick(event);
       case EventType.SUBMIT:
         return handleSubmit(event);
+      case EventType.MOUSEUP:
+        return handleSelect(event);
       default:
         throw new Error(`Unhandled event: ${event.action}`);
     }

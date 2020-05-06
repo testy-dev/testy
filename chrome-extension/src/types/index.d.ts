@@ -11,6 +11,7 @@ export interface ParsedEvent {
   key?: string;
   href?: string;
   inputType?: string;
+  selectedText?: string;
 }
 
 export interface Session {
@@ -26,7 +27,13 @@ export interface ActionWithPayload {
 }
 
 export interface Command {
-  command: "visit" | "click" | "dblclick" | "type" | "submit";
+  command:
+    | "visit"
+    | "click"
+    | "dblclick"
+    | "type"
+    | "submit"
+    | "check-contains-text";
   selector?: string;
   parameter?: string;
 }
