@@ -60,12 +60,44 @@ export default class Model {
    * @param block
    */
   pushBlock(block: Command): Promise<Block> {
+    const last = this.processedCode[this.processedCode.length - 1];
+
+    // If last and actual block is type to same element => add type value to previous block
+    if (
+      last &&
+      last.value.command === "type" &&
+      block.command === "type" &&
+      last.value.selector === block.selector
+    ) {
+      last.value.parameter += block.parameter;
+
+      return new Promise((resolve, reject) => {
+        chrome.storage.local.set({ codeBlocks: this.processedCode }, () => {
+          if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+          else resolve(last);
+        });
+      });
+    }
+
+    // If last block is click and actual is type to same element => remove click and add type
+    if (
+      last &&
+      last.value.command === "click" &&
+      block.command === "type" &&
+      last.value.selector === block.selector
+    ) {
+      // Remove last block
+      this.processedCode.splice(-1, 1);
+    }
+
+    // Else add block
+    const newBlock: Block = {
+      value: block,
+      id: generate(),
+    };
+    this.processedCode.push(newBlock);
+
     return new Promise((resolve, reject) => {
-      const newBlock: Block = {
-        value: block,
-        id: generate(),
-      };
-      this.processedCode.push(newBlock);
       chrome.storage.local.set({ codeBlocks: this.processedCode }, () => {
         if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
         else resolve(newBlock);
