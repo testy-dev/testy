@@ -55,12 +55,7 @@ export default ({ codeBlocks, destroyBlock, moveBlock }: CodeDisplayProps) => {
     <CodeBlock
       key={block.id}
       dragStatus={idx === draggedIdx ? "drag-origin" : "code-block"}
-      text={
-        block.value.command +
-        " " +
-        (block.value.selector || "") +
-        (block.value.parameter || "")
-      }
+      block={block}
       index={idx}
       destroyBlock={destroyBlock}
       onDragStart={onDragStart}

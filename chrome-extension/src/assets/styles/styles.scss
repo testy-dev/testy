@@ -1,14 +1,14 @@
-$font-stack: 'Roboto', Helvetica, sans-serif;
+$font-stack: "Roboto", Helvetica, sans-serif;
 $primary-color: #333;
 $primary-background-color: #fff8dc;
 $max-height: 600px;
 $max-width: 800px;
 $cypress-green: rgb(31, 31, 31);
-$pale-green: rgb(248,251,249);
+$pale-green: rgb(248, 251, 249);
 
 body {
-  height: $max-height * .9;
-  width: $max-width * .9;
+  height: $max-height * 0.9;
+  width: $max-width * 0.9;
   font: 100% $font-stack;
   color: $primary-color;
   background-color: $primary-background-color;
@@ -18,7 +18,7 @@ body {
 * {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 
   &:focus {
     outline: 0;
@@ -72,12 +72,12 @@ body {
   width: 100%;
   bottom: 0px;
   background-color: $cypress-green;
-  display:flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
 
   & #toggle-wrap {
-    display:flex;
+    display: flex;
     justify-content: flex-start;
   }
 
@@ -92,7 +92,7 @@ body {
     display: flex;
     justify-content: flex-end;
   }
-  
+
   & #toggle {
     align-self: flex-start;
   }
@@ -108,7 +108,8 @@ body {
  * Conditionally rendered body content.
  */
 
-#landing-box, #active-box {
+#landing-box,
+#active-box {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -146,7 +147,7 @@ li {
     cursor: grab;
 
     & span {
-      opacity: .7;
+      opacity: 0.7;
     }
     & mark {
       align-self: flex-start;
@@ -190,8 +191,18 @@ li.code-block {
 }
 
 mark {
-  color: $cypress-green;
-  background-color: $pale-green;
+  background-color: #ececec;
+  padding: 3px 5px;
+  margin: 0 3px;
+  border-radius: 4px;
+
+  &.selector {
+    color: #00890b;
+  }
+
+  &.parameter {
+    color: #113e9a;
+  }
 }
 
 /**
