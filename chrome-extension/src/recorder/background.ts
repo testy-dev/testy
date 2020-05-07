@@ -49,13 +49,10 @@ function injectEventRecorder(
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     if (!details || details.frameId === 0) {
-      chrome.tabs.executeScript(
-        { file: "/content-scripts/eventRecorder.js" },
-        () => {
-          if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-          else resolve();
-        }
-      );
+      chrome.tabs.executeScript({ file: "/recorder/contentScript.js" }, () => {
+        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+        else resolve();
+      });
     } else resolve();
   });
 }
@@ -284,3 +281,5 @@ export default function initialize(): void {
   );
   control(cleanUp);
 }
+
+initialize();

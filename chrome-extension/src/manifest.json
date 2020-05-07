@@ -1,6 +1,6 @@
 {
-  "name": "Cypress Recorder",
-  "short_name": "Cypress Rec",
+  "name": "Testy Recorder",
+  "short_name": "Testy Rec",
   "version": "1.0.2",
   "description": "Records a user session and generates cypress code for automation and testing purposes.",
   "manifest_version": 2,
@@ -24,7 +24,8 @@
   "author": "Abbey Campbell, Adam Stover, Brad Morgan, Ken Sakuma",
   "background": {
     "scripts": [
-      "./background.js"
+      "./recorder/background.js",
+      "./highlighter/background.js"
     ],
     "persistent": false
   },
