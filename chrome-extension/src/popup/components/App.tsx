@@ -121,11 +121,11 @@ const App: React.FC = () => {
     // language=graphql
     callGraphql(
       `
-mutation UploadCommands($commands: [command_insert_input!]!) {
-  insert_command(objects: $commands) {
-    affected_rows
-  }
-}`,
+          mutation UploadCommands($commands: [command_insert_input!]!) {
+          insert_command(objects: $commands) {
+            affected_rows
+          }
+        }`,
       {
         commands,
       }

@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { ControlAction } from "../../constants";
+import ReplayButton from "./ReplayButton";
 import ResetButton from "./ResetButton";
 import ToggleButton from "./ToggleButton";
 import UploadButton from "./UploadButton";
@@ -27,6 +28,7 @@ const Footer: React.FC<FooterProps> = ({
       isValidTab={isValidTab}
     />
     {recStatus === "paused" && <ResetButton handleToggle={handleToggle} />}
+    {recStatus === "paused" && <ReplayButton handleToggle={handleToggle} />}
     {recStatus === "paused" && (
       <UploadButton onClick={triggerUpload} countOfCommands={countOfCommands} />
     )}

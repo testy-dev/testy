@@ -15,4 +15,5 @@ export enum ControlAction {
   MOVE = "moveBlock",
   PUSH = "pushBlock",
   HIGHLIGHT = "highlight",
+  REPLAY = "replay",
 }

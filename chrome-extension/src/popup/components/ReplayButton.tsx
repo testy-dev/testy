@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { ControlAction } from "../../constants";
 
 export interface ResetButtonProps {
@@ -12,9 +11,9 @@ export default ({ handleToggle }: ResetButtonProps) => (
       type="button"
       id="reset"
       className="button"
-      onClick={() => handleToggle(ControlAction.RESET)}
+      onClick={() => handleToggle(ControlAction.REPLAY)}
     >
-      Reset
+      Replay
     </button>
   </div>
 );
