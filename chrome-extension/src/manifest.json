@@ -33,6 +33,7 @@
     "default_icon": "./cypressconeICON.png",
     "default_popup": "./popup/index.html"
   },
+  "devtools_page": "./devToolsTab/index.html",
   "commands": {
     "start-recording": {
       "suggested_key": {
