@@ -68,16 +68,6 @@ function checkForBadNavigation(
 function handleFirstConnection(): void {
   session.originalHost = session.activePort.name;
   chrome.webNavigation.onCommitted.addListener(checkForBadNavigation);
-  if (session.lastURL !== session.activePort.sender.url) {
-    const visitBlock = codeGenerator.createVisit(session.activePort.sender.url);
-    session.lastURL = session.activePort.sender.url;
-    model
-      .pushBlock(visitBlock)
-      .then(block =>
-        chrome.runtime.sendMessage({ type: ControlAction.PUSH, payload: block })
-      )
-      .catch(err => new Error(err));
-  }
 }
 
 /**
@@ -98,10 +88,22 @@ function handleNewConnection(portToEventRecorder: chrome.runtime.Port): void {
  * Starts the recording process by injecting the event recorder into the active tab.
  */
 async function startRecording(): Promise<void> {
-  if (session.activePort)
+  if (session.activePort) {
     session.activePort.postMessage({
       type: ControlAction.START,
     });
+    if (session.lastURL !== session.activePort.sender.url) {
+      const visitBlock = codeGenerator.createVisit(
+        session.activePort.sender.url
+      );
+      session.lastURL = session.activePort.sender.url;
+      const block = await model.pushBlock(visitBlock);
+      chrome.runtime.sendMessage({
+        type: ControlAction.PUSH,
+        payload: block,
+      });
+    }
+  }
   await model.updateStatus("on");
   chrome.browserAction.setIcon({ path: "cypressconeREC.png" });
 }
