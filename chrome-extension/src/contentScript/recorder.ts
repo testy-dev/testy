@@ -3,11 +3,12 @@
  *
  * Responsible for recording the DOM events.
  */
-import { EventType } from "../constants";
-import { ParsedEvent } from "../types";
+import { ActionWithPayload, ParsedEvent } from "../types";
+import { ControlAction, EventType } from "../constants";
 import finder from "@medv/finder";
 
 let port: chrome.runtime.Port;
+let listening = false;
 
 /**
  * Parses DOM events into an object with the necessary data.
@@ -83,13 +84,23 @@ function removeDOMListeners(): void {
   });
 }
 
-/**
- * Initializes the event recorder.
- */
-function initialize(): void {
-  port = chrome.runtime.connect({ name: window.location.hostname });
-  port.onDisconnect.addListener(removeDOMListeners);
-  addDOMListeners();
-}
-
-initialize();
+export default {
+  onConnect(p: chrome.runtime.Port) {
+    port = p;
+  },
+  onMessage(message: ActionWithPayload) {
+    if (message.type === ControlAction.START && !listening) {
+      addDOMListeners();
+      listening = true;
+    }
+    if (message.type === ControlAction.STOP && listening) {
+      removeDOMListeners();
+      listening = false;
+    }
+  },
+  onDisconnect() {
+    if (listening) {
+      removeDOMListeners();
+    }
+  },
+};

@@ -4,8 +4,8 @@
   "description": "Records a user session for automation and testing purposes.",
   "main": "index.js",
   "scripts": {
-    "start": "npx tsc --noEmit && npx parcel ./src/popup/index.html ./src/recorder/* ./src/highlighter/* ./src/devToolsTab/*",
-    "build": "npx tsc --noEmit && npx parcel build ./src/popup/index.html ./src/recorder/* ./src/highlighter/* ./src/devToolsTab/*",
+    "start": "npx tsc --noEmit && npx parcel ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.ts ./src/devToolsTab/*",
+    "build": "npx tsc --noEmit && npx parcel build ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.ts ./src/devToolsTab/*",
     "test": "jest --verbose",
     "clean": "rm -rf dist .cache && mkdir dist && cp ./src/manifest.json dist && cp -r ./src/assets/images/. dist",
     "tsc": "npx tsc --noEmit",
