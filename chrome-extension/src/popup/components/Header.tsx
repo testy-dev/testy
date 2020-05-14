@@ -24,7 +24,7 @@ const Header: React.FC<IProps> = ({ activeProject }) => (
   //   }, [activeProject]);
 
   <div id="header">
-    <h1 id="title">Testy Recorder</h1>
+    <h1 id="title">Testy</h1>
     <span style={{ color: "white" }}>Active project: {activeProject}</span>
   </div>
 );

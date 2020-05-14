@@ -4,25 +4,33 @@ import "firebase/auth";
 import * as firebase from "firebase/app";
 
 import "../../assets/styles/styles.scss";
-import { ActionWithPayload, Block, RecState } from "../../types";
+import { ActionWithPayload, RecState } from "../../types";
 import { ControlAction } from "../../constants";
 import { firebaseConfig } from "../config";
+import { read } from "../../helpers/model";
 import { useFirebaseAuthState } from "../hooks";
-import Body from "./Body";
-import Footer from "./Footer";
 import Header from "./Header";
 import Login from "./Login";
 import SelectProject from "./SelectProject";
+import ToggleButton from "./ToggleButton";
 
 firebase.initializeApp(firebaseConfig);
 
 const App: React.FC = () => {
   const [recStatus, setRecStatus] = React.useState<RecState>("off");
-  const [codeBlocks, setCodeBlocks] = React.useState<Block[]>([]);
   const [isValidTab, setIsValidTab] = React.useState<boolean>(true);
   const [activeProject, setActiveProject] = React.useState<
     string | undefined
   >();
+  const [countOfBlocks, setCountOfBlocks] = React.useState<number>(0);
+  const [countOfEdges, setCountOfEdges] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    read(["blocks", "edges"]).then(data => {
+      setCountOfBlocks(data.blocks.length);
+      setCountOfEdges(data.edges.length);
+    });
+  }, []);
 
   React.useEffect(() => {
     chrome.storage.local.get("activeProject", items => {
@@ -41,14 +49,12 @@ const App: React.FC = () => {
   };
   const resetRecording = (): void => {
     setRecStatus("off");
-    setCodeBlocks([]);
   };
 
   React.useEffect((): void => {
     chrome.storage.local.get(
       ["status", "codeBlocks", "activeProject"],
       result => {
-        if (result.codeBlocks) setCodeBlocks(result.codeBlocks);
         if (result.status === "on") setRecStatus("on");
         else if (result.status === "paused") setRecStatus("paused");
         if (result.activeProject) setActiveProject(result.activeProject);
@@ -60,15 +66,10 @@ const App: React.FC = () => {
   }, []);
 
   React.useEffect((): (() => void) => {
-    function handleMessageFromBackground({
-      type,
-      payload,
-    }: ActionWithPayload): void {
+    function handleMessageFromBackground({ type }: ActionWithPayload): void {
       if (type === ControlAction.START && isValidTab) startRecording();
       else if (type === ControlAction.STOP) stopRecording();
       else if (type === ControlAction.RESET) resetRecording();
-      else if (type === ControlAction.PUSH)
-        setCodeBlocks(blocks => [...blocks, payload]);
     }
     chrome.runtime.onMessage.addListener(handleMessageFromBackground);
     return () => {
@@ -83,25 +84,6 @@ const App: React.FC = () => {
     chrome.runtime.sendMessage({ type: action });
   };
 
-  const destroyBlock = (index: number): void => {
-    setCodeBlocks(prevBlocks => prevBlocks.filter((block, i) => i !== index));
-    chrome.runtime.sendMessage({
-      type: ControlAction.DELETE,
-      payload: index,
-    });
-  };
-
-  const moveBlock = (dragIdx: number, dropIdx: number): void => {
-    const temp = [...codeBlocks];
-    const dragged = temp.splice(dragIdx, 1)[0];
-    temp.splice(dropIdx, 0, dragged);
-    setCodeBlocks(temp);
-    chrome.runtime.sendMessage({
-      type: ControlAction.MOVE,
-      payload: { dragIdx, dropIdx },
-    });
-  };
-
   return (
     <div id="App">
       <Header activeProject={activeProject} />
@@ -112,13 +94,13 @@ const App: React.FC = () => {
             onChangeProject={setActiveProject}
           />
         ) : (
-          <Body
-            codeBlocks={codeBlocks}
-            recStatus={recStatus}
-            isValidTab={isValidTab}
-            destroyBlock={destroyBlock}
-            moveBlock={moveBlock}
-          />
+          <div id="body">
+            <ToggleButton
+              recStatus={recStatus}
+              handleToggle={handleToggle}
+              isValidTab={isValidTab}
+            />
+          </div>
         )
       ) : authState === "loading" ? (
         "loading"
@@ -127,11 +109,9 @@ const App: React.FC = () => {
           <Login />
         </div>
       )}
-      <Footer
-        isValidTab={isValidTab}
-        recStatus={recStatus}
-        handleToggle={handleToggle}
-      />
+      <div>
+        {countOfBlocks} blocks, {countOfEdges} edges
+      </div>
     </div>
   );
 };
