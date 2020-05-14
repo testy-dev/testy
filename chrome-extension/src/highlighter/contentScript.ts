@@ -23,13 +23,13 @@ function update(selector: string | null): void {
   }
 
   if (!selector) {
-    highlighter.parentNode.removeChild(highlighter);
+    highlighter.parentNode?.removeChild(highlighter);
     return;
   }
 
   const target = document.querySelector(selector);
   if (!target) {
-    highlighter.parentNode.removeChild(highlighter);
+    highlighter.parentNode?.removeChild(highlighter);
     return;
   }
 

@@ -1,15 +1,14 @@
 import * as React from "react";
 
 import {
-  EdgeShapes,
-  RandomizeNodePositions,
-  RelativeSize,
-  Sigma,
-} from "react-sigma";
+  DefaultLinkModel,
+  DefaultNodeModel,
+  DiagramEngine,
+  DiagramModel,
+  DiagramWidget,
+} from "@projectstorm/react-diagrams";
 
 const App: React.FC = () => {
-  const [blocks, setBlocks] = React.useState<any>();
-
   React.useEffect(() => {
     chrome.devtools.panels.create(
       "Testy",
@@ -18,40 +17,37 @@ const App: React.FC = () => {
     );
   }, []);
 
-  React.useEffect(() => {
-    chrome.storage.local.get(["codeBlocks"], result => {
-      const nodes = (result?.codeBlocks ?? []).map(block => ({
-        id: block.id,
-        label: block.value.command,
-      }));
-      const edges = [];
+  const engine = new DiagramEngine();
+  engine.installDefaultFactories();
 
-      // For now, only connect nodes one by one
-      for (let i = 0; i < nodes.length - 1; i++) {
-        edges.push({
-          id: `e${i}`,
-          source: nodes[i].id,
-          target: nodes[i + 1].id,
-        });
-      }
-      setBlocks({ nodes, edges });
-    });
-  }, []);
+  //2) setup the diagram model
+  const model = new DiagramModel();
+
+  //3-A) create a default node
+  const node1 = new DefaultNodeModel("Node 1", "rgb(0,192,255)");
+  const port1 = node1.addOutPort("Out");
+  node1.setPosition(0, 100);
+
+  //3-B) create another default node
+  const node2 = new DefaultNodeModel("Node 2", "rgb(192,255,0)");
+  const port2 = node2.addInPort("In");
+  node2.setPosition(400, 100);
+
+  // link the ports
+  const link1 = port1.link(port2);
+  (link1 as DefaultLinkModel).addLabel("Hello World!");
+
+  //4) add the models to the root graph
+  model.addAll(node1, node2, link1);
+
+  //5) load model into engine
+  engine.setDiagramModel(model);
+
+  model.setLocked(true);
 
   return (
     <div id="App">
-      {blocks && (
-        <Sigma
-          style={{ height: "100vh" }}
-          graph={blocks}
-          settings={{ drawEdges: true, clone: false }}
-          onClickNode={console.log}
-        >
-          <RelativeSize initialSize={15} />
-          <RandomizeNodePositions />
-          <EdgeShapes default="arrow" />
-        </Sigma>
-      )}
+      <DiagramWidget className="srd-demo-canvas" diagramEngine={engine} />
     </div>
   );
 };

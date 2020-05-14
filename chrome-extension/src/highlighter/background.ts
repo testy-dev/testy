@@ -1,6 +1,6 @@
 import { ActionWithPayload } from "../types";
 
-let activePort: chrome.runtime.Port = null;
+let activePort: chrome.runtime.Port;
 let loadedScript = false;
 
 function handleMessage(message: ActionWithPayload): void {

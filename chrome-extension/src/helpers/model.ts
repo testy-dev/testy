@@ -3,10 +3,11 @@ import { v4 as generate } from "uuid";
 
 export default class Model {
   status: RecState;
-
   processedCode: Block[];
 
   constructor() {
+    this.status = "on";
+    this.processedCode = [];
     this.sync();
   }
 
@@ -69,7 +70,7 @@ export default class Model {
       block.command === "type" &&
       last.value.selector === block.selector
     ) {
-      last.value.parameter += block.parameter;
+      if (last.value.parameter) last.value.parameter += block.parameter;
 
       return new Promise((resolve, reject) => {
         chrome.storage.local.set({ codeBlocks: this.processedCode }, () => {

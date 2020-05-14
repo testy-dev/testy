@@ -56,7 +56,7 @@ const App: React.FC = () => {
       }
     );
     chrome.tabs.query({ active: true, currentWindow: true }, activeTab => {
-      if (activeTab[0].url.startsWith("chrome://")) setIsValidTab(false);
+      if (activeTab[0].url?.startsWith("chrome://")) setIsValidTab(false);
     });
   }, []);
 
@@ -104,13 +104,13 @@ const App: React.FC = () => {
   };
 
   const handleUploadCommands = (): void => {
-    if (codeBlocks.length === 0 || !parseInt(activeProject)) return;
+    if (codeBlocks.length === 0 || !parseInt(activeProject ?? "0")) return;
 
     const commands = [];
     let parentCommandID = "";
     for (const block of codeBlocks) {
       commands.push({
-        project_id: parseInt(activeProject),
+        project_id: parseInt(activeProject ?? "0"),
         id: block.id,
         parent_id: parentCommandID || null,
         ...block.value,

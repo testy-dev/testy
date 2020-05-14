@@ -1,12 +1,29 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "jsx": "react",
     "rootDir": "./src",
-    "lib": ["dom", "es2015"],
-    "noEmit": true
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "noEmit": true,
+    "target": "es5",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "exclude": [
     "node_modules"
+  ],
+  "skipLibCheck": true,
+  "include": [
+    "src"
   ]
 }

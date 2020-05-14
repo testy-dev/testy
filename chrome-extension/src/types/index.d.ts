@@ -17,7 +17,7 @@ export interface ParsedEvent {
 export interface Session {
   isPending: boolean;
   lastURL: string;
-  originalHost: string;
+  originalHost?: string;
   activePort: chrome.runtime.Port | null;
 }
 

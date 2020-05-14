@@ -9,7 +9,7 @@ export interface ToggleButtonProps {
 
 export default ({ recStatus, handleToggle, isValidTab }: ToggleButtonProps) => {
   const handleClick = (): void => {
-    let action: ControlAction;
+    let action: ControlAction = ControlAction.START;
     if (recStatus === "off" || recStatus === "paused")
       action = ControlAction.START;
     else if (recStatus === "on") action = ControlAction.STOP;

@@ -2,7 +2,7 @@ import * as firebase from "firebase";
 
 const endpoint = process.env.REACT_APP_GRAPHQL_ENDPOINT || "";
 
-const callGraphql = async (query, variables = {}) => {
+const callGraphql = async (query: string, variables = {}) => {
   const token = await firebase.auth().currentUser?.getIdToken();
   const response = await fetch(endpoint, {
     method: "POST",

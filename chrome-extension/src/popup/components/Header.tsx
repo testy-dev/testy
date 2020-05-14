@@ -3,7 +3,7 @@ import * as React from "react";
 // import callGraphql from "../../helpers/callGraphql";
 
 interface IProps {
-  activeProject: string;
+  activeProject?: string;
 }
 
 const Header: React.FC<IProps> = ({ activeProject }) => (

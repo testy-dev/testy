@@ -26,7 +26,7 @@ const SpecialKeys = new Map([
 ]);
 
 function handleKeydown(event: ParsedEvent): Command | null {
-  const key = event.key;
+  const key = event.key ?? "";
   if (key.length > 1 && !SpecialKeys.has(key)) return null; // Ignore tab, ctrl, shift, ...
   return {
     command: "type",
@@ -35,7 +35,7 @@ function handleKeydown(event: ParsedEvent): Command | null {
   };
 }
 
-function handleChange(event: ParsedEvent): Command {
+function handleChange(event: ParsedEvent): Command | null {
   if (event.inputType === "checkbox" || event.inputType === "radio")
     return null;
 
@@ -70,7 +70,7 @@ function handleSelect(event: ParsedEvent): Command | null {
 }
 
 export default {
-  createBlock: (event: ParsedEvent): Command => {
+  createBlock: (event: ParsedEvent): Command | null => {
     switch (event.action) {
       case EventType.CLICK:
         return handleClick(event);

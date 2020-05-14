@@ -82,14 +82,14 @@ function handleEvents(event: ParsedEvent): void {
 /**
  * Stops recording and sends back code to the view.
  */
-let stopRecording: () => Promise<void>;
+let stopRecording: () => Promise<void> = async () => undefined;
 
 function checkForBadNavigation(
   details: chrome.webNavigation.WebNavigationTransitionCallbackDetails
 ): void {
   if (
     details.frameId === 0 &&
-    (!details.url.includes(session.originalHost) ||
+    (!details.url.includes(session.originalHost ?? "") ||
       details.transitionQualifiers.includes("forward_back") ||
       details.transitionQualifiers.includes("from_address_bar"))
   ) {
@@ -98,15 +98,17 @@ function checkForBadNavigation(
 }
 
 function handleFirstConnection(): void {
-  session.originalHost = session.activePort.name;
+  session.originalHost = session.activePort?.name;
   chrome.webNavigation.onBeforeNavigate.addListener(ejectEventRecorder);
   chrome.webNavigation.onCommitted.addListener(checkForBadNavigation);
   chrome.webNavigation.onDOMContentLoaded.addListener(injectEventRecorder, {
     url: [{ hostEquals: session.originalHost }],
   });
-  if (session.lastURL !== session.activePort.sender.url) {
-    const visitBlock = codeGenerator.createVisit(session.activePort.sender.url);
-    session.lastURL = session.activePort.sender.url;
+  if (session.lastURL !== session.activePort?.sender?.url) {
+    const visitBlock = codeGenerator.createVisit(
+      session.activePort?.sender?.url ?? ""
+    );
+    session.lastURL = session.activePort?.sender?.url || "";
     model
       .pushBlock(visitBlock)
       .then(block =>
@@ -155,7 +157,7 @@ stopRecording = () =>
       .updateStatus("paused")
       .then(() => {
         session.activePort = null;
-        session.originalHost = null;
+        session.originalHost = undefined;
         chrome.browserAction.setIcon({ path: "cypressconeICON.png" });
         resolve();
       })
@@ -250,7 +252,7 @@ function handleMessage({ type, payload }: ActionWithPayload): Promise<void> {
  */
 function handleQuickKeys(command: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    let action: ControlAction;
+    let action: ControlAction | undefined;
     if (command === "start-recording") {
       if (model.status === "off" || model.status === "paused")
         action = ControlAction.START;

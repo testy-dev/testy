@@ -42,11 +42,11 @@ function parseEvent(event: Event): ParsedEvent | null {
   if (event.type === "keydown") parsedEvent.key = (event as KeyboardEvent).key;
 
   const selection = document.getSelection();
-  if (selection.toString() !== "")
-    parsedEvent.selectedText = selection.toString();
+  if (selection?.toString() !== "")
+    parsedEvent.selectedText = selection?.toString();
 
   // This event will be processed by mouseup
-  if (event.type === "click" && selection.toString() !== "") return;
+  if (event.type === "click" && selection?.toString() !== "") return null;
 
   return parsedEvent;
 }
