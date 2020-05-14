@@ -8,10 +8,8 @@
 
 import { ActionWithPayload, ParsedEvent, Session } from "../types";
 import { ControlAction } from "../constants";
-import Model from "../helpers/model";
+import { getStatus, pushBlock, reset, setStatus } from "../helpers/model";
 import codeGenerator from "../helpers/codeGenerator";
-
-const model = new Model();
 
 const session: Session = {
   isPending: false,
@@ -45,7 +43,7 @@ function control(
 function handleEvents(event: ParsedEvent): void {
   const block = codeGenerator.createBlock(event);
   if (block !== null) {
-    model.pushBlock(block).catch(err => new Error(err));
+    pushBlock(block).catch(err => new Error(err));
   }
 }
 
@@ -78,10 +76,10 @@ function handleFirstConnection(): void {
  * this is how the event recorder sends the background information.
  * @param portToEventRecorder
  */
-function handleNewConnection(portToEventRecorder: chrome.runtime.Port): void {
+async function handleNewConnection(portToEventRecorder: chrome.runtime.Port) {
   session.activePort = portToEventRecorder;
   session.activePort.onMessage.addListener(handleEvents);
-  if (model.status !== "on") handleFirstConnection();
+  if ((await getStatus()) !== "on") handleFirstConnection();
 }
 
 /**
@@ -100,14 +98,14 @@ async function startRecording(): Promise<void> {
         session.activePort.sender.url
       );
       session.lastURL = session.activePort.sender.url;
-      const block = await model.pushBlock(visitBlock);
+      const block = await pushBlock(visitBlock);
       chrome.runtime.sendMessage({
         type: ControlAction.PUSH,
         payload: block,
       });
     }
   }
-  await model.updateStatus("on");
+  await setStatus("on");
   chrome.browserAction.setIcon({ path: "cypressconeREC.png" });
 }
 
@@ -120,7 +118,7 @@ async function stopRecording(): Promise<void> {
       type: ControlAction.STOP,
     });
   chrome.webNavigation.onCommitted.removeListener(checkForBadNavigation);
-  await model.updateStatus("paused");
+  await setStatus("paused");
   session.originalHost = ""; // todo: ???
   chrome.browserAction.setIcon({ path: "cypressconeICON.png" });
 }
@@ -130,7 +128,7 @@ async function stopRecording(): Promise<void> {
  */
 async function resetRecording(): Promise<void> {
   session.lastURL = "";
-  await model.reset();
+  await reset();
 }
 
 /**
@@ -138,15 +136,14 @@ async function resetRecording(): Promise<void> {
  */
 async function cleanUp(): Promise<void> {
   await stopRecording();
-  await model.sync();
 }
 
 /**
- * Handles control messages sent from the view (popup) and conducts the appropriate actions.
- * @param action
+ * Handles all actions coming from the view(popup).
+ * @param message
  */
-async function handleControlAction(action: ControlAction): Promise<void> {
-  switch (action) {
+async function handleMessage(message: ActionWithPayload): Promise<void> {
+  switch (message.type) {
     case ControlAction.START:
       await startRecording();
       break;
@@ -157,25 +154,7 @@ async function handleControlAction(action: ControlAction): Promise<void> {
       await resetRecording();
       break;
     default:
-      throw new Error(`Invalid action: ${action}`);
-  }
-}
-
-/**
- * Handles all actions coming from the view(popup).
- * @param type
- * @param payload
- */
-async function handleMessage({
-  type,
-  payload,
-}: ActionWithPayload): Promise<void> {
-  if (type === ControlAction.DELETE) {
-    await model.deleteBlock(payload);
-  } else if (type === ControlAction.MOVE) {
-    await model.moveBlock(payload.dragIdx, payload.dropIdx);
-  } else {
-    await handleControlAction(type);
+      if (session.activePort) session.activePort.postMessage(message);
   }
 }
 
@@ -184,16 +163,16 @@ async function handleMessage({
  * @param command
  */
 async function handleQuickKeys(command: string): Promise<void> {
+  const status = await getStatus();
   let action: ControlAction | null = null;
   if (command === "start-recording") {
-    if (model.status === "off" || model.status === "paused")
-      action = ControlAction.START;
-    else if (model.status === "on") action = ControlAction.STOP;
-  } else if (command === "reset-recording" && model.status === "paused")
+    if (status === "off" || status === "paused") action = ControlAction.START;
+    else if (status === "on") action = ControlAction.STOP;
+  } else if (command === "reset-recording" && status === "paused")
     action = ControlAction.RESET;
 
   if (action) {
-    await handleControlAction(action);
+    await handleMessage({ type: action });
     chrome.runtime.sendMessage({ type: action });
   }
 }

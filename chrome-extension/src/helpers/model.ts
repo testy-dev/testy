@@ -1,67 +1,63 @@
-import { Block, Command, RecState } from "../types";
 import { v4 as generate } from "uuid";
 
-export default class Model {
-  status: RecState;
-  processedCode: Block[];
+import { Block, Command, Edge, RecState, UUID } from "../types";
 
-  constructor() {
-    this.status = "on";
-    this.processedCode = [];
-    this.sync();
-  }
-
-  /**
-   * Checks the data currently stored in Chrome local storage and performs logic based on current
-   * recording status.
-   */
-  sync(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.get(["status", "codeBlocks"], result => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else {
-          if (result.status === "on" || result.status === "paused") {
-            this.status = "paused";
-            this.processedCode = result.codeBlocks || [];
-          } else {
-            this.status = "off";
-            this.processedCode = [];
-          }
-          chrome.storage.local.set(
-            { status: this.status, codeBlocks: this.processedCode },
-            () => {
-              if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-              else resolve();
-            }
-          );
-        }
-      });
+export function read(
+  keys: string | string[] | Record<string, any> | null
+): Promise<Record<string, any>> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(keys, result => {
+      if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+      else {
+        resolve(result);
+      }
     });
-  }
+  });
+}
 
-  /**
-   * Resets application to original state.
-   */
-  reset(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.status = "off";
-      this.processedCode = [];
-      chrome.storage.local.set(
-        { status: this.status, codeBlocks: this.processedCode },
-        () => {
-          if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-          else resolve();
-        }
-      );
+/**
+ * Promise to write to storage.local
+ * @param items
+ */
+export function write(items: Record<string, any>): Promise<void> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set(items, () => {
+      if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+      else resolve();
     });
-  }
+  });
+}
 
-  /**
-   * Adds a codeblock to the array of code blocks and updates Chrome local storage.
-   * @param block
-   */
-  pushBlock(block: Command): Promise<Block> {
-    const last = this.processedCode[this.processedCode.length - 1];
+export async function getStatus() {
+  return (await read("status"))?.status as RecState;
+}
+
+export async function setStatus(status: RecState) {
+  await write({ status });
+}
+
+/**
+ * Resets application to original state.
+ */
+export async function reset() {
+  await write({ status: "off", blocks: [], edges: [], active: null });
+}
+
+/**
+ * Adds a codeblock to the array of code blocks and updates Chrome local storage.
+ * @param block
+ */
+export async function pushBlock(block: Command): Promise<Block> {
+  const { active, blocks, edges } = (await read([
+    "active",
+    "blocks",
+    "edges",
+  ])) as { active: UUID | null; blocks: Block[]; edges: Edge[] };
+
+  let last: Block | undefined;
+
+  if (active) {
+    last = blocks.find(b => b.id === active);
 
     // If last and actual block is type to same element => add type value to previous block
     if (
@@ -70,83 +66,40 @@ export default class Model {
       block.command === "type" &&
       last.value.selector === block.selector
     ) {
-      if (last.value.parameter) last.value.parameter += block.parameter;
+      last.value.parameter += block.parameter || "";
 
-      return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ codeBlocks: this.processedCode }, () => {
-          if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-          else resolve(last);
-        });
-      });
+      await write({ blocks });
+      return last;
     }
 
     // If last block is click and actual is type to same element => remove click and add type
+    const edgesToLast = edges.filter(e => e[1] === active);
     if (
       last &&
       last.value.command === "click" &&
       block.command === "type" &&
-      last.value.selector === block.selector
+      last.value.selector === block.selector &&
+      edgesToLast.length === 1
     ) {
-      // Remove last block
-      this.processedCode.splice(-1, 1);
+      blocks.splice(blocks.indexOf(last), 1); // Remove last block
+      edges.splice(edges.indexOf(edgesToLast[0]), 1); // Remove edge to this block
+
+      const lastID = edgesToLast[0][0];
+      last = blocks.find(b => b.id === lastID);
     }
-
-    // Else add block
-    const newBlock: Block = {
-      value: block,
-      id: generate(),
-    };
-    this.processedCode.push(newBlock);
-
-    return new Promise((resolve, reject) => {
-      chrome.storage.local.set({ codeBlocks: this.processedCode }, () => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else resolve(newBlock);
-      });
-    });
   }
 
-  /**
-   * Deletes a code block from the code display and updates Chrome local storage.
-   * @param index
-   */
-  deleteBlock(index: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.processedCode.splice(index, 1);
-      chrome.storage.local.set({ codeBlocks: this.processedCode }, () => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else resolve();
-      });
-    });
-  }
+  // Else add block
+  const newBlock: Block = {
+    value: block,
+    id: generate(),
+  };
+  blocks.push(newBlock);
 
-  /**
-   * Allows the user to drag and drop code blocks to new positions in the array.
-   * @param i
-   * @param j
-   */
-  moveBlock(i: number, j: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const dragged = this.processedCode.splice(i, 1)[0];
-      this.processedCode.splice(j, 0, dragged);
-      chrome.storage.local.set({ codeBlocks: this.processedCode }, () => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else resolve();
-      });
-    });
-  }
+  if (last) edges.push([last.id, newBlock.id]);
 
-  /**
-   * Updates the recording status and sends to the background.
-   * @param newStatus
-   */
-  updateStatus(newStatus: RecState): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.status = newStatus;
-      chrome.storage.local.set({ status: this.status }, () => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else resolve();
-      });
-    });
-  }
+  console.debug("Write to storage: ", { blocks, edges, active: newBlock.id });
+
+  await write({ blocks, edges, active: newBlock.id });
+  return newBlock;
 }

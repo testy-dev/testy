@@ -42,3 +42,7 @@ export interface Block {
   value: Command;
   id: string;
 }
+
+export type UUID = string;
+export type Color = string;
+export type Edge = [UUID, UUID] | [UUID, UUID, Color];
