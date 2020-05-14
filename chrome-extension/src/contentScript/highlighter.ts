@@ -1,7 +1,5 @@
 import { ActionWithPayload } from "../types";
 
-let port: chrome.runtime.Port;
-
 let highlighter: HTMLElement | undefined;
 
 function getOffset(el: Element) {
@@ -44,22 +42,17 @@ function update(selector: string | null): void {
   highlighter.style.top = offset.top + "px";
 }
 
-function onMessage(message: ActionWithPayload | string): void {
-  console.log("Highlight incoming message", message);
-  if (typeof message === "object" && message?.type === "highlight") {
-    update(message?.payload ?? null);
-  }
-}
-
-function initialize(): void {
-  console.log("Initialize highlighter");
-  port = chrome.runtime.connect({ name: window.location.hostname });
-  port.onMessage.addListener(onMessage);
-  port.onDisconnect.addListener(() => {
-    console.log("Port disconnected");
+export default {
+  onConnect(_port) {
+    // nothing
+  },
+  onMessage(message: ActionWithPayload) {
+    if (message?.type === "highlight") {
+      update(message?.payload ?? null);
+    }
+  },
+  onDisconnect() {
+    update(null);
     highlighter?.remove();
-    port.onMessage.removeListener(onMessage);
-  });
-}
-
-initialize();
+  },
+};
