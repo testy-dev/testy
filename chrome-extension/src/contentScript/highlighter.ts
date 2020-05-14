@@ -43,7 +43,7 @@ function update(selector: string | null): void {
 }
 
 export default {
-  onConnect(_port) {
+  onConnect(_port: any) {
     // nothing
   },
   onMessage(message: ActionWithPayload) {

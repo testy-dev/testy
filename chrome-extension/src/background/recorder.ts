@@ -54,7 +54,7 @@ function checkForBadNavigation(
 ): void {
   if (
     details.frameId === 0 &&
-    (!details.url.includes(session.originalHost) ||
+    (!details.url.includes(session.originalHost || "") ||
       details.transitionQualifiers.includes("forward_back") ||
       details.transitionQualifiers.includes("from_address_bar"))
   ) {
@@ -66,7 +66,7 @@ function checkForBadNavigation(
  * Add listeners and push visit block
  */
 function handleFirstConnection(): void {
-  session.originalHost = session.activePort.name;
+  if (session.activePort) session.originalHost = session.activePort.name;
   chrome.webNavigation.onCommitted.addListener(checkForBadNavigation);
 }
 
@@ -92,7 +92,10 @@ async function startRecording(): Promise<void> {
     session.activePort.postMessage({
       type: ControlAction.START,
     });
-    if (session.lastURL !== session.activePort.sender.url) {
+    if (
+      session.activePort?.sender?.url &&
+      session.lastURL !== session.activePort?.sender?.url
+    ) {
       const visitBlock = codeGenerator.createVisit(
         session.activePort.sender.url
       );
@@ -118,7 +121,7 @@ async function stopRecording(): Promise<void> {
     });
   chrome.webNavigation.onCommitted.removeListener(checkForBadNavigation);
   await model.updateStatus("paused");
-  session.originalHost = null; // todo: ???
+  session.originalHost = ""; // todo: ???
   chrome.browserAction.setIcon({ path: "cypressconeICON.png" });
 }
 
@@ -181,13 +184,14 @@ async function handleMessage({
  * @param command
  */
 async function handleQuickKeys(command: string): Promise<void> {
-  let action: ControlAction;
+  let action: ControlAction | null = null;
   if (command === "start-recording") {
     if (model.status === "off" || model.status === "paused")
       action = ControlAction.START;
     else if (model.status === "on") action = ControlAction.STOP;
   } else if (command === "reset-recording" && model.status === "paused")
     action = ControlAction.RESET;
+
   if (action) {
     await handleControlAction(action);
     chrome.runtime.sendMessage({ type: action });
