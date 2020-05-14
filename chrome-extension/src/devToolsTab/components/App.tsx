@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import "@projectstorm/react-diagrams/dist/style.min.css";
 import {
   DefaultLinkModel,
   DefaultNodeModel,
