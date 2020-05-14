@@ -26,10 +26,7 @@ const App: React.FC = () => {
     chrome.storage.local.get(["codeBlocks"], result => {
       let x = 0;
       (result.codeBlocks ?? []).forEach((block: Block) => {
-        const node = new DefaultNodeModel(
-          block.value.command,
-          "rgb(192,255,0)"
-        );
+        const node = new DefaultNodeModel(block.command, "rgb(192,255,0)");
         node.setPosition(x, 100);
         node.updateDimensions({ width: 100, height: 50 });
         node.addInPort("in");

@@ -26,7 +26,8 @@ export interface ActionWithPayload {
   payload?: any;
 }
 
-export interface Command {
+export interface Block {
+  id: string;
   command:
     | "visit"
     | "click"
@@ -36,11 +37,6 @@ export interface Command {
     | "check-contains-text";
   selector?: string;
   parameter?: string;
-}
-
-export interface Block {
-  value: Command;
-  id: string;
 }
 
 export type UUID = string;

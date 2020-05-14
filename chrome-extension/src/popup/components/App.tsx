@@ -13,7 +13,6 @@ import Footer from "./Footer";
 import Header from "./Header";
 import Login from "./Login";
 import SelectProject from "./SelectProject";
-import callGraphql from "../../helpers/callGraphql";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -103,35 +102,6 @@ const App: React.FC = () => {
     });
   };
 
-  const handleUploadCommands = (): void => {
-    if (codeBlocks.length === 0 || !parseInt(activeProject ?? "0")) return;
-
-    const commands = [];
-    let parentCommandID = "";
-    for (const block of codeBlocks) {
-      commands.push({
-        project_id: parseInt(activeProject ?? "0"),
-        id: block.id,
-        parent_id: parentCommandID || null,
-        ...block.value,
-      });
-      parentCommandID = block.id;
-    }
-
-    // language=graphql
-    callGraphql(
-      `
-          mutation UploadCommands($commands: [command_insert_input!]!) {
-          insert_command(objects: $commands) {
-            affected_rows
-          }
-        }`,
-      {
-        commands,
-      }
-    );
-  };
-
   return (
     <div id="App">
       <Header activeProject={activeProject} />
@@ -161,8 +131,6 @@ const App: React.FC = () => {
         isValidTab={isValidTab}
         recStatus={recStatus}
         handleToggle={handleToggle}
-        triggerUpload={handleUploadCommands}
-        countOfCommands={codeBlocks.length}
       />
     </div>
   );

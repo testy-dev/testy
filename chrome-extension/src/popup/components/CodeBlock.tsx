@@ -32,23 +32,21 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
     onDrop={e => onDrop(e, index)}
   >
     <span>
-      {block.value.command}
-      {block.value.selector && (
+      {block.command}
+      {block.selector && (
         <mark
           className="selector"
           onMouseEnter={() => {
             chrome.runtime.sendMessage({
               type: "highlight",
-              payload: block.value.selector,
+              payload: block.selector,
             });
           }}
         >
-          {block.value.selector}
+          {block.selector}
         </mark>
       )}
-      {block.value.parameter && (
-        <mark className="parameter">{block.value.parameter}</mark>
-      )}
+      {block.parameter && <mark className="parameter">{block.parameter}</mark>}
     </span>
     <button
       type="button"

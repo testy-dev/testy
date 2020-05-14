@@ -1,6 +1,4 @@
-import { v4 as generate } from "uuid";
-
-import { Block, Command, Edge, RecState, UUID } from "../types";
+import { Block, Edge, RecState, UUID } from "../types";
 
 export function read(
   keys: string | string[] | Record<string, any> | null
@@ -45,9 +43,9 @@ export async function reset() {
 
 /**
  * Adds a codeblock to the array of code blocks and updates Chrome local storage.
- * @param block
+ * @param newBlock
  */
-export async function pushBlock(block: Command): Promise<Block> {
+export async function pushBlock(newBlock: Block): Promise<Block> {
   const { active, blocks, edges } = (await read([
     "active",
     "blocks",
@@ -62,11 +60,11 @@ export async function pushBlock(block: Command): Promise<Block> {
     // If last and actual block is type to same element => add type value to previous block
     if (
       last &&
-      last.value.command === "type" &&
-      block.command === "type" &&
-      last.value.selector === block.selector
+      last.command === "type" &&
+      newBlock.command === "type" &&
+      last.selector === newBlock.selector
     ) {
-      last.value.parameter += block.parameter || "";
+      last.parameter += newBlock.parameter || "";
 
       await write({ blocks });
       return last;
@@ -76,9 +74,9 @@ export async function pushBlock(block: Command): Promise<Block> {
     const edgesToLast = edges.filter(e => e[1] === active);
     if (
       last &&
-      last.value.command === "click" &&
-      block.command === "type" &&
-      last.value.selector === block.selector &&
+      last.command === "click" &&
+      newBlock.command === "type" &&
+      last.selector === newBlock.selector &&
       edgesToLast.length === 1
     ) {
       blocks.splice(blocks.indexOf(last), 1); // Remove last block
@@ -90,16 +88,10 @@ export async function pushBlock(block: Command): Promise<Block> {
   }
 
   // Else add block
-  const newBlock: Block = {
-    value: block,
-    id: generate(),
-  };
   blocks.push(newBlock);
-
   if (last) edges.push([last.id, newBlock.id]);
-
+  await write({ blocks, edges, active: newBlock.id });
   console.debug("Write to storage: ", { blocks, edges, active: newBlock.id });
 
-  await write({ blocks, edges, active: newBlock.id });
   return newBlock;
 }
