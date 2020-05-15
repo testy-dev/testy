@@ -27,8 +27,8 @@ const App: React.FC = () => {
 
   React.useEffect(() => {
     read(["blocks", "edges"]).then(data => {
-      setCountOfBlocks(data.blocks.length);
-      setCountOfEdges(data.edges.length);
+      setCountOfBlocks(data.blocks?.length ?? 0);
+      setCountOfEdges(data.edges?.length ?? 0);
     });
   }, []);
 
