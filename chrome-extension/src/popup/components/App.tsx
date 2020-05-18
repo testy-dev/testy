@@ -52,14 +52,11 @@ const App: React.FC = () => {
   };
 
   React.useEffect((): void => {
-    chrome.storage.local.get(
-      ["status", "codeBlocks", "activeProject"],
-      result => {
-        if (result.status === "on") setRecStatus("on");
-        else if (result.status === "paused") setRecStatus("paused");
-        if (result.activeProject) setActiveProject(result.activeProject);
-      }
-    );
+    chrome.storage.local.get(["status", "activeProject"], result => {
+      if (result.status === "on") setRecStatus("on");
+      else if (result.status === "paused") setRecStatus("paused");
+      if (result.activeProject) setActiveProject(result.activeProject);
+    });
     chrome.tabs.query({ active: true, currentWindow: true }, activeTab => {
       if (activeTab[0].url?.startsWith("chrome://")) setIsValidTab(false);
     });
