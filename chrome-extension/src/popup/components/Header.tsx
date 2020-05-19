@@ -1,4 +1,5 @@
 import * as React from "react";
+import styled from "styled-components";
 // import { useEffect, useState } from "react";
 // import callGraphql from "../../helpers/callGraphql";
 
@@ -23,10 +24,24 @@ const Header: React.FC<IProps> = ({ activeProject }) => (
   //     ).then(response => setProjectName(response?.data?.project?.name));
   //   }, [activeProject]);
 
-  <div id="header">
-    <h1 id="title">Testy</h1>
-    <span style={{ color: "white" }}>Active project: {activeProject}</span>
-  </div>
+  <StyledHeader>
+    <Title>Testy</Title>
+    <Project>Active project: {activeProject}</Project>
+  </StyledHeader>
 );
+
+const StyledHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background: #1f1f1f;
+  color: white;
+
+  padding: 7px 5px;
+`;
+const Title = styled.h1`
+  margin: 0;
+  font-size: 100%;
+`;
+const Project = styled.span``;
 
 export default Header;

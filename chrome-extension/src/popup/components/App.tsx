@@ -2,16 +2,14 @@ import * as React from "react";
 
 import "firebase/auth";
 import * as firebase from "firebase/app";
+import styled from "styled-components";
 
-import "../../assets/styles/styles.scss";
 import { ActionWithPayload, RecState } from "../../types";
+import { Button } from "./styled-components";
 import { ControlAction } from "../../constants";
 import { firebaseConfig } from "../config";
 import { read } from "../../helpers/model";
-import { useFirebaseAuthState } from "../hooks";
 import Header from "./Header";
-import Login from "./Login";
-import SelectProject from "./SelectProject";
 import ToggleButton from "./ToggleButton";
 
 firebase.initializeApp(firebaseConfig);
@@ -32,14 +30,7 @@ const App: React.FC = () => {
     });
   }, []);
 
-  React.useEffect(() => {
-    chrome.storage.local.get("activeProject", items => {
-      if (items.activeProject !== activeProject)
-        chrome.storage.local.set({ activeProject });
-    });
-  }, [activeProject]);
-
-  const authState = useFirebaseAuthState();
+  // const authState = useFirebaseAuthState();
 
   const startRecording = (): void => {
     setRecStatus("on");
@@ -55,15 +46,23 @@ const App: React.FC = () => {
     chrome.storage.local.get(
       ["status", "codeBlocks", "activeProject"],
       result => {
-        if (result.status === "on") setRecStatus("on");
-        else if (result.status === "paused") setRecStatus("paused");
-        if (result.activeProject) setActiveProject(result.activeProject);
+        if (result?.status === "on") setRecStatus("on");
+        else if (result?.status === "paused") setRecStatus("paused");
+        if (result?.activeProject) setActiveProject(result.activeProject);
       }
     );
     chrome.tabs.query({ active: true, currentWindow: true }, activeTab => {
       if (activeTab[0].url?.startsWith("chrome://")) setIsValidTab(false);
     });
   }, []);
+
+  // Write active project to storage
+  React.useEffect(() => {
+    chrome.storage.local.get("activeProject", items => {
+      if (items?.activeProject !== activeProject)
+        chrome.storage.local.set({ activeProject });
+    });
+  }, [activeProject]);
 
   React.useEffect((): (() => void) => {
     function handleMessageFromBackground({ type }: ActionWithPayload): void {
@@ -85,35 +84,49 @@ const App: React.FC = () => {
   };
 
   return (
-    <div id="App">
+    <Root>
       <Header activeProject={activeProject} />
-      {authState === "in" ? (
-        !activeProject ? (
-          <SelectProject
-            activeProject={activeProject}
-            onChangeProject={setActiveProject}
-          />
-        ) : (
-          <div id="body">
-            <ToggleButton
-              recStatus={recStatus}
-              handleToggle={handleToggle}
-              isValidTab={isValidTab}
-            />
-          </div>
-        )
-      ) : authState === "loading" ? (
-        "loading"
-      ) : (
-        <div id="body">
-          <Login />
-        </div>
-      )}
-      <div>
-        {countOfBlocks} blocks, {countOfEdges} edges
-      </div>
-    </div>
+      {/*<SelectProject*/}
+      {/*  activeProject={activeProject}*/}
+      {/*  onChangeProject={setActiveProject}*/}
+      {/*/>*/}
+      <ToggleButton
+        recStatus={recStatus}
+        handleToggle={handleToggle}
+        isValidTab={isValidTab}
+      />
+      <Wrap>
+        <span>For show all blocks press F12 and open tab "Testy"</span>
+      </Wrap>
+      <Footer>
+        <span>{countOfBlocks} blocks</span>
+        <span>{countOfEdges} edges</span>
+        <Button onClick={() => handleToggle(ControlAction.RESET)}>Reset</Button>
+      </Footer>
+    </Root>
   );
 };
+
+const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 15px;
+  font-family: "Roboto", sans-serif;
+  min-width: 250px;
+  min-height: 250px;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 5px 7px;
+`;
+
+const Wrap = styled.div`
+  align-self: center;
+  text-align: center;
+`;
 
 export default App;
