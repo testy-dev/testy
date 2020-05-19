@@ -1,5 +1,8 @@
 import * as React from "react";
+import styled from "styled-components";
+
 import { ControlAction } from "../../constants";
+import { LargeButton } from "./styled-components";
 
 export interface ToggleButtonProps {
   isValidTab: boolean;
@@ -7,7 +10,11 @@ export interface ToggleButtonProps {
   handleToggle: (action: ControlAction) => void;
 }
 
-export default ({ recStatus, handleToggle, isValidTab }: ToggleButtonProps) => {
+const ToggleButton: React.FC<ToggleButtonProps> = ({
+  recStatus,
+  handleToggle,
+  isValidTab,
+}) => {
   const handleClick = (): void => {
     let action: ControlAction = ControlAction.START;
     if (recStatus === "off" || recStatus === "paused")
@@ -16,17 +23,9 @@ export default ({ recStatus, handleToggle, isValidTab }: ToggleButtonProps) => {
     handleToggle(action);
   };
 
-  const buttonClass: string =
-    !isValidTab && (recStatus === "off" || recStatus === "paused")
-      ? "disabled-button"
-      : "button";
-
   return (
-    <div id="toggle-wrap">
-      <button
-        type="button"
-        id="toggle"
-        className={buttonClass}
+    <Wrap>
+      <LargeButton
         onClick={handleClick}
         disabled={
           !isValidTab && (recStatus === "off" || recStatus === "paused")
@@ -34,11 +33,17 @@ export default ({ recStatus, handleToggle, isValidTab }: ToggleButtonProps) => {
       >
         {(recStatus === "off" || recStatus === "paused") &&
           !isValidTab &&
-          "Invalid Tab"}
+          "This page cannot be recorder"}
         {recStatus === "off" && isValidTab && "Start Recording"}
-        {recStatus === "paused" && isValidTab && "Resume"}
+        {recStatus === "paused" && isValidTab && "Start Recording"}
         {recStatus === "on" && "Stop Recording"}
-      </button>
-    </div>
+      </LargeButton>
+    </Wrap>
   );
 };
+
+const Wrap = styled.div`
+  align-self: center;
+`;
+
+export default ToggleButton;
