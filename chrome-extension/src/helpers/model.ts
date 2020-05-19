@@ -46,7 +46,7 @@ export async function reset() {
  * @param newBlock
  */
 export async function pushBlock(newBlock: Block): Promise<Block> {
-  const { active, blocks, edges } = (await read([
+  const { active = null, blocks = [], edges = [] } = (await read([
     "active",
     "blocks",
     "edges",
