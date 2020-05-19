@@ -23,17 +23,31 @@ const App: React.FC = () => {
       "cypresscone16.png",
       "devToolsTab/index.html"
     );
-    chrome.storage.local.get(["codeBlocks"], result => {
+    chrome.storage.local.get(["blocks", "edges"], result => {
       let x = 0;
-      (result.codeBlocks ?? []).forEach((block: Block) => {
-        const node = new DefaultNodeModel(block.command, "rgb(192,255,0)");
-        node.setPosition(x, 100);
-        node.updateDimensions({ width: 100, height: 50 });
-        node.addInPort("in");
-        node.addOutPort("out");
-        model.addNode(node);
+      const blocks: any = {};
+      (result.blocks ?? []).forEach((block: Block) => {
+        blocks[block.id] = new DefaultNodeModel(
+          block.command,
+          "rgb(192,255,0)"
+        );
+        blocks[block.id].setPosition(x, 100);
+        blocks[block.id].updateDimensions({ width: 100, height: 50 });
+        blocks[block.id].addInPort("in");
+        blocks[block.id].addOutPort("out");
+        model.addNode(blocks[block.id]);
         x += 200;
       });
+
+      (result.edges ?? []).forEach(
+        ([outBlockId, inBlockId]: [string, string]) => {
+          model.addLink(
+            blocks[outBlockId]
+              .getOutPorts()[0]
+              .link(blocks[inBlockId].getInPorts()[0])
+          );
+        }
+      );
     });
   }, []);
 
