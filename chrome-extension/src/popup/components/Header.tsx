@@ -3,32 +3,51 @@ import styled from "styled-components";
 // import { useEffect, useState } from "react";
 // import callGraphql from "../../helpers/callGraphql";
 
+import { useFirebaseAuthState } from "../hooks";
+
 interface IProps {
-  activeProject?: string;
+  onLogout: () => void;
+  onLogin: () => void;
+  activeProject: number | undefined;
+  onSelectProject: () => void;
 }
 
-const Header: React.FC<IProps> = ({ activeProject }) => (
-  //   const [projectName, setProjectName] = useState<any>();
-  //
-  //   useEffect(() => {
-  //     // language=graphql
-  //     callGraphql(
-  //       `
-  // query($id: Int!){
-  //     project(where: {id: {_eq: $id}}) {
-  //         id
-  //         name
-  //     }
-  // }`,
-  //       { id: activeProject }
-  //     ).then(response => setProjectName(response?.data?.project?.name));
-  //   }, [activeProject]);
+const Header: React.FC<IProps> = ({
+  onLogout,
+  onLogin,
+  activeProject,
+  onSelectProject,
+}) => {
+  const authState = useFirebaseAuthState();
 
-  <StyledHeader>
-    <Title>Testy</Title>
-    <Project>Active project: {activeProject}</Project>
-  </StyledHeader>
-);
+  return (
+    //   const [projectName, setProjectName] = useState<any>();
+    //
+    //   useEffect(() => {
+    //     // language=graphql
+    //     callGraphql(
+    //       `
+    // query($id: Int!){
+    //     project(where: {id: {_eq: $id}}) {
+    //         id
+    //         name
+    //     }
+    // }`,
+    //       { id: activeProject }
+    //     ).then(response => setProjectName(response?.data?.project?.name));
+    //   }, [activeProject]);
+
+    <StyledHeader>
+      <Title>Testy</Title>
+      <Project onClick={onSelectProject}>
+        {activeProject ? "Project: " + activeProject : "Select project"}
+      </Project>
+      <User onClick={authState === "in" ? onLogout : onLogin}>
+        {authState === "in" ? "Log out" : "Log in"}
+      </User>
+    </StyledHeader>
+  );
+};
 
 const StyledHeader = styled.div`
   display: flex;
@@ -36,12 +55,17 @@ const StyledHeader = styled.div`
   background: #1f1f1f;
   color: white;
 
-  padding: 7px 5px;
+  padding: 5px 7px;
 `;
 const Title = styled.h1`
   margin: 0;
   font-size: 100%;
 `;
-const Project = styled.span``;
+const Project = styled.span`
+  cursor: pointer;
+`;
+const User = styled.span`
+  cursor: pointer;
+`;
 
 export default Header;

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import callGraphql from "../../helpers/callGraphql";
 
 interface IProps {
-  activeProject?: string;
-  onChangeProject: (id: string) => void;
+  activeProject?: number;
+  onChangeProject: (id: number) => void;
 }
 
 const SelectProject: React.FC<IProps> = ({
@@ -13,6 +13,7 @@ const SelectProject: React.FC<IProps> = ({
   onChangeProject,
 }) => {
   const [data, setData] = useState<any>();
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     // language=graphql
@@ -27,10 +28,30 @@ const SelectProject: React.FC<IProps> = ({
     }
   }
 }
-    `).then(response => setData(response?.data));
-  });
+    `)
+      .then(response =>
+        response?.data
+          ? setData(response.data)
+          : setError(response?.errors?.[0]?.message || "Cannot load projects")
+      )
+      .catch(console.error);
+  }, []);
 
+  if (error) return <div>{error}</div>;
   if (!data) return <div id="body">Loading organizations and projects ...</div>;
+  if (data?.organization?.length === 0)
+    return (
+      <div>
+        You don't have any project. Create one in{" "}
+        <a
+          href="https://app.testy.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          app.testy.dev
+        </a>
+      </div>
+    );
 
   return (
     <div id="body">

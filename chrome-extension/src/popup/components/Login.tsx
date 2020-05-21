@@ -1,15 +1,7 @@
 import * as React from "react";
 
 import * as firebase from "firebase/app";
-import {
-  Box,
-  Button,
-  Form,
-  FormField,
-  Heading,
-  Text,
-  TextInput,
-} from "grommet";
+import { Box, Button, Form, FormField, Text, TextInput } from "grommet";
 import { Github, Google } from "grommet-icons";
 
 const GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
@@ -38,11 +30,8 @@ const Login: React.FC = () => {
   }, [setError]);
 
   return (
-    <Box direction="column" align="center" gap="medium">
-      <Box justify="center">
-        <Heading level={1}>Login</Heading>
-      </Box>
-      <Box width="medium">
+    <Box direction="column" align="center" gap="xsmall" pad="medium">
+      <Box>
         <Form onSubmit={handleLogin} aria-label="Login">
           <FormField label="E-mail">
             <TextInput
@@ -66,7 +55,7 @@ const Login: React.FC = () => {
           <Button
             type="submit"
             label="Login"
-            size="large"
+            size="small"
             primary={true}
             fill="horizontal"
           />
@@ -78,9 +67,8 @@ const Login: React.FC = () => {
           role="button"
           aria-label="Login with Google account"
           color="plain"
-          size="large"
         />
-        <Github color="plain" size="large" />
+        <Github color="plain" />
       </Box>
     </Box>
   );

@@ -9,19 +9,31 @@ import { Button } from "./styled-components";
 import { ControlAction } from "../../constants";
 import { firebaseConfig } from "../config";
 import { read } from "../../helpers/model";
+import { useFirebaseAuthState } from "../hooks";
 import Header from "./Header";
+import Login from "./Login";
+import SelectProject from "./SelectProject";
 import ToggleButton from "./ToggleButton";
 
 firebase.initializeApp(firebaseConfig);
+
+enum Screen {
+  home,
+  login,
+  selectProject,
+}
 
 const App: React.FC = () => {
   const [recStatus, setRecStatus] = React.useState<RecState>("off");
   const [isValidTab, setIsValidTab] = React.useState<boolean>(true);
   const [activeProject, setActiveProject] = React.useState<
-    string | undefined
+    number | undefined
   >();
   const [countOfBlocks, setCountOfBlocks] = React.useState<number>(0);
   const [countOfEdges, setCountOfEdges] = React.useState<number>(0);
+  const [screen, setScreen] = React.useState<Screen>(Screen.home);
+
+  const loginState = useFirebaseAuthState();
 
   React.useEffect(() => {
     read(["blocks", "edges"]).then(data => {
@@ -29,8 +41,6 @@ const App: React.FC = () => {
       setCountOfEdges(data.edges?.length ?? 0);
     });
   }, []);
-
-  // const authState = useFirebaseAuthState();
 
   const startRecording = (): void => {
     setRecStatus("on");
@@ -40,6 +50,10 @@ const App: React.FC = () => {
   };
   const resetRecording = (): void => {
     setRecStatus("off");
+  };
+
+  const onLogout = async () => {
+    await firebase.auth().signOut();
   };
 
   React.useEffect((): void => {
@@ -83,21 +97,49 @@ const App: React.FC = () => {
     chrome.runtime.sendMessage({ type: action });
   };
 
+  let screenContent;
+  if (screen === Screen.login && loginState !== "in") {
+    screenContent = <Login />;
+  } else if (screen === Screen.selectProject && loginState === "in") {
+    screenContent = (
+      <SelectProject
+        activeProject={activeProject}
+        onChangeProject={setActiveProject}
+      />
+    );
+  } else {
+    screenContent = (
+      <>
+        <ToggleButton
+          recStatus={recStatus}
+          handleToggle={handleToggle}
+          isValidTab={isValidTab}
+        />
+        <Wrap>
+          <span>For show all blocks press F12 and open tab "Testy"</span>
+        </Wrap>
+      </>
+    );
+  }
+
   return (
     <Root>
-      <Header activeProject={activeProject} />
-      {/*<SelectProject*/}
-      {/*  activeProject={activeProject}*/}
-      {/*  onChangeProject={setActiveProject}*/}
-      {/*/>*/}
-      <ToggleButton
-        recStatus={recStatus}
-        handleToggle={handleToggle}
-        isValidTab={isValidTab}
+      <Header
+        onLogin={() => setScreen(Screen.login)}
+        onLogout={onLogout}
+        activeProject={activeProject}
+        onSelectProject={() => setScreen(Screen.selectProject)}
       />
-      <Wrap>
-        <span>For show all blocks press F12 and open tab "Testy"</span>
-      </Wrap>
+      {screen !== Screen.home && (
+        <Back
+          onClick={() => {
+            setScreen(Screen.home);
+          }}
+        >
+          {"< Go Back"}
+        </Back>
+      )}
+      <Content>{screenContent}</Content>
       <Footer>
         <span>{countOfBlocks} blocks</span>
         <span>{countOfEdges} edges</span>
@@ -110,7 +152,6 @@ const App: React.FC = () => {
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   font-size: 15px;
   font-family: "Roboto", sans-serif;
   min-width: 250px;
@@ -128,5 +169,14 @@ const Wrap = styled.div`
   align-self: center;
   text-align: center;
 `;
+
+const Content = styled(Wrap)`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const Back = styled.div``;
 
 export default App;
