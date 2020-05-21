@@ -9,6 +9,7 @@ import {
 } from "@projectstorm/react-diagrams";
 
 import { Block } from "../../types";
+import { write } from "../../helpers/model";
 
 const App: React.FC = () => {
   const engine = new DiagramEngine();
@@ -32,6 +33,11 @@ const App: React.FC = () => {
           "rgb(192,255,0)"
         );
         blocks[block.id].setPosition(x, 100);
+        blocks[block.id].addListener({
+          selectionChanged: async (node: any) => {
+            if (node?.isSelected) await write({ active: block.id });
+          },
+        });
         blocks[block.id].updateDimensions({ width: 100, height: 50 });
         blocks[block.id].addInPort("in");
         blocks[block.id].addOutPort("out");
