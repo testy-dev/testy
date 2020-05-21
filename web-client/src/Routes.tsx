@@ -15,6 +15,7 @@ import UserID from "./components/UserID";
 
 const waitForNewToken = async (user: firebase.User) => {
   // Check if refresh is required.
+  await import("firebase/database");
   const metadataRef = firebase
     .database()
     .ref("metadata/" + user.uid + "/refreshTime");

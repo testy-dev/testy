@@ -12,7 +12,6 @@ import { deepMerge } from "grommet/utils";
 import { setContext } from "@apollo/link-context";
 
 import "firebase/auth";
-import "firebase/database";
 import firebase from "firebase/app";
 
 import { CommandsProvider } from "./components/state/commands";
