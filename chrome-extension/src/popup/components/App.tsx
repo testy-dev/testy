@@ -174,7 +174,7 @@ mutation($project: Int!, $graph: jsonb) {
       <Footer>
         <span>{countOfBlocks} blocks</span>
         <span>{countOfEdges} edges</span>
-        {loginState === "in" && (
+        {loginState === "in" && activeProject && countOfBlocks && countOfEdges && (
           <Button onClick={handleSave} disabled={graphSaved}>
             {graphSaved ? "Saved" : "Save"}
           </Button>
