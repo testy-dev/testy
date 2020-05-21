@@ -174,11 +174,14 @@ mutation($project: Int!, $graph: jsonb) {
       <Footer>
         <span>{countOfBlocks} blocks</span>
         <span>{countOfEdges} edges</span>
-        {loginState === "in" && activeProject && countOfBlocks && countOfEdges && (
-          <Button onClick={handleSave} disabled={graphSaved}>
-            {graphSaved ? "Saved" : "Save"}
-          </Button>
-        )}
+        {loginState === "in" &&
+          activeProject &&
+          countOfBlocks > 0 &&
+          countOfEdges > 0 && (
+            <Button onClick={handleSave} disabled={graphSaved}>
+              {graphSaved ? "Saved" : "Save"}
+            </Button>
+          )}
         <Button onClick={() => handleToggle(ControlAction.RESET)}>Reset</Button>
       </Footer>
     </Root>
