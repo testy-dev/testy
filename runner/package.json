@@ -4,15 +4,16 @@
   "license": "proprietary",
   "private": true,
   "scripts": {
-    "build": "parcel build src/browser.ts --target browser && parcel build src/server.ts --target server"
+    "build": "parcel build src/browser.ts --target browser && parcel build src/server.ts --target server",
+    "prod-start": "concurrently -n server,browser --kill-others \"node /app/dist/server.js\" \"cypress run --browser chrome /app/dist/browser.js\""
   },
   "dependencies": {
-    "@types/express": "^4.17.6",
+    "@types/node": "^14.0.5",
     "concurrently": "^5.2.0",
     "cypress": "^4.6.0",
     "cypress-wait-until": "^1.7.1",
-    "express": "^4.17.1",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.3",
+    "ws": "^7.3.0"
   },
   "devDependencies": {
     "parcel": "next"

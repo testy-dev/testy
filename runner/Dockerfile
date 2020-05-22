@@ -45,4 +45,4 @@ RUN echo  " node version:    $(node -v) \n" \
 
 WORKDIR "/app"
 
-ENTRYPOINT "yarn run concurrently -n server,browser --kill-others \"node /app/dist/server.js\" \"cypress run --browser chrome /app/dist/browser.js\""
+ENTRYPOINT ["yarn", "run", "prod-start"]
