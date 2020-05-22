@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 
 import "@projectstorm/react-diagrams/dist/style.min.css";
 import {
@@ -19,21 +19,19 @@ interface IProps {
 }
 
 const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
-  const engine = new DiagramEngine();
-  engine.installDefaultFactories();
+  const engine = useMemo(() => {
+    const engine = new DiagramEngine();
+    engine.installDefaultFactories();
 
-  const model = new DiagramModel();
-  engine.setDiagramModel(model);
+    const model = new DiagramModel();
+    engine.setDiagramModel(model);
 
-  useEffect(() => {
-    let x = 0;
     const nodes: any = {};
     blocks.forEach((block: Block) => {
       const node = new DefaultNodeModel(
         block.command,
         block.command === "check-contains-text" ? "#1d6fe8" : "#c0ff00"
       );
-      node.setPosition(x, 100);
       node.addListener({
         selectionChanged: async (node: any) => {
           if (node?.isSelected) await write({ active: block.id });
@@ -44,7 +42,6 @@ const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
       node.addOutPort("out");
       model.addNode(node);
       nodes[block.id] = node;
-      x += 200;
     });
 
     edges.forEach(([outBlockId, inBlockId]) => {
@@ -55,7 +52,8 @@ const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
       model.addLink(link);
     });
     autoDistribute(engine);
-  }, [blocks, edges, model]);
+    return engine;
+  }, [blocks, edges]);
 
   return <DiagramWidget className="srd-demo-canvas" diagramEngine={engine} />;
 };
