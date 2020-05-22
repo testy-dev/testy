@@ -14,6 +14,7 @@ import Header from "./Header";
 import Login from "./Login";
 import SelectProject from "./SelectProject";
 import ToggleButton from "./ToggleButton";
+import callGraphql from "../../helpers/callGraphql";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -32,6 +33,7 @@ const App: React.FC = () => {
   const [countOfBlocks, setCountOfBlocks] = React.useState<number>(0);
   const [countOfEdges, setCountOfEdges] = React.useState<number>(0);
   const [screen, setScreen] = React.useState<Screen>(Screen.home);
+  const [graphSaved, setGraphSaved] = React.useState<boolean>(false);
 
   const loginState = useFirebaseAuthState();
 
@@ -97,6 +99,35 @@ const App: React.FC = () => {
     chrome.runtime.sendMessage({ type: action });
   };
 
+  const handleSave = async () => {
+    const data = await read(["blocks", "edges"]);
+    // language=graphql
+    const result = await callGraphql(
+      `
+mutation($project: Int!, $graph: jsonb) {
+    update_project(where: {id: {_eq: $project}}, _set: {graph: $graph}) {
+        affected_rows
+    }
+}
+      `,
+      {
+        project: activeProject,
+        graph: JSON.stringify({
+          blocks: data?.blocks ?? [],
+          edges: data?.edges ?? [],
+        }),
+      }
+    );
+    if (result?.data?.update_project?.affected_rows === 1) {
+      // Success
+      setGraphSaved(true);
+      console.debug("Graph saved", result);
+    } else {
+      // Fail
+      console.error("Cannot save graphl", result);
+    }
+  };
+
   let screenContent;
   if (screen === Screen.login && loginState !== "in") {
     screenContent = <Login />;
@@ -143,6 +174,14 @@ const App: React.FC = () => {
       <Footer>
         <span>{countOfBlocks} blocks</span>
         <span>{countOfEdges} edges</span>
+        {loginState === "in" &&
+          activeProject &&
+          countOfBlocks > 0 &&
+          countOfEdges > 0 && (
+            <Button onClick={handleSave} disabled={graphSaved}>
+              {graphSaved ? "Saved" : "Save"}
+            </Button>
+          )}
         <Button onClick={() => handleToggle(ControlAction.RESET)}>Reset</Button>
       </Footer>
     </Root>
