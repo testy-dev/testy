@@ -10,6 +10,7 @@ import {
 
 import { Block, Edge, UUID } from "../../types";
 import { write } from "../../helpers/model";
+import autoDistribute from "./autoDistribute";
 
 interface IProps {
   blocks: Block[];
@@ -53,6 +54,7 @@ const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
       link.setColor("#898989");
       model.addLink(link);
     });
+    autoDistribute(engine);
   }, [blocks, edges, model]);
 
   return <DiagramWidget className="srd-demo-canvas" diagramEngine={engine} />;
