@@ -11,12 +11,28 @@ import { ControlAction } from "../constants";
 import { getStatus, pushBlock, reset, setStatus } from "../helpers/model";
 import codeGenerator from "../helpers/codeGenerator";
 
+const ports = new Map<number, chrome.runtime.Port>();
 const session: Session = {
   isPending: false,
   lastURL: "",
   originalHost: "",
-  activePort: null,
 };
+
+async function getActiveTab(): Promise<chrome.tabs.Tab | null> {
+  return new Promise(resolve =>
+    chrome.tabs.query({ active: true }, result => {
+      resolve(result?.[0]);
+    })
+  );
+}
+
+async function getActivePort() {
+  const tab = await getActiveTab();
+  if (!tab?.id) return null;
+  const port = ports.get(tab.id);
+  if (!port) return null;
+  return port;
+}
 
 /**
  * Controls the flow of execution by enforcing synchronicity.
@@ -47,26 +63,27 @@ function handleEvents(event: ParsedEvent): void {
   }
 }
 
-function checkForBadNavigation(
-  details: chrome.webNavigation.WebNavigationTransitionCallbackDetails
-): void {
-  if (
-    details.frameId === 0 &&
-    (!details.url.includes(session.originalHost || "") ||
-      details.transitionQualifiers.includes("forward_back") ||
-      details.transitionQualifiers.includes("from_address_bar"))
-  ) {
-    control(stopRecording);
-  }
-}
+// TODO: I am not sure if we need to check bad navigation
+// function checkForBadNavigation(
+//   details: chrome.webNavigation.WebNavigationTransitionCallbackDetails
+// ): void {
+//   if (
+//     details.frameId === 0 &&
+//     (!details.url.includes(session.originalHost || "") ||
+//       details.transitionQualifiers.includes("forward_back") ||
+//       details.transitionQualifiers.includes("from_address_bar"))
+//   ) {
+//     control(stopRecording);
+//   }
+// }
 
-/**
- * Add listeners and push visit block
- */
-function handleFirstConnection(): void {
-  if (session.activePort) session.originalHost = session.activePort.name;
-  chrome.webNavigation.onCommitted.addListener(checkForBadNavigation);
-}
+// /**
+//  * Add listeners and push visit block
+//  */
+// function handleFirstConnection(): void {
+//   if (session.activePort) session.originalHost = session.activePort.name;
+//   chrome.webNavigation.onCommitted.addListener(checkForBadNavigation);
+// }
 
 /**
  * Handles any new connections from event recorders.
@@ -77,33 +94,29 @@ function handleFirstConnection(): void {
  * @param portToEventRecorder
  */
 async function handleNewConnection(portToEventRecorder: chrome.runtime.Port) {
-  session.activePort = portToEventRecorder;
-  session.activePort.onMessage.addListener(handleEvents);
-  if ((await getStatus()) !== "on") handleFirstConnection();
+  if (portToEventRecorder.sender?.tab?.id) {
+    ports.set(portToEventRecorder.sender?.tab?.id, portToEventRecorder);
+  }
+
+  portToEventRecorder.onMessage.addListener(handleEvents);
+  portToEventRecorder.onDisconnect.addListener(port => {
+    if (port.sender?.tab?.id) ports.delete(port.sender?.tab?.id);
+  });
+  // if ((await getStatus()) !== "on") handleFirstConnection();
 }
 
 /**
  * Starts the recording process by injecting the event recorder into the active tab.
  */
 async function startRecording(): Promise<void> {
-  if (session.activePort) {
-    session.activePort.postMessage({
-      type: ControlAction.START,
-    });
-    if (
-      session.activePort?.sender?.url &&
-      session.lastURL !== session.activePort?.sender?.url
-    ) {
-      const visitBlock = codeGenerator.createVisit(
-        session.activePort.sender.url
-      );
-      session.lastURL = session.activePort.sender.url;
-      const block = await pushBlock(visitBlock);
-      chrome.runtime.sendMessage({
-        type: ControlAction.PUSH,
-        payload: block,
-      });
-    }
+  const activePort = await getActivePort();
+  if (!activePort) return;
+  activePort.postMessage({
+    type: ControlAction.START,
+  });
+  if (activePort?.sender?.url && session.lastURL !== activePort?.sender?.url) {
+    session.lastURL = activePort.sender.url;
+    await pushBlock(codeGenerator.createVisit(activePort.sender.url));
   }
   await setStatus("on");
   chrome.browserAction.setIcon({ path: "cypressconeREC.png" });
@@ -113,11 +126,12 @@ async function startRecording(): Promise<void> {
  * Stops recording and sends back code to the view.
  */
 async function stopRecording(): Promise<void> {
-  if (session.activePort)
-    session.activePort.postMessage({
+  const activePort = await getActivePort();
+  if (activePort)
+    activePort.postMessage({
       type: ControlAction.STOP,
     });
-  chrome.webNavigation.onCommitted.removeListener(checkForBadNavigation);
+  // chrome.webNavigation.onCommitted.removeListener(checkForBadNavigation);
   await setStatus("paused");
   session.originalHost = ""; // todo: ???
   chrome.browserAction.setIcon({ path: "cypressconeICON.png" });
@@ -154,7 +168,8 @@ async function handleMessage(message: ActionWithPayload): Promise<void> {
       await resetRecording();
       break;
     default:
-      if (session.activePort) session.activePort.postMessage(message);
+      const activePort = await getActivePort();
+      if (activePort) activePort.postMessage(message);
   }
 }
 
