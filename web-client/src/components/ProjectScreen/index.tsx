@@ -5,7 +5,7 @@ import { graphql } from "@gqless/react";
 import { useHistory, useParams } from "react-router-dom";
 
 import { gql, useQuery } from "@apollo/client";
-import { query } from "../../graphql";
+import { fetchQuery, query } from "../../graphql";
 import Logo from "../Logo";
 
 const ProjectScreen: React.FC = () => {
@@ -51,7 +51,7 @@ interface SlugInput {
 }
 
 const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
-  const name = query.project({
+  const project = query.project({
     where: {
       // @ts-ignore
       slug: { _eq: projectSlug },
@@ -62,8 +62,28 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
         },
       },
     },
-  })?.[0].name;
-  return <Heading level={1}>Project {name}</Heading>;
+  })?.[0];
+  const name = project.name;
+  const id = project.id;
+  return (
+    <Box direction="row" align="center" justify="between">
+      <Heading level={1}>Project {name}</Heading>
+      <Button
+        label="Run now"
+        primary
+        onClick={() => {
+          if(!id) return;
+          // language=graphql
+          fetchQuery(
+            `mutation ($project_id: Int!) {
+  run_project(project_id: $project_id)
+}`,
+            { project_id: id }
+          );
+        }}
+      />
+    </Box>
+  );
 });
 
 const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {

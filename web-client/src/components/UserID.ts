@@ -1,8 +1,10 @@
-function UserID(this: any) {
-  this.userID = 0;
-  this.getUser = () => this.userID;
-  this.setUser = (value: number) => this.userID = value;
-  return this;
-}
+let userID = 0;
 
-export default UserID();
+export default {
+  getUser() {
+    return userID;
+  },
+  setUser(value: number) {
+    userID = value;
+  }
+};
