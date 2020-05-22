@@ -18,7 +18,6 @@ export interface Session {
   isPending: boolean;
   lastURL: string;
   originalHost?: string;
-  activePort: chrome.runtime.Port | null;
 }
 
 export interface ActionWithPayload {
