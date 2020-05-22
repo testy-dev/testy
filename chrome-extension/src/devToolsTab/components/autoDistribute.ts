@@ -2,9 +2,10 @@ import * as dagre from "dagre";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 import { cloneDeep } from "lodash";
 
+// Width and height is swapped because of use "dagre" lib from left to right
 const size = {
-  width: 60,
-  height: 60,
+  width: 50, // this is height
+  height: 110, // this is width
 };
 
 function autoDistribute(engine: DiagramEngine) {
@@ -28,8 +29,11 @@ export function distributeElements(model) {
   const nodes = distributeGraph(clonedModel);
   nodes.forEach(node => {
     const modelNode = clonedModel.nodes.find(item => item.id === node.id);
-    modelNode.x = node.x;
-    modelNode.y = node.y;
+    // Make graph from left to right
+    // noinspection JSSuspiciousNameCombination
+    modelNode.x = node.y;
+    // noinspection JSSuspiciousNameCombination
+    modelNode.y = node.x;
   });
   return clonedModel;
 }
