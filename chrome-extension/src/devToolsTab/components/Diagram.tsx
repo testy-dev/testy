@@ -49,7 +49,9 @@ const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
     edges.forEach(([outBlockId, inBlockId]) => {
       const outPort = nodes[outBlockId].getOutPorts()[0];
       const inPort = nodes[inBlockId].getInPorts()[0];
-      model.addLink(outPort.link(inPort));
+      const link = outPort.link(inPort);
+      link.setColor("#898989");
+      model.addLink(link);
     });
   }, [blocks, edges, model]);
 
