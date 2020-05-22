@@ -45,6 +45,6 @@ RUN echo  " node version:    $(node -v) \n" \
 
 WORKDIR "/app"
 
-ENTRYPOINT ["cypress", "run", "--browser", "chrome", "/app/dist/index.js"]
+ENTRYPOINT ["cypress", "run", "--browser", "chrome", "/app/dist/browser.js"]
 #ENTRYPOINT ["docker-entrypoint.sh"]
 

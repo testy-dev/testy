@@ -1,10 +1,10 @@
 version: '3.6'
 
 services:
-  simulator:
+  runner:
     build:
-      dockerfile: ../simulator/dev.Dockerfile
-      context: ../simulator
+      dockerfile: ./Dockerfile
+      context: .
     volumes:
     - .:/app
     ports:
