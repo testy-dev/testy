@@ -20,40 +20,6 @@ export const schema = {
       extension: ((extensions as any) || {}).Boolean,
     });
   },
-  get Boolean_comparison_exp() {
-    return new InputNode(
-      {
-        get _eq() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _gt() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _gte() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _in() {
-          return new InputNodeField(new ArrayNode(schema.Boolean, true), true);
-        },
-        get _is_null() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _lt() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _lte() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _neq() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _nin() {
-          return new InputNodeField(new ArrayNode(schema.Boolean, true), true);
-        },
-      },
-      { name: "Boolean_comparison_exp" }
-    );
-  },
   get Float() {
     return new ScalarNode({
       name: "Float",
@@ -104,6 +70,19 @@ export const schema = {
         },
       },
       { name: "Int_comparison_exp" }
+    );
+  },
+  get RunProjectOutput() {
+    return new ObjectNode(
+      {
+        get status() {
+          return new FieldNode(schema.Boolean, undefined, false);
+        },
+      },
+      {
+        name: "RunProjectOutput",
+        extension: ((extensions as any) || {}).RunProjectOutput,
+      }
     );
   },
   get SampleInput() {
@@ -391,111 +370,100 @@ export const schema = {
   get __TypeKind() {
     return new EnumNode({ name: "__TypeKind" });
   },
-  get command_run_history() {
-    return new ObjectNode(
-      {
-        get command_id() {
-          return new FieldNode(schema.uuid, undefined, false);
-        },
-        get created_at() {
-          return new FieldNode(schema.timestamptz, undefined, false);
-        },
-        get fail() {
-          return new FieldNode(schema.Boolean, undefined, false);
-        },
-        get id() {
-          return new FieldNode(schema.uuid, undefined, false);
-        },
-        get missconfiguration() {
-          return new FieldNode(schema.Boolean, undefined, false);
-        },
-        get running_time() {
-          return new FieldNode(schema.Int, undefined, false);
-        },
-      },
-      {
-        name: "command_run_history",
-        extension: ((extensions as any) || {}).command_run_history,
-      }
-    );
+  get json() {
+    return new ScalarNode({
+      name: "json",
+      extension: ((extensions as any) || {}).json,
+    });
   },
-  get command_run_history_bool_exp() {
+  get json_comparison_exp() {
     return new InputNode(
       {
-        get _and() {
-          return new InputNodeField(
-            new ArrayNode(schema.command_run_history_bool_exp, true),
-            true
-          );
+        get _eq() {
+          return new InputNodeField(schema.json, true);
         },
-        get _not() {
-          return new InputNodeField(schema.command_run_history_bool_exp, true);
+        get _gt() {
+          return new InputNodeField(schema.json, true);
         },
-        get _or() {
-          return new InputNodeField(
-            new ArrayNode(schema.command_run_history_bool_exp, true),
-            true
-          );
+        get _gte() {
+          return new InputNodeField(schema.json, true);
         },
-        get command_id() {
-          return new InputNodeField(schema.uuid_comparison_exp, true);
+        get _in() {
+          return new InputNodeField(new ArrayNode(schema.json, true), true);
         },
-        get created_at() {
-          return new InputNodeField(schema.timestamptz_comparison_exp, true);
+        get _is_null() {
+          return new InputNodeField(schema.Boolean, true);
         },
-        get fail() {
-          return new InputNodeField(schema.Boolean_comparison_exp, true);
+        get _lt() {
+          return new InputNodeField(schema.json, true);
         },
-        get id() {
-          return new InputNodeField(schema.uuid_comparison_exp, true);
+        get _lte() {
+          return new InputNodeField(schema.json, true);
         },
-        get missconfiguration() {
-          return new InputNodeField(schema.Boolean_comparison_exp, true);
+        get _neq() {
+          return new InputNodeField(schema.json, true);
         },
-        get running_time() {
-          return new InputNodeField(schema.Int_comparison_exp, true);
+        get _nin() {
+          return new InputNodeField(new ArrayNode(schema.json, true), true);
         },
       },
-      { name: "command_run_history_bool_exp" }
+      { name: "json_comparison_exp" }
     );
   },
-  get command_run_history_order_by() {
+  get jsonb() {
+    return new ScalarNode({
+      name: "jsonb",
+      extension: ((extensions as any) || {}).jsonb,
+    });
+  },
+  get jsonb_comparison_exp() {
     return new InputNode(
       {
-        get command_id() {
-          return new InputNodeField(schema.order_by, true);
+        get _contained_in() {
+          return new InputNodeField(schema.jsonb, true);
         },
-        get created_at() {
-          return new InputNodeField(schema.order_by, true);
+        get _contains() {
+          return new InputNodeField(schema.jsonb, true);
         },
-        get fail() {
-          return new InputNodeField(schema.order_by, true);
+        get _eq() {
+          return new InputNodeField(schema.jsonb, true);
         },
-        get id() {
-          return new InputNodeField(schema.order_by, true);
+        get _gt() {
+          return new InputNodeField(schema.jsonb, true);
         },
-        get missconfiguration() {
-          return new InputNodeField(schema.order_by, true);
+        get _gte() {
+          return new InputNodeField(schema.jsonb, true);
         },
-        get running_time() {
-          return new InputNodeField(schema.order_by, true);
+        get _has_key() {
+          return new InputNodeField(schema.String, true);
+        },
+        get _has_keys_all() {
+          return new InputNodeField(new ArrayNode(schema.String, true), true);
+        },
+        get _has_keys_any() {
+          return new InputNodeField(new ArrayNode(schema.String, true), true);
+        },
+        get _in() {
+          return new InputNodeField(new ArrayNode(schema.jsonb, true), true);
+        },
+        get _is_null() {
+          return new InputNodeField(schema.Boolean, true);
+        },
+        get _lt() {
+          return new InputNodeField(schema.jsonb, true);
+        },
+        get _lte() {
+          return new InputNodeField(schema.jsonb, true);
+        },
+        get _neq() {
+          return new InputNodeField(schema.jsonb, true);
+        },
+        get _nin() {
+          return new InputNodeField(new ArrayNode(schema.jsonb, true), true);
         },
       },
-      { name: "command_run_history_order_by" }
+      { name: "jsonb_comparison_exp" }
     );
-  },
-  get command_run_history_pk_columns_input() {
-    return new InputNode(
-      {
-        get id() {
-          return new InputNodeField(schema.uuid, false);
-        },
-      },
-      { name: "command_run_history_pk_columns_input" }
-    );
-  },
-  get command_run_history_select_column() {
-    return new EnumNode({ name: "command_run_history_select_column" });
   },
   get mutation_root() {
     return new ObjectNode(
@@ -729,6 +697,20 @@ export const schema = {
             true
           );
         },
+        get run_project() {
+          return new FieldNode(
+            schema.uuid,
+            new Arguments(
+              {
+                get project_id() {
+                  return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            false
+          );
+        },
         get update_organization() {
           return new FieldNode(
             schema.organization_mutation_response,
@@ -764,6 +746,30 @@ export const schema = {
           return new FieldNode(
             schema.project_mutation_response,
             new Arguments({
+              get _append() {
+                return new ArgumentsField(schema.project_append_input, true);
+              },
+              get _delete_at_path() {
+                return new ArgumentsField(
+                  schema.project_delete_at_path_input,
+                  true
+                );
+              },
+              get _delete_elem() {
+                return new ArgumentsField(
+                  schema.project_delete_elem_input,
+                  true
+                );
+              },
+              get _delete_key() {
+                return new ArgumentsField(
+                  schema.project_delete_key_input,
+                  true
+                );
+              },
+              get _prepend() {
+                return new ArgumentsField(schema.project_prepend_input, true);
+              },
               get _set() {
                 return new ArgumentsField(schema.project_set_input, true);
               },
@@ -778,6 +784,30 @@ export const schema = {
           return new FieldNode(
             schema.project,
             new Arguments({
+              get _append() {
+                return new ArgumentsField(schema.project_append_input, true);
+              },
+              get _delete_at_path() {
+                return new ArgumentsField(
+                  schema.project_delete_at_path_input,
+                  true
+                );
+              },
+              get _delete_elem() {
+                return new ArgumentsField(
+                  schema.project_delete_elem_input,
+                  true
+                );
+              },
+              get _delete_key() {
+                return new ArgumentsField(
+                  schema.project_delete_key_input,
+                  true
+                );
+              },
+              get _prepend() {
+                return new ArgumentsField(schema.project_prepend_input, true);
+              },
               get _set() {
                 return new ArgumentsField(schema.project_set_input, true);
               },
@@ -1283,6 +1313,17 @@ export const schema = {
   get project() {
     return new ObjectNode(
       {
+        get graph() {
+          return new FieldNode(
+            schema.jsonb,
+            new Arguments({
+              get path() {
+                return new ArgumentsField(schema.String, true);
+              },
+            }),
+            true
+          );
+        },
         get id() {
           return new FieldNode(schema.Int, undefined, false);
         },
@@ -1366,6 +1407,16 @@ export const schema = {
       { name: "project", extension: ((extensions as any) || {}).project }
     );
   },
+  get project_append_input() {
+    return new InputNode(
+      {
+        get graph() {
+          return new InputNodeField(schema.jsonb, true);
+        },
+      },
+      { name: "project_append_input" }
+    );
+  },
   get project_arr_rel_insert_input() {
     return new InputNode(
       {
@@ -1400,6 +1451,9 @@ export const schema = {
             true
           );
         },
+        get graph() {
+          return new InputNodeField(schema.jsonb_comparison_exp, true);
+        },
         get id() {
           return new InputNodeField(schema.Int_comparison_exp, true);
         },
@@ -1425,9 +1479,42 @@ export const schema = {
   get project_constraint() {
     return new EnumNode({ name: "project_constraint" });
   },
+  get project_delete_at_path_input() {
+    return new InputNode(
+      {
+        get graph() {
+          return new InputNodeField(new ArrayNode(schema.String, true), true);
+        },
+      },
+      { name: "project_delete_at_path_input" }
+    );
+  },
+  get project_delete_elem_input() {
+    return new InputNode(
+      {
+        get graph() {
+          return new InputNodeField(schema.Int, true);
+        },
+      },
+      { name: "project_delete_elem_input" }
+    );
+  },
+  get project_delete_key_input() {
+    return new InputNode(
+      {
+        get graph() {
+          return new InputNodeField(schema.String, true);
+        },
+      },
+      { name: "project_delete_key_input" }
+    );
+  },
   get project_insert_input() {
     return new InputNode(
       {
+        get graph() {
+          return new InputNodeField(schema.jsonb, true);
+        },
         get name() {
           return new InputNodeField(schema.String, true);
         },
@@ -1502,6 +1589,9 @@ export const schema = {
   get project_order_by() {
     return new InputNode(
       {
+        get graph() {
+          return new InputNodeField(schema.order_by, true);
+        },
         get id() {
           return new InputNodeField(schema.order_by, true);
         },
@@ -1535,6 +1625,16 @@ export const schema = {
         },
       },
       { name: "project_pk_columns_input" }
+    );
+  },
+  get project_prepend_input() {
+    return new InputNode(
+      {
+        get graph() {
+          return new InputNodeField(schema.jsonb, true);
+        },
+      },
+      { name: "project_prepend_input" }
     );
   },
   get project_run_history() {
@@ -2407,6 +2507,9 @@ export const schema = {
   get project_set_input() {
     return new InputNode(
       {
+        get graph() {
+          return new InputNodeField(schema.jsonb, true);
+        },
         get name() {
           return new InputNodeField(schema.String, true);
         },
@@ -2423,52 +2526,6 @@ export const schema = {
   get query_root() {
     return new ObjectNode(
       {
-        get command_run_history() {
-          return new FieldNode(
-            new ArrayNode(schema.command_run_history, false),
-            new Arguments({
-              get distinct_on() {
-                return new ArgumentsField(
-                  new ArrayNode(schema.command_run_history_select_column, true),
-                  true
-                );
-              },
-              get limit() {
-                return new ArgumentsField(schema.Int, true);
-              },
-              get offset() {
-                return new ArgumentsField(schema.Int, true);
-              },
-              get order_by() {
-                return new ArgumentsField(
-                  new ArrayNode(schema.command_run_history_order_by, true),
-                  true
-                );
-              },
-              get where() {
-                return new ArgumentsField(
-                  schema.command_run_history_bool_exp,
-                  true
-                );
-              },
-            }),
-            false
-          );
-        },
-        get command_run_history_by_pk() {
-          return new FieldNode(
-            schema.command_run_history,
-            new Arguments(
-              {
-                get id() {
-                  return new ArgumentsField(schema.uuid, false);
-                },
-              },
-              true
-            ),
-            true
-          );
-        },
         get organization() {
           return new FieldNode(
             new ArrayNode(schema.organization, false),
@@ -2675,6 +2732,20 @@ export const schema = {
               {
                 get id() {
                   return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
+        get run_project() {
+          return new FieldNode(
+            schema.run_project,
+            new Arguments(
+              {
+                get id() {
+                  return new ArgumentsField(schema.uuid, false);
                 },
               },
               true
@@ -2729,55 +2800,31 @@ export const schema = {
       { name: "query_root", extension: ((extensions as any) || {}).query_root }
     );
   },
+  get run_project() {
+    return new ObjectNode(
+      {
+        get created_at() {
+          return new FieldNode(schema.timestamptz, undefined, true);
+        },
+        get errors() {
+          return new FieldNode(schema.json, undefined, true);
+        },
+        get id() {
+          return new FieldNode(schema.uuid, undefined, true);
+        },
+        get output() {
+          return new FieldNode(schema.RunProjectOutput, undefined, true);
+        },
+      },
+      {
+        name: "run_project",
+        extension: ((extensions as any) || {}).run_project,
+      }
+    );
+  },
   get subscription_root() {
     return new ObjectNode(
       {
-        get command_run_history() {
-          return new FieldNode(
-            new ArrayNode(schema.command_run_history, false),
-            new Arguments({
-              get distinct_on() {
-                return new ArgumentsField(
-                  new ArrayNode(schema.command_run_history_select_column, true),
-                  true
-                );
-              },
-              get limit() {
-                return new ArgumentsField(schema.Int, true);
-              },
-              get offset() {
-                return new ArgumentsField(schema.Int, true);
-              },
-              get order_by() {
-                return new ArgumentsField(
-                  new ArrayNode(schema.command_run_history_order_by, true),
-                  true
-                );
-              },
-              get where() {
-                return new ArgumentsField(
-                  schema.command_run_history_bool_exp,
-                  true
-                );
-              },
-            }),
-            false
-          );
-        },
-        get command_run_history_by_pk() {
-          return new FieldNode(
-            schema.command_run_history,
-            new Arguments(
-              {
-                get id() {
-                  return new ArgumentsField(schema.uuid, false);
-                },
-              },
-              true
-            ),
-            true
-          );
-        },
         get organization() {
           return new FieldNode(
             new ArrayNode(schema.organization, false),
@@ -2984,6 +3031,20 @@ export const schema = {
               {
                 get id() {
                   return new ArgumentsField(schema.Int, false);
+                },
+              },
+              true
+            ),
+            true
+          );
+        },
+        get run_project() {
+          return new FieldNode(
+            schema.run_project,
+            new Arguments(
+              {
+                get id() {
+                  return new ArgumentsField(schema.uuid, false);
                 },
               },
               true
@@ -3300,40 +3361,6 @@ export const schema = {
       name: "uuid",
       extension: ((extensions as any) || {}).uuid,
     });
-  },
-  get uuid_comparison_exp() {
-    return new InputNode(
-      {
-        get _eq() {
-          return new InputNodeField(schema.uuid, true);
-        },
-        get _gt() {
-          return new InputNodeField(schema.uuid, true);
-        },
-        get _gte() {
-          return new InputNodeField(schema.uuid, true);
-        },
-        get _in() {
-          return new InputNodeField(new ArrayNode(schema.uuid, true), true);
-        },
-        get _is_null() {
-          return new InputNodeField(schema.Boolean, true);
-        },
-        get _lt() {
-          return new InputNodeField(schema.uuid, true);
-        },
-        get _lte() {
-          return new InputNodeField(schema.uuid, true);
-        },
-        get _neq() {
-          return new InputNodeField(schema.uuid, true);
-        },
-        get _nin() {
-          return new InputNodeField(new ArrayNode(schema.uuid, true), true);
-        },
-      },
-      { name: "uuid_comparison_exp" }
-    );
   },
 };
 

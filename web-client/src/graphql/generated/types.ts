@@ -21,22 +21,6 @@ type t_Boolean<T extends boolean = boolean> = ScalarType<
 >;
 
 /**
- * @name Boolean_comparison_exp
- * @type INPUT_OBJECT
- */
-export type Boolean_comparison_exp = {
-  _eq: boolean | null;
-  _gt: boolean | null;
-  _gte: boolean | null;
-  _in: boolean[] | null;
-  _is_null: boolean | null;
-  _lt: boolean | null;
-  _lte: boolean | null;
-  _neq: boolean | null;
-  _nin: boolean[] | null;
-};
-
-/**
  * @name Float
  * @type SCALAR
  */
@@ -59,16 +43,28 @@ type t_Int<T extends number = number> = ScalarType<T, Extension<"Int">>;
  * @type INPUT_OBJECT
  */
 export type Int_comparison_exp = {
-  _eq: number | null;
-  _gt: number | null;
-  _gte: number | null;
-  _in: number[] | null;
-  _is_null: boolean | null;
-  _lt: number | null;
-  _lte: number | null;
-  _neq: number | null;
-  _nin: number[] | null;
+  _eq?: number | null;
+  _gt?: number | null;
+  _gte?: number | null;
+  _in?: number[] | null;
+  _is_null?: boolean | null;
+  _lt?: number | null;
+  _lte?: number | null;
+  _neq?: number | null;
+  _nin?: number[] | null;
 };
+
+/**
+ * @name RunProjectOutput
+ * @type OBJECT
+ */
+type t_RunProjectOutput = FieldsType<
+  {
+    __typename: t_String<"RunProjectOutput">;
+    status: t_Boolean;
+  },
+  Extension<"RunProjectOutput">
+>;
 
 /**
  * @name SampleInput
@@ -99,21 +95,21 @@ type t_String<T extends string = string> = ScalarType<T, Extension<"String">>;
  * @type INPUT_OBJECT
  */
 export type String_comparison_exp = {
-  _eq: string | null;
-  _gt: string | null;
-  _gte: string | null;
-  _ilike: string | null;
-  _in: string[] | null;
-  _is_null: boolean | null;
-  _like: string | null;
-  _lt: string | null;
-  _lte: string | null;
-  _neq: string | null;
-  _nilike: string | null;
-  _nin: string[] | null;
-  _nlike: string | null;
-  _nsimilar: string | null;
-  _similar: string | null;
+  _eq?: string | null;
+  _gt?: string | null;
+  _gte?: string | null;
+  _ilike?: string | null;
+  _in?: string[] | null;
+  _is_null?: boolean | null;
+  _like?: string | null;
+  _lt?: string | null;
+  _lte?: string | null;
+  _neq?: string | null;
+  _nilike?: string | null;
+  _nin?: string[] | null;
+  _nlike?: string | null;
+  _nsimilar?: string | null;
+  _similar?: string | null;
 };
 
 /**
@@ -124,7 +120,7 @@ type t___Directive = FieldsType<
   {
     __typename: t_String<"__Directive">;
     args: t___InputValue[];
-    description: t_String | null;
+    description?: t_String | null;
     locations: t___DirectiveLocation[];
     name: t_String;
   },
@@ -163,8 +159,8 @@ type t___DirectiveLocation = EnumType<
 type t___EnumValue = FieldsType<
   {
     __typename: t_String<"__EnumValue">;
-    deprecationReason: t_String | null;
-    description: t_String | null;
+    deprecationReason?: t_String | null;
+    description?: t_String | null;
     isDeprecated: t_Boolean;
     name: t_String;
   },
@@ -179,8 +175,8 @@ type t___Field = FieldsType<
   {
     __typename: t_String<"__Field">;
     args: t___InputValue[];
-    deprecationReason: t_String | null;
-    description: t_String | null;
+    deprecationReason?: t_String | null;
+    description?: t_String | null;
     isDeprecated: t_Boolean;
     name: t_String;
     type: t___Type;
@@ -195,8 +191,8 @@ type t___Field = FieldsType<
 type t___InputValue = FieldsType<
   {
     __typename: t_String<"__InputValue">;
-    defaultValue: t_String | null;
-    description: t_String | null;
+    defaultValue?: t_String | null;
+    description?: t_String | null;
     name: t_String;
     type: t___Type;
   },
@@ -211,9 +207,9 @@ type t___Schema = FieldsType<
   {
     __typename: t_String<"__Schema">;
     directives: t___Directive[];
-    mutationType: t___Type | null;
+    mutationType?: t___Type | null;
     queryType: t___Type;
-    subscriptionType: t___Type | null;
+    subscriptionType?: t___Type | null;
     types: t___Type[];
   },
   Extension<"__Schema">
@@ -226,21 +222,21 @@ type t___Schema = FieldsType<
 type t___Type = FieldsType<
   {
     __typename: t_String<"__Type">;
-    description: t_String | null;
-    enumValues: FieldsTypeArg<
+    description?: t_String | null;
+    enumValues?: FieldsTypeArg<
       { includeDeprecated?: boolean | null },
       t___EnumValue[] | null
     >;
-    fields: FieldsTypeArg<
+    fields?: FieldsTypeArg<
       { includeDeprecated?: boolean | null },
       t___Field[] | null
     >;
-    inputFields: t___InputValue[] | null;
-    interfaces: t___Type[] | null;
+    inputFields?: t___InputValue[] | null;
+    interfaces?: t___Type[] | null;
     kind: t___TypeKind;
-    name: t_String | null;
-    ofType: t___Type | null;
-    possibleTypes: t___Type[] | null;
+    name?: t_String | null;
+    ofType?: t___Type | null;
+    possibleTypes?: t___Type[] | null;
   },
   Extension<"__Type">
 >;
@@ -261,69 +257,53 @@ type t___TypeKind = EnumType<
 >;
 
 /**
- * @name command_run_history
- * @type OBJECT
+ * @name json
+ * @type SCALAR
  */
-type t_command_run_history = FieldsType<
-  {
-    __typename: t_String<"command_run_history">;
-    command_id: t_uuid;
-    created_at: t_timestamptz;
-    fail: t_Boolean;
-    id: t_uuid;
-    missconfiguration: t_Boolean;
-    running_time: t_Int;
-  },
-  Extension<"command_run_history">
->;
+type t_json<T extends any = any> = ScalarType<T, Extension<"json">>;
 
 /**
- * @name command_run_history_bool_exp
+ * @name json_comparison_exp
  * @type INPUT_OBJECT
  */
-export type command_run_history_bool_exp = {
-  _and: (command_run_history_bool_exp | null)[] | null;
-  _not: command_run_history_bool_exp | null;
-  _or: (command_run_history_bool_exp | null)[] | null;
-  command_id: uuid_comparison_exp | null;
-  created_at: timestamptz_comparison_exp | null;
-  fail: Boolean_comparison_exp | null;
-  id: uuid_comparison_exp | null;
-  missconfiguration: Boolean_comparison_exp | null;
-  running_time: Int_comparison_exp | null;
+export type json_comparison_exp = {
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 };
 
 /**
- * @name command_run_history_order_by
+ * @name jsonb
+ * @type SCALAR
+ */
+type t_jsonb<T extends any = any> = ScalarType<T, Extension<"jsonb">>;
+
+/**
+ * @name jsonb_comparison_exp
  * @type INPUT_OBJECT
  */
-export type command_run_history_order_by = {
-  command_id: order_by | null;
-  created_at: order_by | null;
-  fail: order_by | null;
-  id: order_by | null;
-  missconfiguration: order_by | null;
-  running_time: order_by | null;
+export type jsonb_comparison_exp = {
+  _contained_in?: any | null;
+  _contains?: any | null;
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _has_key?: string | null;
+  _has_keys_all?: string[] | null;
+  _has_keys_any?: string[] | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 };
-
-/**
- * @name command_run_history_pk_columns_input
- * @type INPUT_OBJECT
- */
-export type command_run_history_pk_columns_input = { id: any };
-
-/**
- * @name command_run_history_select_column
- * @type ENUM
- */
-type t_command_run_history_select_column = EnumType<
-  | "command_id"
-  | "created_at"
-  | "fail"
-  | "id"
-  | "missconfiguration"
-  | "running_time"
->;
 
 /**
  * @name mutation_root
@@ -336,7 +316,7 @@ type t_mutation_root = FieldsType<
     /**
      * delete data from the table: "organization"
      */
-    delete_organization: FieldsTypeArg<
+    delete_organization?: FieldsTypeArg<
       { where: organization_bool_exp },
       t_organization_mutation_response | null
     >;
@@ -344,7 +324,7 @@ type t_mutation_root = FieldsType<
     /**
      * delete single row from the table: "organization"
      */
-    delete_organization_by_pk: FieldsTypeArg<
+    delete_organization_by_pk?: FieldsTypeArg<
       { id: number },
       t_organization | null
     >;
@@ -352,7 +332,7 @@ type t_mutation_root = FieldsType<
     /**
      * delete data from the table: "organization_invite_user"
      */
-    delete_organization_invite_user: FieldsTypeArg<
+    delete_organization_invite_user?: FieldsTypeArg<
       { where: organization_invite_user_bool_exp },
       t_organization_invite_user_mutation_response | null
     >;
@@ -360,7 +340,7 @@ type t_mutation_root = FieldsType<
     /**
      * delete single row from the table: "organization_invite_user"
      */
-    delete_organization_invite_user_by_pk: FieldsTypeArg<
+    delete_organization_invite_user_by_pk?: FieldsTypeArg<
       { id: number },
       t_organization_invite_user | null
     >;
@@ -368,7 +348,7 @@ type t_mutation_root = FieldsType<
     /**
      * delete data from the table: "project"
      */
-    delete_project: FieldsTypeArg<
+    delete_project?: FieldsTypeArg<
       { where: project_bool_exp },
       t_project_mutation_response | null
     >;
@@ -376,12 +356,12 @@ type t_mutation_root = FieldsType<
     /**
      * delete single row from the table: "project"
      */
-    delete_project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
+    delete_project_by_pk?: FieldsTypeArg<{ id: number }, t_project | null>;
 
     /**
      * insert data into the table: "organization"
      */
-    insert_organization: FieldsTypeArg<
+    insert_organization?: FieldsTypeArg<
       {
         objects: organization_insert_input[];
         on_conflict?: organization_on_conflict | null;
@@ -392,7 +372,7 @@ type t_mutation_root = FieldsType<
     /**
      * insert data into the table: "organization_invite_user"
      */
-    insert_organization_invite_user: FieldsTypeArg<
+    insert_organization_invite_user?: FieldsTypeArg<
       { objects: organization_invite_user_insert_input[] },
       t_organization_invite_user_mutation_response | null
     >;
@@ -400,7 +380,7 @@ type t_mutation_root = FieldsType<
     /**
      * insert a single row into the table: "organization_invite_user"
      */
-    insert_organization_invite_user_one: FieldsTypeArg<
+    insert_organization_invite_user_one?: FieldsTypeArg<
       { object: organization_invite_user_insert_input },
       t_organization_invite_user | null
     >;
@@ -408,7 +388,7 @@ type t_mutation_root = FieldsType<
     /**
      * insert a single row into the table: "organization"
      */
-    insert_organization_one: FieldsTypeArg<
+    insert_organization_one?: FieldsTypeArg<
       {
         object: organization_insert_input;
         on_conflict?: organization_on_conflict | null;
@@ -419,7 +399,7 @@ type t_mutation_root = FieldsType<
     /**
      * insert data into the table: "project"
      */
-    insert_project: FieldsTypeArg<
+    insert_project?: FieldsTypeArg<
       {
         objects: project_insert_input[];
         on_conflict?: project_on_conflict | null;
@@ -430,7 +410,7 @@ type t_mutation_root = FieldsType<
     /**
      * insert a single row into the table: "project"
      */
-    insert_project_one: FieldsTypeArg<
+    insert_project_one?: FieldsTypeArg<
       {
         object: project_insert_input;
         on_conflict?: project_on_conflict | null;
@@ -441,7 +421,7 @@ type t_mutation_root = FieldsType<
     /**
      * insert data into the table: "user"
      */
-    insert_user: FieldsTypeArg<
+    insert_user?: FieldsTypeArg<
       { objects: user_insert_input[]; on_conflict?: user_on_conflict | null },
       t_user_mutation_response | null
     >;
@@ -449,15 +429,20 @@ type t_mutation_root = FieldsType<
     /**
      * insert a single row into the table: "user"
      */
-    insert_user_one: FieldsTypeArg<
+    insert_user_one?: FieldsTypeArg<
       { object: user_insert_input; on_conflict?: user_on_conflict | null },
       t_user | null
     >;
 
     /**
+     * perform the action: "run_project"
+     */
+    run_project: FieldsTypeArg<{ project_id: number }, t_uuid>;
+
+    /**
      * update data of the table: "organization"
      */
-    update_organization: FieldsTypeArg<
+    update_organization?: FieldsTypeArg<
       { _set?: organization_set_input | null; where: organization_bool_exp },
       t_organization_mutation_response | null
     >;
@@ -465,7 +450,7 @@ type t_mutation_root = FieldsType<
     /**
      * update single row of the table: "organization"
      */
-    update_organization_by_pk: FieldsTypeArg<
+    update_organization_by_pk?: FieldsTypeArg<
       {
         _set?: organization_set_input | null;
         pk_columns: organization_pk_columns_input;
@@ -476,23 +461,39 @@ type t_mutation_root = FieldsType<
     /**
      * update data of the table: "project"
      */
-    update_project: FieldsTypeArg<
-      { _set?: project_set_input | null; where: project_bool_exp },
+    update_project?: FieldsTypeArg<
+      {
+        _append?: project_append_input | null;
+        _delete_at_path?: project_delete_at_path_input | null;
+        _delete_elem?: project_delete_elem_input | null;
+        _delete_key?: project_delete_key_input | null;
+        _prepend?: project_prepend_input | null;
+        _set?: project_set_input | null;
+        where: project_bool_exp;
+      },
       t_project_mutation_response | null
     >;
 
     /**
      * update single row of the table: "project"
      */
-    update_project_by_pk: FieldsTypeArg<
-      { _set?: project_set_input | null; pk_columns: project_pk_columns_input },
+    update_project_by_pk?: FieldsTypeArg<
+      {
+        _append?: project_append_input | null;
+        _delete_at_path?: project_delete_at_path_input | null;
+        _delete_elem?: project_delete_elem_input | null;
+        _delete_key?: project_delete_key_input | null;
+        _prepend?: project_prepend_input | null;
+        _set?: project_set_input | null;
+        pk_columns: project_pk_columns_input;
+      },
       t_project | null
     >;
 
     /**
      * update data of the table: "user"
      */
-    update_user: FieldsTypeArg<
+    update_user?: FieldsTypeArg<
       { _set?: user_set_input | null; where: user_bool_exp },
       t_user_mutation_response | null
     >;
@@ -500,7 +501,7 @@ type t_mutation_root = FieldsType<
     /**
      * update single row of the table: "user"
      */
-    update_user_by_pk: FieldsTypeArg<
+    update_user_by_pk?: FieldsTypeArg<
       { _set?: user_set_input | null; pk_columns: user_pk_columns_input },
       t_user | null
     >;
@@ -575,7 +576,7 @@ type t_organization = FieldsType<
  */
 export type organization_arr_rel_insert_input = {
   data: organization_insert_input[];
-  on_conflict: organization_on_conflict | null;
+  on_conflict?: organization_on_conflict | null;
 };
 
 /**
@@ -583,16 +584,16 @@ export type organization_arr_rel_insert_input = {
  * @type INPUT_OBJECT
  */
 export type organization_bool_exp = {
-  _and: (organization_bool_exp | null)[] | null;
-  _not: organization_bool_exp | null;
-  _or: (organization_bool_exp | null)[] | null;
-  id: Int_comparison_exp | null;
-  invited_users: organization_invite_user_bool_exp | null;
-  name: String_comparison_exp | null;
-  owner: user_bool_exp | null;
-  owner_id: Int_comparison_exp | null;
-  projects: project_bool_exp | null;
-  slug: String_comparison_exp | null;
+  _and?: (organization_bool_exp | null)[] | null;
+  _not?: organization_bool_exp | null;
+  _or?: (organization_bool_exp | null)[] | null;
+  id?: Int_comparison_exp | null;
+  invited_users?: organization_invite_user_bool_exp | null;
+  name?: String_comparison_exp | null;
+  owner?: user_bool_exp | null;
+  owner_id?: Int_comparison_exp | null;
+  projects?: project_bool_exp | null;
+  slug?: String_comparison_exp | null;
 };
 
 /**
@@ -608,12 +609,12 @@ type t_organization_constraint = EnumType<
  * @type INPUT_OBJECT
  */
 export type organization_insert_input = {
-  invited_users: organization_invite_user_arr_rel_insert_input | null;
-  name: string | null;
-  owner: user_obj_rel_insert_input | null;
-  owner_id: number | null;
-  projects: project_arr_rel_insert_input | null;
-  slug: string | null;
+  invited_users?: organization_invite_user_arr_rel_insert_input | null;
+  name?: string | null;
+  owner?: user_obj_rel_insert_input | null;
+  owner_id?: number | null;
+  projects?: project_arr_rel_insert_input | null;
+  slug?: string | null;
 };
 
 /**
@@ -649,14 +650,14 @@ export type organization_invite_user_arr_rel_insert_input = {
  * @type INPUT_OBJECT
  */
 export type organization_invite_user_bool_exp = {
-  _and: (organization_invite_user_bool_exp | null)[] | null;
-  _not: organization_invite_user_bool_exp | null;
-  _or: (organization_invite_user_bool_exp | null)[] | null;
-  created_at: timestamptz_comparison_exp | null;
-  email: String_comparison_exp | null;
-  id: Int_comparison_exp | null;
-  organization: organization_bool_exp | null;
-  organization_id: Int_comparison_exp | null;
+  _and?: (organization_invite_user_bool_exp | null)[] | null;
+  _not?: organization_invite_user_bool_exp | null;
+  _or?: (organization_invite_user_bool_exp | null)[] | null;
+  created_at?: timestamptz_comparison_exp | null;
+  email?: String_comparison_exp | null;
+  id?: Int_comparison_exp | null;
+  organization?: organization_bool_exp | null;
+  organization_id?: Int_comparison_exp | null;
 };
 
 /**
@@ -664,9 +665,9 @@ export type organization_invite_user_bool_exp = {
  * @type INPUT_OBJECT
  */
 export type organization_invite_user_insert_input = {
-  email: string | null;
-  organization: organization_obj_rel_insert_input | null;
-  organization_id: number | null;
+  email?: string | null;
+  organization?: organization_obj_rel_insert_input | null;
+  organization_id?: number | null;
 };
 
 /**
@@ -703,11 +704,11 @@ export type organization_invite_user_obj_rel_insert_input = {
  * @type INPUT_OBJECT
  */
 export type organization_invite_user_order_by = {
-  created_at: order_by | null;
-  email: order_by | null;
-  id: order_by | null;
-  organization: organization_order_by | null;
-  organization_id: order_by | null;
+  created_at?: order_by | null;
+  email?: order_by | null;
+  id?: order_by | null;
+  organization?: organization_order_by | null;
+  organization_id?: order_by | null;
 };
 
 /**
@@ -751,7 +752,7 @@ type t_organization_mutation_response = FieldsType<
  */
 export type organization_obj_rel_insert_input = {
   data: organization_insert_input;
-  on_conflict: organization_on_conflict | null;
+  on_conflict?: organization_on_conflict | null;
 };
 
 /**
@@ -761,7 +762,7 @@ export type organization_obj_rel_insert_input = {
 export type organization_on_conflict = {
   constraint: organization_constraint;
   update_columns: organization_update_column[];
-  where: organization_bool_exp | null;
+  where?: organization_bool_exp | null;
 };
 
 /**
@@ -769,11 +770,11 @@ export type organization_on_conflict = {
  * @type INPUT_OBJECT
  */
 export type organization_order_by = {
-  id: order_by | null;
-  name: order_by | null;
-  owner: user_order_by | null;
-  owner_id: order_by | null;
-  slug: order_by | null;
+  id?: order_by | null;
+  name?: order_by | null;
+  owner?: user_order_by | null;
+  owner_id?: order_by | null;
+  slug?: order_by | null;
 };
 
 /**
@@ -795,8 +796,8 @@ type t_organization_select_column = EnumType<
  * @type INPUT_OBJECT
  */
 export type organization_set_input = {
-  name: string | null;
-  slug: string | null;
+  name?: string | null;
+  slug?: string | null;
 };
 
 /**
@@ -812,6 +813,7 @@ type t_organization_update_column = EnumType<"name" | "slug">;
 type t_project = FieldsType<
   {
     __typename: t_String<"project">;
+    graph?: FieldsTypeArg<{ path?: string | null }, t_jsonb | null>;
     id: t_Int;
     name: t_String;
 
@@ -854,12 +856,18 @@ type t_project = FieldsType<
 >;
 
 /**
+ * @name project_append_input
+ * @type INPUT_OBJECT
+ */
+export type project_append_input = { graph?: any | null };
+
+/**
  * @name project_arr_rel_insert_input
  * @type INPUT_OBJECT
  */
 export type project_arr_rel_insert_input = {
   data: project_insert_input[];
-  on_conflict: project_on_conflict | null;
+  on_conflict?: project_on_conflict | null;
 };
 
 /**
@@ -867,15 +875,16 @@ export type project_arr_rel_insert_input = {
  * @type INPUT_OBJECT
  */
 export type project_bool_exp = {
-  _and: (project_bool_exp | null)[] | null;
-  _not: project_bool_exp | null;
-  _or: (project_bool_exp | null)[] | null;
-  id: Int_comparison_exp | null;
-  name: String_comparison_exp | null;
-  organization: organization_bool_exp | null;
-  organization_id: Int_comparison_exp | null;
-  run_history: project_run_history_bool_exp | null;
-  slug: String_comparison_exp | null;
+  _and?: (project_bool_exp | null)[] | null;
+  _not?: project_bool_exp | null;
+  _or?: (project_bool_exp | null)[] | null;
+  graph?: jsonb_comparison_exp | null;
+  id?: Int_comparison_exp | null;
+  name?: String_comparison_exp | null;
+  organization?: organization_bool_exp | null;
+  organization_id?: Int_comparison_exp | null;
+  run_history?: project_run_history_bool_exp | null;
+  slug?: String_comparison_exp | null;
 };
 
 /**
@@ -883,18 +892,39 @@ export type project_bool_exp = {
  * @type ENUM
  */
 type t_project_constraint = EnumType<
-  "project_organization_id_slug_key" | "project_pkey"
+  | "project_organization_id_name_key"
+  | "project_organization_id_slug_key"
+  | "project_pkey"
 >;
+
+/**
+ * @name project_delete_at_path_input
+ * @type INPUT_OBJECT
+ */
+export type project_delete_at_path_input = { graph?: (string | null)[] | null };
+
+/**
+ * @name project_delete_elem_input
+ * @type INPUT_OBJECT
+ */
+export type project_delete_elem_input = { graph?: number | null };
+
+/**
+ * @name project_delete_key_input
+ * @type INPUT_OBJECT
+ */
+export type project_delete_key_input = { graph?: string | null };
 
 /**
  * @name project_insert_input
  * @type INPUT_OBJECT
  */
 export type project_insert_input = {
-  name: string | null;
-  organization: organization_obj_rel_insert_input | null;
-  organization_id: number | null;
-  slug: string | null;
+  graph?: any | null;
+  name?: string | null;
+  organization?: organization_obj_rel_insert_input | null;
+  organization_id?: number | null;
+  slug?: string | null;
 };
 
 /**
@@ -924,7 +954,7 @@ type t_project_mutation_response = FieldsType<
  */
 export type project_obj_rel_insert_input = {
   data: project_insert_input;
-  on_conflict: project_on_conflict | null;
+  on_conflict?: project_on_conflict | null;
 };
 
 /**
@@ -934,7 +964,7 @@ export type project_obj_rel_insert_input = {
 export type project_on_conflict = {
   constraint: project_constraint;
   update_columns: project_update_column[];
-  where: project_bool_exp | null;
+  where?: project_bool_exp | null;
 };
 
 /**
@@ -942,12 +972,13 @@ export type project_on_conflict = {
  * @type INPUT_OBJECT
  */
 export type project_order_by = {
-  id: order_by | null;
-  name: order_by | null;
-  organization: organization_order_by | null;
-  organization_id: order_by | null;
-  run_history_aggregate: project_run_history_aggregate_order_by | null;
-  slug: order_by | null;
+  graph?: order_by | null;
+  id?: order_by | null;
+  name?: order_by | null;
+  organization?: organization_order_by | null;
+  organization_id?: order_by | null;
+  run_history_aggregate?: project_run_history_aggregate_order_by | null;
+  slug?: order_by | null;
 };
 
 /**
@@ -955,6 +986,12 @@ export type project_order_by = {
  * @type INPUT_OBJECT
  */
 export type project_pk_columns_input = { id: number };
+
+/**
+ * @name project_prepend_input
+ * @type INPUT_OBJECT
+ */
+export type project_prepend_input = { graph?: any | null };
 
 /**
  * @name project_run_history
@@ -986,7 +1023,7 @@ type t_project_run_history = FieldsType<
 type t_project_run_history_aggregate = FieldsType<
   {
     __typename: t_String<"project_run_history_aggregate">;
-    aggregate: t_project_run_history_aggregate_fields | null;
+    aggregate?: t_project_run_history_aggregate_fields | null;
     nodes: t_project_run_history[];
   },
   Extension<"project_run_history_aggregate">
@@ -999,23 +1036,23 @@ type t_project_run_history_aggregate = FieldsType<
 type t_project_run_history_aggregate_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_aggregate_fields">;
-    avg: t_project_run_history_avg_fields | null;
-    count: FieldsTypeArg<
+    avg?: t_project_run_history_avg_fields | null;
+    count?: FieldsTypeArg<
       {
         columns?: project_run_history_select_column[] | null;
         distinct?: boolean | null;
       },
       t_Int | null
     >;
-    max: t_project_run_history_max_fields | null;
-    min: t_project_run_history_min_fields | null;
-    stddev: t_project_run_history_stddev_fields | null;
-    stddev_pop: t_project_run_history_stddev_pop_fields | null;
-    stddev_samp: t_project_run_history_stddev_samp_fields | null;
-    sum: t_project_run_history_sum_fields | null;
-    var_pop: t_project_run_history_var_pop_fields | null;
-    var_samp: t_project_run_history_var_samp_fields | null;
-    variance: t_project_run_history_variance_fields | null;
+    max?: t_project_run_history_max_fields | null;
+    min?: t_project_run_history_min_fields | null;
+    stddev?: t_project_run_history_stddev_fields | null;
+    stddev_pop?: t_project_run_history_stddev_pop_fields | null;
+    stddev_samp?: t_project_run_history_stddev_samp_fields | null;
+    sum?: t_project_run_history_sum_fields | null;
+    var_pop?: t_project_run_history_var_pop_fields | null;
+    var_samp?: t_project_run_history_var_samp_fields | null;
+    variance?: t_project_run_history_variance_fields | null;
   },
   Extension<"project_run_history_aggregate_fields">
 >;
@@ -1025,17 +1062,17 @@ type t_project_run_history_aggregate_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_aggregate_order_by = {
-  avg: project_run_history_avg_order_by | null;
-  count: order_by | null;
-  max: project_run_history_max_order_by | null;
-  min: project_run_history_min_order_by | null;
-  stddev: project_run_history_stddev_order_by | null;
-  stddev_pop: project_run_history_stddev_pop_order_by | null;
-  stddev_samp: project_run_history_stddev_samp_order_by | null;
-  sum: project_run_history_sum_order_by | null;
-  var_pop: project_run_history_var_pop_order_by | null;
-  var_samp: project_run_history_var_samp_order_by | null;
-  variance: project_run_history_variance_order_by | null;
+  avg?: project_run_history_avg_order_by | null;
+  count?: order_by | null;
+  max?: project_run_history_max_order_by | null;
+  min?: project_run_history_min_order_by | null;
+  stddev?: project_run_history_stddev_order_by | null;
+  stddev_pop?: project_run_history_stddev_pop_order_by | null;
+  stddev_samp?: project_run_history_stddev_samp_order_by | null;
+  sum?: project_run_history_sum_order_by | null;
+  var_pop?: project_run_history_var_pop_order_by | null;
+  var_samp?: project_run_history_var_samp_order_by | null;
+  variance?: project_run_history_variance_order_by | null;
 };
 
 /**
@@ -1045,12 +1082,12 @@ export type project_run_history_aggregate_order_by = {
 type t_project_run_history_avg_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_avg_fields">;
-    commands_done: t_Float | null;
-    commands_failed: t_Float | null;
-    commands_total: t_Float | null;
-    id: t_Float | null;
-    project_id: t_Float | null;
-    run_by_user: t_Float | null;
+    commands_done?: t_Float | null;
+    commands_failed?: t_Float | null;
+    commands_total?: t_Float | null;
+    id?: t_Float | null;
+    project_id?: t_Float | null;
+    run_by_user?: t_Float | null;
   },
   Extension<"project_run_history_avg_fields">
 >;
@@ -1060,12 +1097,12 @@ type t_project_run_history_avg_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_avg_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1073,17 +1110,17 @@ export type project_run_history_avg_order_by = {
  * @type INPUT_OBJECT
  */
 export type project_run_history_bool_exp = {
-  _and: (project_run_history_bool_exp | null)[] | null;
-  _not: project_run_history_bool_exp | null;
-  _or: (project_run_history_bool_exp | null)[] | null;
-  commands_done: Int_comparison_exp | null;
-  commands_failed: Int_comparison_exp | null;
-  commands_total: Int_comparison_exp | null;
-  created_at: timestamptz_comparison_exp | null;
-  id: Int_comparison_exp | null;
-  project: project_bool_exp | null;
-  project_id: Int_comparison_exp | null;
-  run_by_user: Int_comparison_exp | null;
+  _and?: (project_run_history_bool_exp | null)[] | null;
+  _not?: project_run_history_bool_exp | null;
+  _or?: (project_run_history_bool_exp | null)[] | null;
+  commands_done?: Int_comparison_exp | null;
+  commands_failed?: Int_comparison_exp | null;
+  commands_total?: Int_comparison_exp | null;
+  created_at?: timestamptz_comparison_exp | null;
+  id?: Int_comparison_exp | null;
+  project?: project_bool_exp | null;
+  project_id?: Int_comparison_exp | null;
+  run_by_user?: Int_comparison_exp | null;
 };
 
 /**
@@ -1093,13 +1130,13 @@ export type project_run_history_bool_exp = {
 type t_project_run_history_max_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_max_fields">;
-    commands_done: t_Int | null;
-    commands_failed: t_Int | null;
-    commands_total: t_Int | null;
-    created_at: t_timestamptz | null;
-    id: t_Int | null;
-    project_id: t_Int | null;
-    run_by_user: t_Int | null;
+    commands_done?: t_Int | null;
+    commands_failed?: t_Int | null;
+    commands_total?: t_Int | null;
+    created_at?: t_timestamptz | null;
+    id?: t_Int | null;
+    project_id?: t_Int | null;
+    run_by_user?: t_Int | null;
   },
   Extension<"project_run_history_max_fields">
 >;
@@ -1109,13 +1146,13 @@ type t_project_run_history_max_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_max_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  created_at: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  created_at?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1125,13 +1162,13 @@ export type project_run_history_max_order_by = {
 type t_project_run_history_min_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_min_fields">;
-    commands_done: t_Int | null;
-    commands_failed: t_Int | null;
-    commands_total: t_Int | null;
-    created_at: t_timestamptz | null;
-    id: t_Int | null;
-    project_id: t_Int | null;
-    run_by_user: t_Int | null;
+    commands_done?: t_Int | null;
+    commands_failed?: t_Int | null;
+    commands_total?: t_Int | null;
+    created_at?: t_timestamptz | null;
+    id?: t_Int | null;
+    project_id?: t_Int | null;
+    run_by_user?: t_Int | null;
   },
   Extension<"project_run_history_min_fields">
 >;
@@ -1141,13 +1178,13 @@ type t_project_run_history_min_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_min_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  created_at: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  created_at?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1155,14 +1192,14 @@ export type project_run_history_min_order_by = {
  * @type INPUT_OBJECT
  */
 export type project_run_history_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  created_at: order_by | null;
-  id: order_by | null;
-  project: project_order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  created_at?: order_by | null;
+  id?: order_by | null;
+  project?: project_order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1192,12 +1229,12 @@ type t_project_run_history_select_column = EnumType<
 type t_project_run_history_stddev_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_stddev_fields">;
-    commands_done: t_Float | null;
-    commands_failed: t_Float | null;
-    commands_total: t_Float | null;
-    id: t_Float | null;
-    project_id: t_Float | null;
-    run_by_user: t_Float | null;
+    commands_done?: t_Float | null;
+    commands_failed?: t_Float | null;
+    commands_total?: t_Float | null;
+    id?: t_Float | null;
+    project_id?: t_Float | null;
+    run_by_user?: t_Float | null;
   },
   Extension<"project_run_history_stddev_fields">
 >;
@@ -1207,12 +1244,12 @@ type t_project_run_history_stddev_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_stddev_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1222,12 +1259,12 @@ export type project_run_history_stddev_order_by = {
 type t_project_run_history_stddev_pop_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_stddev_pop_fields">;
-    commands_done: t_Float | null;
-    commands_failed: t_Float | null;
-    commands_total: t_Float | null;
-    id: t_Float | null;
-    project_id: t_Float | null;
-    run_by_user: t_Float | null;
+    commands_done?: t_Float | null;
+    commands_failed?: t_Float | null;
+    commands_total?: t_Float | null;
+    id?: t_Float | null;
+    project_id?: t_Float | null;
+    run_by_user?: t_Float | null;
   },
   Extension<"project_run_history_stddev_pop_fields">
 >;
@@ -1237,12 +1274,12 @@ type t_project_run_history_stddev_pop_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_stddev_pop_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1252,12 +1289,12 @@ export type project_run_history_stddev_pop_order_by = {
 type t_project_run_history_stddev_samp_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_stddev_samp_fields">;
-    commands_done: t_Float | null;
-    commands_failed: t_Float | null;
-    commands_total: t_Float | null;
-    id: t_Float | null;
-    project_id: t_Float | null;
-    run_by_user: t_Float | null;
+    commands_done?: t_Float | null;
+    commands_failed?: t_Float | null;
+    commands_total?: t_Float | null;
+    id?: t_Float | null;
+    project_id?: t_Float | null;
+    run_by_user?: t_Float | null;
   },
   Extension<"project_run_history_stddev_samp_fields">
 >;
@@ -1267,12 +1304,12 @@ type t_project_run_history_stddev_samp_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_stddev_samp_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1282,12 +1319,12 @@ export type project_run_history_stddev_samp_order_by = {
 type t_project_run_history_sum_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_sum_fields">;
-    commands_done: t_Int | null;
-    commands_failed: t_Int | null;
-    commands_total: t_Int | null;
-    id: t_Int | null;
-    project_id: t_Int | null;
-    run_by_user: t_Int | null;
+    commands_done?: t_Int | null;
+    commands_failed?: t_Int | null;
+    commands_total?: t_Int | null;
+    id?: t_Int | null;
+    project_id?: t_Int | null;
+    run_by_user?: t_Int | null;
   },
   Extension<"project_run_history_sum_fields">
 >;
@@ -1297,12 +1334,12 @@ type t_project_run_history_sum_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_sum_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1312,12 +1349,12 @@ export type project_run_history_sum_order_by = {
 type t_project_run_history_var_pop_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_var_pop_fields">;
-    commands_done: t_Float | null;
-    commands_failed: t_Float | null;
-    commands_total: t_Float | null;
-    id: t_Float | null;
-    project_id: t_Float | null;
-    run_by_user: t_Float | null;
+    commands_done?: t_Float | null;
+    commands_failed?: t_Float | null;
+    commands_total?: t_Float | null;
+    id?: t_Float | null;
+    project_id?: t_Float | null;
+    run_by_user?: t_Float | null;
   },
   Extension<"project_run_history_var_pop_fields">
 >;
@@ -1327,12 +1364,12 @@ type t_project_run_history_var_pop_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_var_pop_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1342,12 +1379,12 @@ export type project_run_history_var_pop_order_by = {
 type t_project_run_history_var_samp_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_var_samp_fields">;
-    commands_done: t_Float | null;
-    commands_failed: t_Float | null;
-    commands_total: t_Float | null;
-    id: t_Float | null;
-    project_id: t_Float | null;
-    run_by_user: t_Float | null;
+    commands_done?: t_Float | null;
+    commands_failed?: t_Float | null;
+    commands_total?: t_Float | null;
+    id?: t_Float | null;
+    project_id?: t_Float | null;
+    run_by_user?: t_Float | null;
   },
   Extension<"project_run_history_var_samp_fields">
 >;
@@ -1357,12 +1394,12 @@ type t_project_run_history_var_samp_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_var_samp_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1372,12 +1409,12 @@ export type project_run_history_var_samp_order_by = {
 type t_project_run_history_variance_fields = FieldsType<
   {
     __typename: t_String<"project_run_history_variance_fields">;
-    commands_done: t_Float | null;
-    commands_failed: t_Float | null;
-    commands_total: t_Float | null;
-    id: t_Float | null;
-    project_id: t_Float | null;
-    run_by_user: t_Float | null;
+    commands_done?: t_Float | null;
+    commands_failed?: t_Float | null;
+    commands_total?: t_Float | null;
+    id?: t_Float | null;
+    project_id?: t_Float | null;
+    run_by_user?: t_Float | null;
   },
   Extension<"project_run_history_variance_fields">
 >;
@@ -1387,12 +1424,12 @@ type t_project_run_history_variance_fields = FieldsType<
  * @type INPUT_OBJECT
  */
 export type project_run_history_variance_order_by = {
-  commands_done: order_by | null;
-  commands_failed: order_by | null;
-  commands_total: order_by | null;
-  id: order_by | null;
-  project_id: order_by | null;
-  run_by_user: order_by | null;
+  commands_done?: order_by | null;
+  commands_failed?: order_by | null;
+  commands_total?: order_by | null;
+  id?: order_by | null;
+  project_id?: order_by | null;
+  run_by_user?: order_by | null;
 };
 
 /**
@@ -1400,20 +1437,24 @@ export type project_run_history_variance_order_by = {
  * @type ENUM
  */
 type t_project_select_column = EnumType<
-  "id" | "name" | "organization_id" | "slug"
+  "graph" | "id" | "name" | "organization_id" | "slug"
 >;
 
 /**
  * @name project_set_input
  * @type INPUT_OBJECT
  */
-export type project_set_input = { name: string | null; slug: string | null };
+export type project_set_input = {
+  graph?: any | null;
+  name?: string | null;
+  slug?: string | null;
+};
 
 /**
  * @name project_update_column
  * @type ENUM
  */
-type t_project_update_column = EnumType<"name" | "slug">;
+type t_project_update_column = EnumType<"graph" | "name" | "slug">;
 
 /**
  * @name query_root
@@ -1422,28 +1463,6 @@ type t_project_update_column = EnumType<"name" | "slug">;
 type t_query_root = FieldsType<
   {
     __typename: t_String<"query_root">;
-
-    /**
-     * fetch data from the table: "command_run_history"
-     */
-    command_run_history: FieldsTypeArg<
-      {
-        distinct_on?: command_run_history_select_column[] | null;
-        limit?: number | null;
-        offset?: number | null;
-        order_by?: command_run_history_order_by[] | null;
-        where?: command_run_history_bool_exp | null;
-      },
-      t_command_run_history[]
-    >;
-
-    /**
-     * fetch data from the table: "command_run_history" using primary key columns
-     */
-    command_run_history_by_pk: FieldsTypeArg<
-      { id: any },
-      t_command_run_history | null
-    >;
 
     /**
      * fetch data from the table: "organization"
@@ -1462,7 +1481,7 @@ type t_query_root = FieldsType<
     /**
      * fetch data from the table: "organization" using primary key columns
      */
-    organization_by_pk: FieldsTypeArg<{ id: number }, t_organization | null>;
+    organization_by_pk?: FieldsTypeArg<{ id: number }, t_organization | null>;
 
     /**
      * fetch data from the table: "organization_invite_user"
@@ -1481,7 +1500,7 @@ type t_query_root = FieldsType<
     /**
      * fetch data from the table: "organization_invite_user" using primary key columns
      */
-    organization_invite_user_by_pk: FieldsTypeArg<
+    organization_invite_user_by_pk?: FieldsTypeArg<
       { id: number },
       t_organization_invite_user | null
     >;
@@ -1503,7 +1522,7 @@ type t_query_root = FieldsType<
     /**
      * fetch data from the table: "project" using primary key columns
      */
-    project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
+    project_by_pk?: FieldsTypeArg<{ id: number }, t_project | null>;
 
     /**
      * fetch data from the table: "project_run_history"
@@ -1536,10 +1555,15 @@ type t_query_root = FieldsType<
     /**
      * fetch data from the table: "project_run_history" using primary key columns
      */
-    project_run_history_by_pk: FieldsTypeArg<
+    project_run_history_by_pk?: FieldsTypeArg<
       { id: number },
       t_project_run_history | null
     >;
+
+    /**
+     * retrieve the result of action: "run_project"
+     */
+    run_project?: FieldsTypeArg<{ id: any }, t_run_project | null>;
 
     /**
      * fetch data from the table: "user"
@@ -1558,9 +1582,40 @@ type t_query_root = FieldsType<
     /**
      * fetch data from the table: "user" using primary key columns
      */
-    user_by_pk: FieldsTypeArg<{ id: number }, t_user | null>;
+    user_by_pk?: FieldsTypeArg<{ id: number }, t_user | null>;
   },
   Extension<"query_root">
+>;
+
+/**
+ * @name run_project
+ * @type OBJECT
+ */
+type t_run_project = FieldsType<
+  {
+    __typename: t_String<"run_project">;
+
+    /**
+     * the time at which this action was created
+     */
+    created_at?: t_timestamptz | null;
+
+    /**
+     * errors related to the invocation
+     */
+    errors?: t_json | null;
+
+    /**
+     * the unique id of an action
+     */
+    id?: t_uuid | null;
+
+    /**
+     * the output fields of this action
+     */
+    output?: t_RunProjectOutput | null;
+  },
+  Extension<"run_project">
 >;
 
 /**
@@ -1572,28 +1627,6 @@ type t_subscription_root = FieldsType<
     __typename: t_String<"subscription_root">;
 
     /**
-     * fetch data from the table: "command_run_history"
-     */
-    command_run_history: FieldsTypeArg<
-      {
-        distinct_on?: command_run_history_select_column[] | null;
-        limit?: number | null;
-        offset?: number | null;
-        order_by?: command_run_history_order_by[] | null;
-        where?: command_run_history_bool_exp | null;
-      },
-      t_command_run_history[]
-    >;
-
-    /**
-     * fetch data from the table: "command_run_history" using primary key columns
-     */
-    command_run_history_by_pk: FieldsTypeArg<
-      { id: any },
-      t_command_run_history | null
-    >;
-
-    /**
      * fetch data from the table: "organization"
      */
     organization: FieldsTypeArg<
@@ -1610,7 +1643,7 @@ type t_subscription_root = FieldsType<
     /**
      * fetch data from the table: "organization" using primary key columns
      */
-    organization_by_pk: FieldsTypeArg<{ id: number }, t_organization | null>;
+    organization_by_pk?: FieldsTypeArg<{ id: number }, t_organization | null>;
 
     /**
      * fetch data from the table: "organization_invite_user"
@@ -1629,7 +1662,7 @@ type t_subscription_root = FieldsType<
     /**
      * fetch data from the table: "organization_invite_user" using primary key columns
      */
-    organization_invite_user_by_pk: FieldsTypeArg<
+    organization_invite_user_by_pk?: FieldsTypeArg<
       { id: number },
       t_organization_invite_user | null
     >;
@@ -1651,7 +1684,7 @@ type t_subscription_root = FieldsType<
     /**
      * fetch data from the table: "project" using primary key columns
      */
-    project_by_pk: FieldsTypeArg<{ id: number }, t_project | null>;
+    project_by_pk?: FieldsTypeArg<{ id: number }, t_project | null>;
 
     /**
      * fetch data from the table: "project_run_history"
@@ -1684,10 +1717,15 @@ type t_subscription_root = FieldsType<
     /**
      * fetch data from the table: "project_run_history" using primary key columns
      */
-    project_run_history_by_pk: FieldsTypeArg<
+    project_run_history_by_pk?: FieldsTypeArg<
       { id: number },
       t_project_run_history | null
     >;
+
+    /**
+     * retrieve the result of action: "run_project"
+     */
+    run_project?: FieldsTypeArg<{ id: any }, t_run_project | null>;
 
     /**
      * fetch data from the table: "user"
@@ -1706,7 +1744,7 @@ type t_subscription_root = FieldsType<
     /**
      * fetch data from the table: "user" using primary key columns
      */
-    user_by_pk: FieldsTypeArg<{ id: number }, t_user | null>;
+    user_by_pk?: FieldsTypeArg<{ id: number }, t_user | null>;
   },
   Extension<"subscription_root">
 >;
@@ -1725,15 +1763,15 @@ type t_timestamptz<T extends any = any> = ScalarType<
  * @type INPUT_OBJECT
  */
 export type timestamptz_comparison_exp = {
-  _eq: any | null;
-  _gt: any | null;
-  _gte: any | null;
-  _in: any[] | null;
-  _is_null: boolean | null;
-  _lt: any | null;
-  _lte: any | null;
-  _neq: any | null;
-  _nin: any[] | null;
+  _eq?: any | null;
+  _gt?: any | null;
+  _gte?: any | null;
+  _in?: any[] | null;
+  _is_null?: boolean | null;
+  _lt?: any | null;
+  _lte?: any | null;
+  _neq?: any | null;
+  _nin?: any[] | null;
 };
 
 /**
@@ -1770,7 +1808,7 @@ type t_user = FieldsType<
  */
 export type user_arr_rel_insert_input = {
   data: user_insert_input[];
-  on_conflict: user_on_conflict | null;
+  on_conflict?: user_on_conflict | null;
 };
 
 /**
@@ -1778,13 +1816,13 @@ export type user_arr_rel_insert_input = {
  * @type INPUT_OBJECT
  */
 export type user_bool_exp = {
-  _and: (user_bool_exp | null)[] | null;
-  _not: user_bool_exp | null;
-  _or: (user_bool_exp | null)[] | null;
-  firebase_id: String_comparison_exp | null;
-  id: Int_comparison_exp | null;
-  name: String_comparison_exp | null;
-  owner_of_organizations: organization_bool_exp | null;
+  _and?: (user_bool_exp | null)[] | null;
+  _not?: user_bool_exp | null;
+  _or?: (user_bool_exp | null)[] | null;
+  firebase_id?: String_comparison_exp | null;
+  id?: Int_comparison_exp | null;
+  name?: String_comparison_exp | null;
+  owner_of_organizations?: organization_bool_exp | null;
 };
 
 /**
@@ -1798,8 +1836,8 @@ type t_user_constraint = EnumType<"user_firebase_id_key" | "user_pkey">;
  * @type INPUT_OBJECT
  */
 export type user_insert_input = {
-  name: string | null;
-  owner_of_organizations: organization_arr_rel_insert_input | null;
+  name?: string | null;
+  owner_of_organizations?: organization_arr_rel_insert_input | null;
 };
 
 /**
@@ -1829,7 +1867,7 @@ type t_user_mutation_response = FieldsType<
  */
 export type user_obj_rel_insert_input = {
   data: user_insert_input;
-  on_conflict: user_on_conflict | null;
+  on_conflict?: user_on_conflict | null;
 };
 
 /**
@@ -1839,7 +1877,7 @@ export type user_obj_rel_insert_input = {
 export type user_on_conflict = {
   constraint: user_constraint;
   update_columns: user_update_column[];
-  where: user_bool_exp | null;
+  where?: user_bool_exp | null;
 };
 
 /**
@@ -1847,9 +1885,9 @@ export type user_on_conflict = {
  * @type INPUT_OBJECT
  */
 export type user_order_by = {
-  firebase_id: order_by | null;
-  id: order_by | null;
-  name: order_by | null;
+  firebase_id?: order_by | null;
+  id?: order_by | null;
+  name?: order_by | null;
 };
 
 /**
@@ -1868,7 +1906,7 @@ type t_user_select_column = EnumType<"firebase_id" | "id" | "name">;
  * @name user_set_input
  * @type INPUT_OBJECT
  */
-export type user_set_input = { name: string | null };
+export type user_set_input = { name?: string | null };
 
 /**
  * @name user_update_column
@@ -1881,22 +1919,6 @@ type t_user_update_column = EnumType<"name">;
  * @type SCALAR
  */
 type t_uuid<T extends any = any> = ScalarType<T, Extension<"uuid">>;
-
-/**
- * @name uuid_comparison_exp
- * @type INPUT_OBJECT
- */
-export type uuid_comparison_exp = {
-  _eq: any | null;
-  _gt: any | null;
-  _gte: any | null;
-  _in: any[] | null;
-  _is_null: boolean | null;
-  _lt: any | null;
-  _lte: any | null;
-  _neq: any | null;
-  _nin: any[] | null;
-};
 
 /**
  * @name Boolean
@@ -1923,6 +1945,12 @@ export type ID = TypeData<t_ID>;
 export type Int = TypeData<t_Int>;
 
 /**
+ * @name RunProjectOutput
+ * @type OBJECT
+ */
+export type RunProjectOutput = TypeData<t_RunProjectOutput>;
+
+/**
  * @name SampleOutput
  * @type OBJECT
  */
@@ -1944,7 +1972,26 @@ export type __Directive = TypeData<t___Directive>;
  * @name __DirectiveLocation
  * @type ENUM
  */
-export type __DirectiveLocation = TypeData<t___DirectiveLocation>;
+export enum __DirectiveLocation {
+  ARGUMENT_DEFINITION = "ARGUMENT_DEFINITION",
+  ENUM = "ENUM",
+  ENUM_VALUE = "ENUM_VALUE",
+  FIELD = "FIELD",
+  FIELD_DEFINITION = "FIELD_DEFINITION",
+  FRAGMENT_DEFINITION = "FRAGMENT_DEFINITION",
+  FRAGMENT_SPREAD = "FRAGMENT_SPREAD",
+  INLINE_FRAGMENT = "INLINE_FRAGMENT",
+  INPUT_FIELD_DEFINITION = "INPUT_FIELD_DEFINITION",
+  INPUT_OBJECT = "INPUT_OBJECT",
+  INTERFACE = "INTERFACE",
+  MUTATION = "MUTATION",
+  OBJECT = "OBJECT",
+  QUERY = "QUERY",
+  SCALAR = "SCALAR",
+  SCHEMA = "SCHEMA",
+  SUBSCRIPTION = "SUBSCRIPTION",
+  UNION = "UNION",
+}
 
 /**
  * @name __EnumValue
@@ -1980,21 +2027,28 @@ export type __Type = TypeData<t___Type>;
  * @name __TypeKind
  * @type ENUM
  */
-export type __TypeKind = TypeData<t___TypeKind>;
+export enum __TypeKind {
+  ENUM = "ENUM",
+  INPUT_OBJECT = "INPUT_OBJECT",
+  INTERFACE = "INTERFACE",
+  LIST = "LIST",
+  NON_NULL = "NON_NULL",
+  OBJECT = "OBJECT",
+  SCALAR = "SCALAR",
+  UNION = "UNION",
+}
 
 /**
- * @name command_run_history
- * @type OBJECT
+ * @name json
+ * @type SCALAR
  */
-export type command_run_history = TypeData<t_command_run_history>;
+export type json = TypeData<t_json>;
 
 /**
- * @name command_run_history_select_column
- * @type ENUM
+ * @name jsonb
+ * @type SCALAR
  */
-export type command_run_history_select_column = TypeData<
-  t_command_run_history_select_column
->;
+export type jsonb = TypeData<t_jsonb>;
 
 /**
  * @name mutation_root
@@ -2006,7 +2060,14 @@ export type mutation_root = TypeData<t_mutation_root>;
  * @name order_by
  * @type ENUM
  */
-export type order_by = TypeData<t_order_by>;
+export enum order_by {
+  asc = "asc",
+  asc_nulls_first = "asc_nulls_first",
+  asc_nulls_last = "asc_nulls_last",
+  desc = "desc",
+  desc_nulls_first = "desc_nulls_first",
+  desc_nulls_last = "desc_nulls_last",
+}
 
 /**
  * @name organization
@@ -2018,7 +2079,11 @@ export type organization = TypeData<t_organization>;
  * @name organization_constraint
  * @type ENUM
  */
-export type organization_constraint = TypeData<t_organization_constraint>;
+export enum organization_constraint {
+  organization_name_key = "organization_name_key",
+  organization_pkey = "organization_pkey",
+  organization_slug_key = "organization_slug_key",
+}
 
 /**
  * @name organization_invite_user
@@ -2038,9 +2103,12 @@ export type organization_invite_user_mutation_response = TypeData<
  * @name organization_invite_user_select_column
  * @type ENUM
  */
-export type organization_invite_user_select_column = TypeData<
-  t_organization_invite_user_select_column
->;
+export enum organization_invite_user_select_column {
+  created_at = "created_at",
+  email = "email",
+  id = "id",
+  organization_id = "organization_id",
+}
 
 /**
  * @name organization_mutation_response
@@ -2054,13 +2122,21 @@ export type organization_mutation_response = TypeData<
  * @name organization_select_column
  * @type ENUM
  */
-export type organization_select_column = TypeData<t_organization_select_column>;
+export enum organization_select_column {
+  id = "id",
+  name = "name",
+  owner_id = "owner_id",
+  slug = "slug",
+}
 
 /**
  * @name organization_update_column
  * @type ENUM
  */
-export type organization_update_column = TypeData<t_organization_update_column>;
+export enum organization_update_column {
+  name = "name",
+  slug = "slug",
+}
 
 /**
  * @name project
@@ -2072,7 +2148,11 @@ export type project = TypeData<t_project>;
  * @name project_constraint
  * @type ENUM
  */
-export type project_constraint = TypeData<t_project_constraint>;
+export enum project_constraint {
+  project_organization_id_name_key = "project_organization_id_name_key",
+  project_organization_id_slug_key = "project_organization_id_slug_key",
+  project_pkey = "project_pkey",
+}
 
 /**
  * @name project_mutation_response
@@ -2130,9 +2210,15 @@ export type project_run_history_min_fields = TypeData<
  * @name project_run_history_select_column
  * @type ENUM
  */
-export type project_run_history_select_column = TypeData<
-  t_project_run_history_select_column
->;
+export enum project_run_history_select_column {
+  commands_done = "commands_done",
+  commands_failed = "commands_failed",
+  commands_total = "commands_total",
+  created_at = "created_at",
+  id = "id",
+  project_id = "project_id",
+  run_by_user = "run_by_user",
+}
 
 /**
  * @name project_run_history_stddev_fields
@@ -2194,19 +2280,35 @@ export type project_run_history_variance_fields = TypeData<
  * @name project_select_column
  * @type ENUM
  */
-export type project_select_column = TypeData<t_project_select_column>;
+export enum project_select_column {
+  graph = "graph",
+  id = "id",
+  name = "name",
+  organization_id = "organization_id",
+  slug = "slug",
+}
 
 /**
  * @name project_update_column
  * @type ENUM
  */
-export type project_update_column = TypeData<t_project_update_column>;
+export enum project_update_column {
+  graph = "graph",
+  name = "name",
+  slug = "slug",
+}
 
 /**
  * @name query_root
  * @type OBJECT
  */
 export type query_root = TypeData<t_query_root>;
+
+/**
+ * @name run_project
+ * @type OBJECT
+ */
+export type run_project = TypeData<t_run_project>;
 
 /**
  * @name subscription_root
@@ -2230,7 +2332,10 @@ export type user = TypeData<t_user>;
  * @name user_constraint
  * @type ENUM
  */
-export type user_constraint = TypeData<t_user_constraint>;
+export enum user_constraint {
+  user_firebase_id_key = "user_firebase_id_key",
+  user_pkey = "user_pkey",
+}
 
 /**
  * @name user_mutation_response
@@ -2242,13 +2347,19 @@ export type user_mutation_response = TypeData<t_user_mutation_response>;
  * @name user_select_column
  * @type ENUM
  */
-export type user_select_column = TypeData<t_user_select_column>;
+export enum user_select_column {
+  firebase_id = "firebase_id",
+  id = "id",
+  name = "name",
+}
 
 /**
  * @name user_update_column
  * @type ENUM
  */
-export type user_update_column = TypeData<t_user_update_column>;
+export enum user_update_column {
+  name = "name",
+}
 
 /**
  * @name uuid

@@ -1,3 +1,5 @@
+import "regenerator-runtime/runtime";
+
 import * as serviceWorker from "./serviceWorker";
 import App from "./App";
 import React from "react";
