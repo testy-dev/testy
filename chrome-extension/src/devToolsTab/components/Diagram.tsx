@@ -18,6 +18,23 @@ interface IProps {
   onSelectBlock: (blockID?: UUID) => void;
 }
 
+const getCommandColor = (command: Block["command"]): string => {
+  switch (command) {
+    case "click":
+    case "dblclick":
+    case "submit":
+      return "#02a323";
+    case "check-contains-text":
+      return "#126dcd";
+    case "type":
+      return "#e7e630";
+    case "visit":
+      return "#ac056e";
+    default:
+      return "#5f5f5f";
+  }
+};
+
 const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
   const engine = useMemo(() => {
     const engine = new DiagramEngine();
@@ -29,8 +46,10 @@ const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
     const nodes: any = {};
     blocks.forEach((block: Block) => {
       const node = new DefaultNodeModel(
-        block.command,
-        block.command === "check-contains-text" ? "#1d6fe8" : "#c0ff00"
+        block.command === "check-contains-text"
+          ? "contains text"
+          : block.command,
+        getCommandColor(block.command)
       );
       node.addListener({
         selectionChanged: async (node: any) => {
