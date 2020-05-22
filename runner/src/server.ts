@@ -1,5 +1,6 @@
 import * as express from "express";
 import { Server } from "ws";
+import { fetchQuery } from "./utils";
 
 const webSocketServer = new Server({ port: 8082 });
 webSocketServer.start();
@@ -24,12 +25,21 @@ webSocketServer.on("connection", ws => {
 
 const app = express();
 
-app.get("/", req => {
+app.post("/", async req => {
+  const project = await fetchQuery(
+    `
+  query ($projectId: Int!) {
+  project(where: {id: {_eq: $projectId}}) {
+    graph
+  }
+}`,
+    { projectId: req.body.input.project_id }
+  );
+  const graph = JSON.parse(project.data?.project?.[0]?.graph);
+  console.log("Graph:", graph);
   if (wsInstance) {
     wsInstance.send(JSON.stringify(req.body));
   }
 });
 
 app.listen(8080);
-
-app.on;

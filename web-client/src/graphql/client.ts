@@ -24,9 +24,7 @@ export const fetchQuery: QueryFetcher = async (query, variables) => {
     throw new Error(`Network error, received status code ${response.status}`);
   }
 
-  const json = await response.json();
-
-  return json;
+  return await response.json();
 };
 
 export const client = new Client<query_root>(schema.query_root, fetchQuery);
