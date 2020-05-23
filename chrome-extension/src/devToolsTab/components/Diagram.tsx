@@ -9,7 +9,6 @@ import {
 } from "@projectstorm/react-diagrams";
 
 import { Block, Edge, UUID } from "../../types";
-import { write } from "../../helpers/model";
 import autoDistribute from "./autoDistribute";
 
 interface IProps {
@@ -35,7 +34,7 @@ const getCommandColor = (command: Block["command"]): string => {
   }
 };
 
-const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
+const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
   const engine = useMemo(() => {
     const engine = new DiagramEngine();
     engine.installDefaultFactories();
@@ -52,8 +51,9 @@ const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
         getCommandColor(block.command)
       );
       node.addListener({
-        selectionChanged: async (node: any) => {
-          if (node?.isSelected) await write({ active: block.id });
+        selectionChanged: () => {
+          onSelectBlock(block.id);
+          console.log("select block", block.id);
         },
       });
       node.updateDimensions({ width: 100, height: 50 });
@@ -72,9 +72,15 @@ const Diagram: React.FC<IProps> = ({ blocks, edges }) => {
     });
     autoDistribute(engine);
     return engine;
-  }, [blocks, edges]);
+  }, [blocks, edges, onSelectBlock]);
 
-  return <DiagramWidget className="srd-demo-canvas" diagramEngine={engine} />;
+  return (
+    <DiagramWidget
+      className="srd-demo-canvas"
+      diagramEngine={engine}
+      maxNumberPointsPerLink={0}
+    />
+  );
 };
 
 export default Diagram;
