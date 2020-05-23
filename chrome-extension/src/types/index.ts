@@ -25,6 +25,15 @@ export interface ActionWithPayload {
   payload?: any;
 }
 
+export const Commands = {
+  visit: "Visit",
+  click: "Click",
+  dblclick: "Double click",
+  type: "Type",
+  submit: "Submit",
+  "check-contains-text": "Contains text",
+};
+
 export interface Block {
   id: string;
   command:

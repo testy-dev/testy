@@ -1,8 +1,9 @@
 import * as React from "react";
 
+import { map } from "lodash";
 import styled from "styled-components";
 
-import { UUID } from "../../types";
+import { Commands, UUID } from "../../types";
 import { write } from "../../helpers/model";
 import Diagram from "./Diagram";
 import useLocalStorage from "./useLocalStorage";
@@ -32,8 +33,50 @@ const App: React.FC = () => {
       />
       <Column>
         <Header>Testy</Header>
-        <div>Status: {storage.status ?? "off"}</div>
-        <div>Continue after block: {storage.active ?? "not set"}</div>
+        <div>Recording status: {storage.status ?? "off"}</div>
+        <div>
+          {storage.blocks?.length ?? 0} blocks, {storage.edges?.length ?? 0}{" "}
+          edges
+        </div>
+        <div>Active block: {storage.active ?? "not set"}</div>
+        {storage.active && (
+          <>
+            <div>
+              Command:{" "}
+              <select
+                value={
+                  storage.blocks?.find(b => b.id === storage.active)?.command
+                }
+              >
+                {map(Commands, (value, key) => (
+                  <option key={key} value={key}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              Selector:{" "}
+              <input
+                type="text"
+                value={
+                  storage.blocks?.find(b => b.id === storage.active)
+                    ?.selector ?? ""
+                }
+              />
+            </div>
+            <div>
+              Parameter:{" "}
+              <input
+                type="text"
+                value={
+                  storage.blocks?.find(b => b.id === storage.active)
+                    ?.parameter ?? ""
+                }
+              />
+            </div>
+          </>
+        )}
       </Column>
     </Root>
   );
@@ -49,6 +92,7 @@ const Column = styled.div`
   border-left: 1px solid #cccccc;
   background: #f3f3f3;
   color: #444444;
+  line-height: 1.5;
 `;
 const Header = styled.h1`
   margin: 0 0 5px;
