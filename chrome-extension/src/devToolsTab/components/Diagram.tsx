@@ -2,10 +2,12 @@ import React, { useEffect, useMemo } from "react";
 
 import "@projectstorm/react-diagrams/dist/style.min.css";
 import {
+  BaseEvent,
   DefaultNodeModel,
   DiagramEngine,
   DiagramModel,
   DiagramWidget,
+  LinkModel,
 } from "@projectstorm/react-diagrams";
 import { forOwn } from "lodash";
 
@@ -69,9 +71,7 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
     edges.forEach(([outBlockId, inBlockId]) => {
       const outPort = nodes[outBlockId].getOutPorts()[0];
       const inPort = nodes[inBlockId].getInPorts()[0];
-      const link = outPort.link(inPort);
-      link.setColor("#898989");
-      model.addLink(link);
+      model.addLink(outPort.link(inPort));
     });
     autoDistribute(engine);
     forOwn(engine.getDiagramModel().getNodes(), node =>
@@ -85,6 +85,13 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
         },
       })
     );
+    engine.getDiagramModel().addListener({
+      linksUpdated(event: BaseEvent & { link: LinkModel; isCreated: boolean }) {
+        // @ts-ignore setColor is not documented
+        event.link.setColor("#898989");
+      },
+    });
+    engine.zoomToFit();
   }, [blocks, edges, engine, onSelectBlock]);
 
   return (
