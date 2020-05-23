@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { map } from "lodash";
 import styled from "styled-components";
 
-import { Commands, UUID } from "../../types";
+import { Block, UUID } from "../../types";
 import { write } from "../../helpers/model";
 import Diagram from "./Diagram";
+import EditBlock from "./EditBlock";
 import useLocalStorage from "./useLocalStorage";
 
 const App: React.FC = () => {
@@ -24,6 +24,14 @@ const App: React.FC = () => {
     await write({ active: blockID });
   };
 
+  const handleUpdateBlock = async (block: Block) => {
+    await write({
+      blocks: [...storage.blocks?.filter(b => b.id !== block.id), block],
+    });
+  };
+
+  const activeBlock =
+    storage.active && storage.blocks.find(b => b.id === storage.active);
   return (
     <Root>
       <Diagram
@@ -39,43 +47,8 @@ const App: React.FC = () => {
           edges
         </div>
         <div>Active block: {storage.active ?? "not set"}</div>
-        {storage.active && (
-          <>
-            <div>
-              Command:{" "}
-              <select
-                value={
-                  storage.blocks?.find(b => b.id === storage.active)?.command
-                }
-              >
-                {map(Commands, (value, key) => (
-                  <option key={key} value={key}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              Selector:{" "}
-              <input
-                type="text"
-                value={
-                  storage.blocks?.find(b => b.id === storage.active)
-                    ?.selector ?? ""
-                }
-              />
-            </div>
-            <div>
-              Parameter:{" "}
-              <input
-                type="text"
-                value={
-                  storage.blocks?.find(b => b.id === storage.active)
-                    ?.parameter ?? ""
-                }
-              />
-            </div>
-          </>
+        {activeBlock && (
+          <EditBlock block={activeBlock} onSave={handleUpdateBlock} />
         )}
       </Column>
     </Root>

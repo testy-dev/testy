@@ -77,7 +77,6 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
     forOwn(engine.getDiagramModel().getNodes(), node =>
       node.addListener({
         selectionChanged: e => {
-          console.log(e);
           if (e.isSelected) {
             // @ts-ignore extras exists
             onSelectBlock(e.entity.extras.blockID);
