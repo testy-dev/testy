@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import "@projectstorm/react-diagrams/dist/style.min.css";
 import {
@@ -7,6 +7,7 @@ import {
   DiagramModel,
   DiagramWidget,
 } from "@projectstorm/react-diagrams";
+import { forOwn } from "lodash";
 
 import { Block, Edge, UUID } from "../../types";
 import autoDistribute from "./autoDistribute";
@@ -14,7 +15,7 @@ import autoDistribute from "./autoDistribute";
 interface IProps {
   blocks: Block[];
   edges: Edge[];
-  onSelectBlock: (blockID?: UUID) => void;
+  onSelectBlock: (blockID: UUID | null) => void;
 }
 
 const getCommandColor = (command: Block["command"]): string => {
@@ -41,6 +42,13 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
 
     const model = new DiagramModel();
     engine.setDiagramModel(model);
+    return engine;
+  }, []);
+
+  useEffect(() => {
+    const model = engine.getDiagramModel();
+    forOwn(model.getLinks(), link => model.removeLink(link));
+    forOwn(model.getNodes(), node => model.removeNode(node));
 
     const nodes: any = {};
     blocks.forEach((block: Block) => {
@@ -50,12 +58,7 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
           : block.command,
         getCommandColor(block.command)
       );
-      node.addListener({
-        selectionChanged: () => {
-          onSelectBlock(block.id);
-          console.log("select block", block.id);
-        },
-      });
+      node.extras = { blockID: block.id };
       node.updateDimensions({ width: 100, height: 50 });
       node.addInPort("in");
       node.addOutPort("out");
@@ -71,14 +74,25 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
       model.addLink(link);
     });
     autoDistribute(engine);
-    return engine;
-  }, [blocks, edges, onSelectBlock]);
+    forOwn(engine.getDiagramModel().getNodes(), node =>
+      node.addListener({
+        selectionChanged: e => {
+          console.log(e);
+          if (e.isSelected) {
+            // @ts-ignore extras exists
+            onSelectBlock(e.entity.extras.blockID);
+          } else onSelectBlock(null);
+        },
+      })
+    );
+  }, [blocks, edges, engine, onSelectBlock]);
 
   return (
     <DiagramWidget
       className="srd-demo-canvas"
       diagramEngine={engine}
       maxNumberPointsPerLink={0}
+      inverseZoom={true}
     />
   );
 };

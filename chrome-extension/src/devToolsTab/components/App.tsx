@@ -19,7 +19,7 @@ const App: React.FC = () => {
 
   const storage = useLocalStorage();
 
-  const handleSelectBlock = async (blockID?: UUID) => {
+  const handleSelectBlock = async (blockID: UUID | null) => {
     await write({ active: blockID });
   };
 
