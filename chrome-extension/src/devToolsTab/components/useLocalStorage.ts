@@ -25,8 +25,13 @@ function useLocalStorage() {
   });
 
   useEffect(() => {
-    chrome.storage.local.get(["blocks", "edges"], result =>
-      setData(result as Data)
+    chrome.storage.local.get(["blocks", "edges", "active", "status"], result =>
+      setData({
+        blocks: result?.blocks ?? [],
+        edges: result?.edges ?? [],
+        active: result?.active ?? null,
+        status: result?.status ?? "off",
+      })
     );
   }, []);
 
