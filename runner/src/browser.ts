@@ -6,15 +6,21 @@ it("test", function () {
 
   ws.onopen = () => {
     send({ hello: "Hello from Cypress!" });
+    console.log("Tell me truth");
 
     ws.onmessage = event => {
       try {
-        const data = JSON.parse(event.data);
-        console.log(event.data);
-        commands = data.blocks;
+        send("Data:");
+        send(event.data);
+        commands = JSON.parse(event.data).event.data.new.edges;
       } catch (e) {
         console.error("Cannot JSON parse message input", event, e);
       }
+    };
+
+    // todo exit on close connection
+    ws.onclose = () => {
+      console.log("Bye");
     };
   };
 
