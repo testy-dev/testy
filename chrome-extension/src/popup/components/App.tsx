@@ -15,6 +15,7 @@ import Login from "./Login";
 import SelectProject from "./SelectProject";
 import ToggleButton from "./ToggleButton";
 import callGraphql from "../../helpers/callGraphql";
+import useLocalStorage from "../../helpers/useLocalStorage";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -30,19 +31,11 @@ const App: React.FC = () => {
   const [activeProject, setActiveProject] = React.useState<
     number | undefined
   >();
-  const [countOfBlocks, setCountOfBlocks] = React.useState<number>(0);
-  const [countOfEdges, setCountOfEdges] = React.useState<number>(0);
   const [screen, setScreen] = React.useState<Screen>(Screen.home);
   const [graphSaved, setGraphSaved] = React.useState<boolean>(false);
 
+  const storage = useLocalStorage();
   const loginState = useFirebaseAuthState();
-
-  React.useEffect(() => {
-    read(["blocks", "edges"]).then(data => {
-      setCountOfBlocks(data.blocks?.length ?? 0);
-      setCountOfEdges(data.edges?.length ?? 0);
-    });
-  }, []);
 
   const startRecording = (): void => {
     setRecStatus("on");
@@ -175,7 +168,7 @@ mutation($project: Int!, $graph: jsonb) {
         {loginState === "in" && activeProject && (
           <Wrap>
             <Button onClick={handleLoad}>Load</Button>
-            {countOfBlocks > 0 && countOfEdges > 0 && (
+            {storage.blocks?.length > 0 && storage.edges?.length > 0 && (
               <Button onClick={handleSave} disabled={graphSaved}>
                 {graphSaved ? "Saved" : "Save"}
               </Button>
@@ -205,8 +198,8 @@ mutation($project: Int!, $graph: jsonb) {
       )}
       <Content>{screenContent}</Content>
       <Footer>
-        <span>{countOfBlocks} blocks</span>
-        <span>{countOfEdges} edges</span>
+        <span>{storage?.blocks?.length ?? 0} blocks</span>
+        <span>{storage?.edges?.length ?? 0} edges</span>
         <Button onClick={() => handleToggle(ControlAction.RESET)}>Reset</Button>
       </Footer>
     </Root>
@@ -232,6 +225,10 @@ const Footer = styled.div`
 const Wrap = styled.div`
   align-self: center;
   text-align: center;
+
+  * {
+    margin: 5px;
+  }
 `;
 
 const Content = styled(Wrap)`

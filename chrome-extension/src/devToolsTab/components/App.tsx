@@ -6,7 +6,7 @@ import { Block, UUID } from "../../types";
 import { write } from "../../helpers/model";
 import Diagram from "./Diagram";
 import EditBlock from "./EditBlock";
-import useLocalStorage from "./useLocalStorage";
+import useLocalStorage from "../../helpers/useLocalStorage";
 
 const App: React.FC = () => {
   // Register tab in dev tools
