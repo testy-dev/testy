@@ -8,13 +8,14 @@ import { ActionWithPayload, RecState } from "../../types";
 import { Button } from "./styled-components";
 import { ControlAction } from "../../constants";
 import { firebaseConfig } from "../config";
-import { read } from "../../helpers/model";
+import { read, write } from "../../helpers/model";
 import { useFirebaseAuthState } from "../hooks";
 import Header from "./Header";
 import Login from "./Login";
 import SelectProject from "./SelectProject";
 import ToggleButton from "./ToggleButton";
 import callGraphql from "../../helpers/callGraphql";
+import useLocalStorage from "../../helpers/useLocalStorage";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -30,19 +31,11 @@ const App: React.FC = () => {
   const [activeProject, setActiveProject] = React.useState<
     number | undefined
   >();
-  const [countOfBlocks, setCountOfBlocks] = React.useState<number>(0);
-  const [countOfEdges, setCountOfEdges] = React.useState<number>(0);
   const [screen, setScreen] = React.useState<Screen>(Screen.home);
   const [graphSaved, setGraphSaved] = React.useState<boolean>(false);
 
+  const storage = useLocalStorage();
   const loginState = useFirebaseAuthState();
-
-  React.useEffect(() => {
-    read(["blocks", "edges"]).then(data => {
-      setCountOfBlocks(data.blocks?.length ?? 0);
-      setCountOfEdges(data.edges?.length ?? 0);
-    });
-  }, []);
 
   const startRecording = (): void => {
     setRecStatus("on");
@@ -128,6 +121,29 @@ mutation($project: Int!, $graph: jsonb) {
     }
   };
 
+  const handleLoad = async () => {
+    try {
+      // language=graphql
+      const result = await callGraphql(
+        `query($project: Int!) {
+                project(where: {id: {_eq: $project}}) {
+                    graph
+                }
+            }`,
+        {
+          project: activeProject,
+        }
+      );
+
+      const graph = result?.data?.project?.[0]?.graph;
+      const { blocks, edges } = JSON.parse(graph);
+      await write({ blocks, edges });
+      console.debug("Data loaded", blocks, edges);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   let screenContent;
   if (screen === Screen.login && loginState !== "in") {
     screenContent = <Login />;
@@ -149,6 +165,16 @@ mutation($project: Int!, $graph: jsonb) {
         <Wrap>
           <span>For show all blocks press F12 and open tab "Testy"</span>
         </Wrap>
+        {loginState === "in" && activeProject && (
+          <Wrap>
+            <Button onClick={handleLoad}>Load</Button>
+            {storage.blocks?.length > 0 && storage.edges?.length > 0 && (
+              <Button onClick={handleSave} disabled={graphSaved}>
+                {graphSaved ? "Saved" : "Save"}
+              </Button>
+            )}
+          </Wrap>
+        )}
       </>
     );
   }
@@ -172,16 +198,8 @@ mutation($project: Int!, $graph: jsonb) {
       )}
       <Content>{screenContent}</Content>
       <Footer>
-        <span>{countOfBlocks} blocks</span>
-        <span>{countOfEdges} edges</span>
-        {loginState === "in" &&
-          activeProject &&
-          countOfBlocks > 0 &&
-          countOfEdges > 0 && (
-            <Button onClick={handleSave} disabled={graphSaved}>
-              {graphSaved ? "Saved" : "Save"}
-            </Button>
-          )}
+        <span>{storage?.blocks?.length ?? 0} blocks</span>
+        <span>{storage?.edges?.length ?? 0} edges</span>
         <Button onClick={() => handleToggle(ControlAction.RESET)}>Reset</Button>
       </Footer>
     </Root>
@@ -207,6 +225,10 @@ const Footer = styled.div`
 const Wrap = styled.div`
   align-self: center;
   text-align: center;
+
+  * {
+    margin: 5px;
+  }
 `;
 
 const Content = styled(Wrap)`

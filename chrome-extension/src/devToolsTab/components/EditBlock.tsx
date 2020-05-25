@@ -17,8 +17,8 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
 
   useEffect(() => {
     setCommand(block.command);
-    setSelector(block.selector);
-    setParameter(block.parameter);
+    setSelector(block.selector ?? "");
+    setParameter(block.parameter ?? "");
   }, [block.command, block.parameter, block.selector]);
 
   const isChanged =
