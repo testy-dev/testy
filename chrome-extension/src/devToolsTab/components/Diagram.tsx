@@ -17,6 +17,7 @@ import autoDistribute from "./autoDistribute";
 interface IProps {
   blocks: Block[];
   edges: Edge[];
+  selected: UUID | null;
   onSelectBlock: (blockID: UUID | null) => void;
 }
 
@@ -37,7 +38,12 @@ const getCommandColor = (command: Block["command"]): string => {
   }
 };
 
-const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
+const Diagram: React.FC<IProps> = ({
+  blocks,
+  edges,
+  selected,
+  onSelectBlock,
+}) => {
   const engine = useMemo(() => {
     const engine = new DiagramEngine();
     engine.installDefaultFactories();
@@ -62,6 +68,7 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
       node.updateDimensions({ width: 100, height: 50 });
       node.addInPort("in");
       node.addOutPort("out");
+      if (selected === block.id) node.setSelected(true);
       model.addNode(node);
       nodes[block.id] = node;
     });
@@ -88,8 +95,9 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
         event.link.setColor("#898989");
       },
     });
+    // engine.repaintCanvas();
     engine.zoomToFit();
-  }, [blocks, edges, engine, onSelectBlock]);
+  }, [blocks, edges, engine, onSelectBlock, selected]);
 
   return (
     <DiagramWidget

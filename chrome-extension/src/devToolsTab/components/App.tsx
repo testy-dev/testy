@@ -37,6 +37,7 @@ const App: React.FC = () => {
       <Diagram
         blocks={storage.blocks}
         edges={storage.edges}
+        selected={storage.active}
         onSelectBlock={handleSelectBlock}
       />
       <Column>
