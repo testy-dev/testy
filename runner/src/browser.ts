@@ -17,11 +17,6 @@ it("test", function () {
         console.error("Cannot JSON parse message input", event, e);
       }
     };
-
-    // todo exit on close connection
-    ws.onclose = () => {
-      console.log("Bye");
-    };
   };
 
   cy.waitUntil(
@@ -40,6 +35,9 @@ it("test", function () {
             break;
           case "check-contains-text":
             cy.get(command.selector).contains(command.parameter);
+            break;
+          case "type":
+            cy.get(command.selector).type(command.parameter);
             break;
         }
         if (command?.library === "cypress") {
