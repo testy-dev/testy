@@ -11,7 +11,7 @@ import {
 } from "@projectstorm/react-diagrams";
 import { forOwn } from "lodash";
 
-import { Block, Edge, UUID } from "../../types";
+import { Block, Commands, Edge, UUID } from "../../types";
 import autoDistribute from "./autoDistribute";
 
 interface IProps {
@@ -55,9 +55,7 @@ const Diagram: React.FC<IProps> = ({ blocks, edges, onSelectBlock }) => {
     const nodes: any = {};
     blocks.forEach((block: Block) => {
       const node = new DefaultNodeModel(
-        block.command === "check-contains-text"
-          ? "contains text"
-          : block.command,
+        Commands[block.command],
         getCommandColor(block.command)
       );
       node.extras = { blockID: block.id };
