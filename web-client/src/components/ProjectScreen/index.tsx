@@ -2,14 +2,13 @@ import React, { Suspense } from "react";
 
 import { Box, Button, Heading, Text } from "grommet";
 import { graphql } from "@gqless/react";
-import { useHistory, useParams } from "react-router-dom";
-
+import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
+
 import { fetchQuery, query } from "../../graphql";
 import Logo from "../Logo";
 
 const ProjectScreen: React.FC = () => {
-  const history = useHistory();
   const { orgSlug, projectSlug } = useParams<{
     orgSlug: string;
     projectSlug: string;
@@ -35,11 +34,6 @@ const ProjectScreen: React.FC = () => {
         gap="medium"
       >
         <Text size="large">Tree of commands</Text>
-        <Button
-          label="Open editor"
-          size="large"
-          onClick={() => history.push(`/${orgSlug}/${projectSlug}/editor`)}
-        />
       </Box>
     </Box>
   );
@@ -73,12 +67,16 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
         primary
         onClick={() => {
           if(!id) return;
-          // language=graphql
           fetchQuery(
-            `mutation ($project_id: Int!) {
-  run_project(project_id: $project_id)
-}`,
-            { project_id: id }
+          // language=graphql
+            `
+mutation ($project_id: Int!, $run_by_user: Int!) {
+  insert_run_one(object: {project_id: $project_id, run_by_user: $run_by_user}) {
+    id
+  }
+}
+            `,
+            { project_id: id, run_by_user: 1 }
           );
         }}
       />
@@ -98,16 +96,17 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
         ) {
           id
           name
-          run_history {
-            id
-            commands_done
-            commands_failed
-            commands_total
+          run {
+              id
+              paths {
+                  id
+                  status
+              }
           }
-          run_history_aggregate {
-            aggregate {
-              count
-            }
+          run_aggregate {
+              aggregate {
+                  count
+              }
           }
         }
       }
@@ -121,20 +120,22 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
   );
   if (loading) return <Text>Loading...</Text>;
 
-  const project = data.project?.[0];
+  const project = data?.project?.[0];
   if (!project) return <Text>Not found</Text>;
 
   return (
     <Box>
       <Heading level={2}>
-        History ({project.run_history_aggregate.aggregate.count} items)
+        History ({project.run_aggregate.aggregate.count} items)
       </Heading>
       <Box>
-        {project.run_history.map((h: any) => (
-          <Box key={h.id}>
+        {project.run.map((run: any) => (
+          <Box key={run.id}>
             <Text>
-              #{h.id}, {h.commands_done} done, {h.commands_failed} failed, from{" "}
-              {h.commands_total} total
+              Run {run.id}
+              <div>
+              {run.paths.map((path: any) => <div key={path.id}>path {path.id}, status {path.status ?? "INITIALIZATION"}</div>)}
+              </div>
             </Text>
           </Box>
         ))}

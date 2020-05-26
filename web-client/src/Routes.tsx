@@ -4,7 +4,6 @@ import { Box, Heading } from "grommet";
 import { Route, Switch, useHistory } from "react-router-dom";
 import firebase from "firebase/app";
 
-import EditorScreen from "./components/EditorScreen";
 import HomeScreen from "./components/HomeScreen";
 import LoginScreen from "./components/LoginScreen";
 import NotFoundScreen from "./components/NotFoundScreen";
@@ -113,7 +112,6 @@ const Routes: React.FC = () => {
       <Route path="/" exact component={HomeScreen} />
       {/*<Route path="/:orgSlug" component={OrganizationScreen} />*/}
       <Route path="/:orgSlug/:projectSlug" exact component={ProjectScreen} />
-      <Route path="/:orgSlug/:projectSlug/editor" component={EditorScreen} />
       <Route component={NotFoundScreen} />
     </Switch>
   );

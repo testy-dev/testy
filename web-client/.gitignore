@@ -25,3 +25,5 @@ schema.graphql
 /.cache
 /dist
 /.parcel-cache
+
+.env
