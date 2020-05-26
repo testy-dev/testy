@@ -1,5 +1,8 @@
 /// <reference types="cypress" />
 // ***********************************************************
+
+// It is running inside NodeJS Cypress server
+
 // This example plugins/index.js can be used to load plugins
 //
 // You can change the location of this file or turn off loading
@@ -15,7 +18,8 @@
 /**
  * @type {Cypress.PluginConfig}
  */
-module.exports = () => {
+module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+  require("cypress-terminal-report").installPlugin(on);
 };

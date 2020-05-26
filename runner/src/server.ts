@@ -20,20 +20,17 @@ webSocketServer.on("connection", ws => {
       fetchQuery(
         `
         mutation MyMutation($edges: jsonb, $id: bigint) {
-          update_run_path(where: {id: {_eq: $id}}, _append: {edges: $edges}) {
+          update_run_path(where: {id: {_eq: $id}}, _set: {edges: $edges}) {
             returning {
               id
             }
           }
         }
       `,
-        {
-          input: { id: hasuraData.event.data.new.run_id, edges: data },
-        }
-      );
+        { id: hasuraData.event.data.new.id, edges: data }
+      )
     } else {
       console.log("Cannot forward private -> public", data);
-      // ws.send(JSON.stringify({ connection_status: "INCOMPLETE" }));
     }
   });
 });
