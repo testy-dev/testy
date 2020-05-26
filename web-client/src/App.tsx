@@ -4,12 +4,14 @@ import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
-  InMemoryCache,
+  InMemoryCache, split,
 } from "@apollo/client";
 import { BrowserRouter } from "react-router-dom";
 import { Grommet, generate, grommet } from "grommet";
 import { deepMerge } from "grommet/utils";
 import { setContext } from "@apollo/link-context";
+import { WebSocketLink } from "@apollo/link-ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 
 import "firebase/auth";
 import firebase from "firebase/app";
@@ -22,6 +24,19 @@ firebase.initializeApp(firebaseConfig);
 
 const httpLink = new HttpLink({
   uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
+});
+
+const wsLink = new WebSocketLink({
+  uri: process.env.REACT_APP_GRAPHQL_ENDPOINT?.replace("http", "ws") ?? "",
+  options: {
+    reconnect: true,
+    lazy: true,
+    connectionParams: async () => ({
+      headers: {
+        authorization: "Bearer " + await firebase.auth().currentUser?.getIdToken()
+      }
+    })
+  }
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -39,9 +54,21 @@ const authLink = setContext(async (_, { headers }) => {
   return {};
 });
 
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink)
+);
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: authLink.concat(httpLink),
+  link: splitLink,
 });
 
 const theme = deepMerge(generate(20), grommet, {

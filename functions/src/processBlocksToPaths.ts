@@ -27,7 +27,7 @@ export default functions.https.onRequest(async (req, resp) => {
 
   const pathsByIDs = getPaths(graph.edges);
   const paths = pathsByIDs.map(path =>
-    JSON.stringify(path.map(step => graph.blocks.find(b => b.id === step)))
+    path.map(step => graph.blocks.find(b => b.id === step))
   );
 
   await insertPaths(input.id, paths);
@@ -93,7 +93,7 @@ async function updateRunGraph(run_id: number, graph: string) {
   return response?.data?.update_run_by_pk?.id;
 }
 
-async function insertPaths(run_id: number, paths: string[]) {
+async function insertPaths(run_id: number, paths: object[][]) {
   const mutation = await fetchQuery(
     // language=graphql
     `
@@ -106,7 +106,8 @@ mutation ($objects: [run_path_insert_input!]!) {
     {
       objects: paths.map(p => ({
         run_id,
-        edges: p,
+        edges: JSON.stringify(p),
+        blocks_count: p.length,
       })),
     }
   );

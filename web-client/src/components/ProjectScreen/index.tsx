@@ -2,14 +2,13 @@ import React, { Suspense } from "react";
 
 import { Box, Button, Heading, Text } from "grommet";
 import { graphql } from "@gqless/react";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 
-import { gql, useQuery } from "@apollo/client";
 import { fetchQuery, query } from "../../graphql";
 import Logo from "../Logo";
 
 const ProjectScreen: React.FC = () => {
-  const history = useHistory();
   const { orgSlug, projectSlug } = useParams<{
     orgSlug: string;
     projectSlug: string;
@@ -35,11 +34,6 @@ const ProjectScreen: React.FC = () => {
         gap="medium"
       >
         <Text size="large">Tree of commands</Text>
-        <Button
-          label="Open editor"
-          size="large"
-          onClick={() => history.push(`/${orgSlug}/${projectSlug}/editor`)}
-        />
       </Box>
     </Box>
   );
@@ -72,13 +66,17 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
         label="Run now"
         primary
         onClick={() => {
-          if(!id) return;
-          // language=graphql
+          if (!id) return;
           fetchQuery(
-            `mutation ($project_id: Int!) {
-  run_project(project_id: $project_id)
-}`,
-            { project_id: id }
+            // language=graphql
+            `
+mutation ($project_id: Int!, $run_by_user: Int!) {
+  insert_run_one(object: {project_id: $project_id, run_by_user: $run_by_user}) {
+    id
+  }
+}
+            `,
+            { project_id: id, run_by_user: 1 }
           );
         }}
       />
@@ -87,57 +85,78 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
 });
 
 const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
-  const { data, loading } = useQuery(
+  const { data, loading } = useSubscription(
     gql`
-      query($projectSlug: String!, $orgSlug: String!) {
+      subscription($projectSlug: String!, $orgSlug: String!) {
         project(
           where: {
             slug: { _eq: $projectSlug }
             organization: { slug: { _eq: $orgSlug } }
           }
         ) {
-          id
-          name
-          run_history {
-            id
-            commands_done
-            commands_failed
-            commands_total
-          }
-          run_history_aggregate {
+          run_aggregate {
             aggregate {
               count
+            }
+          }
+          run {
+            paths {
+              id
+              status
+            }
+            id
+            paths_aggregate {
+              aggregate {
+                sum {
+                  credits
+                  blocks_blocked
+                  blocks_count
+                  blocks_failed
+                  blocks_success
+                }
+              }
             }
           }
         }
       }
     `,
     {
-      variables: {
-        orgSlug,
-        projectSlug,
-      },
+      variables: { orgSlug, projectSlug },
     }
   );
+
   if (loading) return <Text>Loading...</Text>;
 
-  const project = data.project?.[0];
+  const project = data?.project?.[0];
   if (!project) return <Text>Not found</Text>;
 
   return (
     <Box>
       <Heading level={2}>
-        History ({project.run_history_aggregate.aggregate.count} items)
+        History ({project?.run_aggregate?.aggregate?.count ?? 0} items)
       </Heading>
       <Box>
-        {project.run_history.map((h: any) => (
-          <Box key={h.id}>
-            <Text>
-              #{h.id}, {h.commands_done} done, {h.commands_failed} failed, from{" "}
-              {h.commands_total} total
-            </Text>
-          </Box>
-        ))}
+        {project.run.map((run: any) => {
+          const sum = run?.paths_aggregate?.aggregate?.sum;
+          return (
+            <Box key={run.id}>
+              <Text>
+                <div>
+                  Run {run.id}, {sum?.blocks_count} blocks (
+                  {sum?.blocks_success} success, {sum?.blocks_failed} failed,{" "}
+                  {sum?.blocks_blocked} blocked), {sum?.credits} credits
+                </div>
+                <div>
+                  {run.paths.map((path: any) => (
+                    <div key={path.id}>
+                      path {path.id}, status {path.status ?? "INITIALIZATION"}
+                    </div>
+                  ))}
+                </div>
+              </Text>
+            </Box>
+          );
+        })}
       </Box>
     </Box>
   );
