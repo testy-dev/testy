@@ -3,7 +3,7 @@ import React, { Suspense } from "react";
 import { Box, Button, Heading, Text } from "grommet";
 import { graphql } from "@gqless/react";
 import { useParams } from "react-router-dom";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 
 import { fetchQuery, query } from "../../graphql";
 import Logo from "../Logo";
@@ -66,9 +66,9 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
         label="Run now"
         primary
         onClick={() => {
-          if(!id) return;
+          if (!id) return;
           fetchQuery(
-          // language=graphql
+            // language=graphql
             `
 mutation ($project_id: Int!, $run_by_user: Int!) {
   insert_run_one(object: {project_id: $project_id, run_by_user: $run_by_user}) {
@@ -85,39 +85,41 @@ mutation ($project_id: Int!, $run_by_user: Int!) {
 });
 
 const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
-  const { data, loading } = useQuery(
+  const {data, loading} = useSubscription(
     gql`
-      query($projectSlug: String!, $orgSlug: String!) {
+      subscription($projectSlug: String!, $orgSlug: String!) {
         project(
           where: {
             slug: { _eq: $projectSlug }
             organization: { slug: { _eq: $orgSlug } }
           }
         ) {
-          id
-          name
           run {
+            paths {
               id
-              paths {
-                  id
-                  status
-              }
-          }
-          run_aggregate {
+              status
+            }
+            id
+            paths_aggregate {
               aggregate {
-                  count
+                sum {
+                  credits
+                  blocks_blocked
+                  blocks_count
+                  blocks_failed
+                  blocks_success
+                }
               }
+            }
           }
         }
       }
     `,
     {
-      variables: {
-        orgSlug,
-        projectSlug,
-      },
+      variables: { orgSlug, projectSlug },
     }
   );
+
   if (loading) return <Text>Loading...</Text>;
 
   const project = data?.project?.[0];
@@ -126,7 +128,8 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
   return (
     <Box>
       <Heading level={2}>
-        History ({project.run_aggregate.aggregate.count} items)
+        History
+        {/*({project?.run?.paths_aggregate.count} items)*/}
       </Heading>
       <Box>
         {project.run.map((run: any) => (
@@ -134,7 +137,11 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
             <Text>
               Run {run.id}
               <div>
-              {run.paths.map((path: any) => <div key={path.id}>path {path.id}, status {path.status ?? "INITIALIZATION"}</div>)}
+                {run.paths.map((path: any) => (
+                  <div key={path.id}>
+                    path {path.id}, status {path.status ?? "INITIALIZATION"}
+                  </div>
+                ))}
               </div>
             </Text>
           </Box>
