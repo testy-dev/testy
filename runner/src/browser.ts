@@ -1,12 +1,18 @@
+type Block = {
+  blockId: string;
+  status: "SUCCESS" | "FAILED" | "BLOCKED";
+  msg?: string;
+};
+
 it("test", function () {
   const ws = new WebSocket("ws://localhost:8082");
   const send = data => ws.send(JSON.stringify(data));
 
   let commands = [];
+  const blockResults: Block[] = [];
 
   ws.onopen = () => {
     send({ hello: "Hello from Cypress!" });
-    console.log("Tell me truth");
 
     ws.onmessage = event => {
       try {
@@ -23,27 +29,34 @@ it("test", function () {
     () => {
       if (ws.readyState !== 1) return; // Wait for opened connection
 
-      const command = commands.shift();
-      if (command) {
-        send({ message: "Command to execute", command });
-        switch (command.command) {
-          case "visit":
-            cy.visit(command.parameter);
-            break;
-          case "click":
-            cy.get(command.selector).click();
-            break;
-          case "check-contains-text":
-            cy.get(command.selector).contains(command.parameter);
-            break;
-          case "type":
-            cy.get(command.selector).type(command.parameter);
-            break;
-        }
-        if (command?.library === "cypress") {
-          const response = cy[command.command].apply(this, command.args);
-          send({ message: "response", command, response });
-        }
+      if (commands.length) {
+        commands.forEach(command => {
+          send({ message: "Command to execute", command });
+          try {
+            switch (command.command) {
+              case "visit":
+                cy.visit(command.parameter);
+                break;
+              case "click":
+                cy.get(command.selector).click();
+                break;
+              case "check-contains-text":
+                cy.get(command.selector).contains(command.parameter);
+                break;
+              case "type":
+                cy.get(command.selector).type(command.parameter);
+                break;
+            }
+            blockResults.push({ blockId: command.block_id, status: "SUCCESS" });
+          } catch (e) {
+            blockResults.push({
+              blockId: command.block_id,
+              msg: e.message,
+              status: "FAILED",
+            });
+          }
+        });
+        send(JSON.stringify(blockResults));
       }
       return false;
     },
