@@ -45,4 +45,12 @@ RUN echo  " node version:    $(node -v) \n" \
 
 WORKDIR "/app"
 
+COPY dist /app/dist/
+COPY package.json /app/
+COPY yarn.lock /app/
+COPY cypress.json /app/
+COPY .env /
+COPY cypress /app/cypress/
+RUN yarn install --prod
+
 ENTRYPOINT ["yarn", "run", "prod-start"]

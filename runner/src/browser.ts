@@ -12,13 +12,11 @@ it("test", function () {
   const blockResults: Block[] = [];
 
   ws.onopen = () => {
-    send({ hello: "Hello from Cypress!" });
-
     ws.onmessage = event => {
       try {
-        send("Data:");
-        send(event.data);
-        commands = JSON.parse(event.data).event.data.new.edges;
+        commands = JSON.parse(JSON.parse(event.data).event.data.new.edges);
+        console.log("commands");
+        console.log(commands);
       } catch (e) {
         console.error("Cannot JSON parse message input", event, e);
       }
@@ -31,14 +29,20 @@ it("test", function () {
 
       if (commands.length) {
         commands.forEach(command => {
-          send({ message: "Command to execute", command });
           try {
             switch (command.command) {
               case "visit":
-                cy.visit(command.parameter);
+                cy.visit(command.parameter, {
+                  onLoad: () => {
+                    command.status = "SUCCESS";
+                    blockResults.push(command);
+                  },
+                });
                 break;
               case "click":
-                cy.get(command.selector).click();
+                const result = cy.get(command.selector).click();
+                console.log("Result");
+                console.log(result);
                 break;
               case "check-contains-text":
                 cy.get(command.selector).contains(command.parameter);
@@ -47,10 +51,9 @@ it("test", function () {
                 cy.get(command.selector).type(command.parameter);
                 break;
             }
-            blockResults.push({ blockId: command.block_id, status: "SUCCESS" });
           } catch (e) {
             blockResults.push({
-              blockId: command.block_id,
+              blockId: command.id,
               msg: e.message,
               status: "FAILED",
             });
