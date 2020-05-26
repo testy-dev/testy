@@ -18,27 +18,3 @@ export const fetchQuery = async (query, variables) => {
 
   return await response.json();
 };
-
-function getPaths(edges: any): string[][] {
-  const paths = [];
-
-  const startingEdges = edges.filter(
-    ([f]) => !edges.find(([, fs]) => fs === f)
-  );
-
-  function generatePath(currentPath: [string, string][]): void {
-    const lastEdge = currentPath[currentPath.length - 1];
-    const next = edges.filter(([f]) => f === lastEdge);
-    if (!next.length) {
-      paths.push(currentPath);
-    } else {
-      next.forEach(path => {
-        generatePath(currentPath.concat(path[1]));
-      });
-    }
-  }
-
-  startingEdges.forEach(node => generatePath(node));
-
-  return paths;
-}
