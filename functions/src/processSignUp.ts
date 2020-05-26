@@ -1,9 +1,7 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-admin.initializeApp(functions.config().firebase);
+import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 
-// On sign up.
-exports.processSignUp = functions.auth.user().onCreate(user => {
+export default functions.auth.user().onCreate(user => {
   const customClaims = {
     "https://hasura.io/jwt/claims": {
       "x-hasura-default-role": "user",
