@@ -107,6 +107,7 @@ mutation ($objects: [run_path_insert_input!]!) {
       objects: paths.map(p => ({
         run_id,
         edges: p,
+        blocks_count: p.length,
       })),
     }
   );
