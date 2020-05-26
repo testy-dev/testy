@@ -10,7 +10,7 @@ export default functions.https.onRequest(async (req, resp) => {
 
   const input = req.body?.event?.data?.new;
   console.log("input", input);
-  let graph = input?.graph ? JSON.parse(input.graph) : null;
+  let graph = input?.graph;
 
   if (!graph) {
     // Graph is not included in run, get graph from project and save it to run
