@@ -85,7 +85,7 @@ mutation ($project_id: Int!, $run_by_user: Int!) {
 });
 
 const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
-  const {data, loading} = useSubscription(
+  const { data, loading } = useSubscription(
     gql`
       subscription($projectSlug: String!, $orgSlug: String!) {
         project(
@@ -94,6 +94,11 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
             organization: { slug: { _eq: $orgSlug } }
           }
         ) {
+          run_aggregate {
+            aggregate {
+              count
+            }
+          }
           run {
             paths {
               id
@@ -128,24 +133,30 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
   return (
     <Box>
       <Heading level={2}>
-        History
-        {/*({project?.run?.paths_aggregate.count} items)*/}
+        History ({project?.run_aggregate?.aggregate?.count ?? 0} items)
       </Heading>
       <Box>
-        {project.run.map((run: any) => (
-          <Box key={run.id}>
-            <Text>
-              Run {run.id}
-              <div>
-                {run.paths.map((path: any) => (
-                  <div key={path.id}>
-                    path {path.id}, status {path.status ?? "INITIALIZATION"}
-                  </div>
-                ))}
-              </div>
-            </Text>
-          </Box>
-        ))}
+        {project.run.map((run: any) => {
+          const sum = run?.paths_aggregate?.aggregate?.sum;
+          return (
+            <Box key={run.id}>
+              <Text>
+                <div>
+                  Run {run.id}, {sum?.blocks_count} blocks (
+                  {sum?.blocks_success} success, {sum?.blocks_failed} failed,{" "}
+                  {sum?.blocks_blocked} blocked), {sum?.credits} credits
+                </div>
+                <div>
+                  {run.paths.map((path: any) => (
+                    <div key={path.id}>
+                      path {path.id}, status {path.status ?? "INITIALIZATION"}
+                    </div>
+                  ))}
+                </div>
+              </Text>
+            </Box>
+          );
+        })}
       </Box>
     </Box>
   );
