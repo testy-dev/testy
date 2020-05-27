@@ -16,16 +16,27 @@ const ProjectScreen: React.FC = () => {
     projectSlug: string;
   }>();
   const [graph, setGraph] = useState<Graph | null>(null);
+  const [openedHistory, setOpenedHistory] = useState<number | null>(null);
   return (
     <Box direction="row" fill>
-      <Box basis="1/3" flex={false} pad="medium" background="light-3">
+      <Box
+        basis="1/3"
+        flex={false}
+        pad="medium"
+        background="light-3"
+        overflow={{ vertical: "auto" }}
+      >
         <Logo />
         <Suspense fallback="Loading ...">
           <ProjectHeader orgSlug={orgSlug} projectSlug={projectSlug} />
           <ProjectHistory
             orgSlug={orgSlug}
             projectSlug={projectSlug}
-            onSelectGraph={graph => setGraph(graph)}
+            openedHistory={openedHistory}
+            onOpenHistory={(id, graph) => {
+              setOpenedHistory(id);
+              setGraph(graph);
+            }}
           />
         </Suspense>
       </Box>
@@ -61,7 +72,7 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
   const name = project.name;
   const id = project.id;
   return (
-    <Box direction="row" align="center" justify="between">
+    <Box direction="row" align="center" justify="between" flex={false}>
       <Heading level={1}>Project {name}</Heading>
       <Button
         label="Run now"
@@ -86,13 +97,15 @@ mutation ($project_id: Int!, $run_by_user: Int!) {
 });
 
 interface ProjectHistoryProps extends SlugInput {
-  onSelectGraph: (graph: Graph) => void;
+  openedHistory: number | null;
+  onOpenHistory: (id: number, graph: Graph) => void;
 }
 
 const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   orgSlug,
   projectSlug,
-  onSelectGraph,
+  openedHistory,
+  onOpenHistory,
 }) => {
   const { data, loading } = useSubscription(
     gql`
@@ -103,13 +116,16 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             organization: { slug: { _eq: $orgSlug } }
           }
         ) {
+          id
+          graph
           run_aggregate {
             aggregate {
               count
             }
           }
-          run {
+          run(order_by: { started_at: desc }) {
             id
+            started_at
             graph
             paths {
               id
@@ -141,21 +157,37 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   if (!project) return <Text>Not found</Text>;
 
   return (
-    <Box>
-      <Heading level={2}>
-        History ({project?.run_aggregate?.aggregate?.count ?? 0} items)
-      </Heading>
-      <Box>
-        {project.run.map((run: any) => {
-          const sum = run?.paths_aggregate?.aggregate?.sum;
-          return (
-            <Box key={run.id} onClick={() => onSelectGraph(run.graph)}>
-              <Text>
-                <div>
-                  Run {run.id}, {sum?.blocks_count} blocks (
-                  {sum?.blocks_success} success, {sum?.blocks_failed} failed,{" "}
-                  {sum?.blocks_blocked} blocked), {sum?.credits} credits
-                </div>
+    <Box flex={false} gap="xsmall">
+      <Box background="light-1" pad="small">
+        Actual state
+      </Box>
+      {project.run.map((run: any) => {
+        const opened = run.id === openedHistory;
+        const sum = run?.paths_aggregate?.aggregate?.sum;
+        return (
+          <Box
+            key={run.id}
+            background="light-1"
+            pad="small"
+            onClick={() => onOpenHistory(run.id, run.graph)}
+            border={{
+              side: "left",
+              size: "medium",
+              color: run.status
+                ? run.status === "SUCCESS"
+                  ? "status-ok"
+                  : "status-error"
+                : "status-unknown",
+            }}
+          >
+            <Text>
+              {run.started_at}
+              <div>
+                Run {run.id}, {sum?.blocks_count} blocks ({sum?.blocks_success}{" "}
+                success, {sum?.blocks_failed} failed, {sum?.blocks_blocked}{" "}
+                blocked), {sum?.credits} credits
+              </div>
+              {opened && (
                 <div>
                   {run.paths.map((path: any) => (
                     <div key={path.id}>
@@ -163,11 +195,11 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
                     </div>
                   ))}
                 </div>
-              </Text>
-            </Box>
-          );
-        })}
-      </Box>
+              )}
+            </Text>
+          </Box>
+        );
+      })}
     </Box>
   );
 };
