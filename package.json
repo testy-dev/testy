@@ -5,7 +5,8 @@
     "functions",
     "web-client",
     "shared",
-    "diagram"
+    "diagram",
+    "chrome-extension"
   ],
   "scripts": {
     "stats": "cloc --exclude-dir=node_modules,lib,out,dist,build ."

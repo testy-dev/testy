@@ -2,11 +2,10 @@ import * as React from "react";
 
 import "firebase/auth";
 import * as firebase from "firebase/app";
+import { ActionWithPayload, ControlAction, RecState } from "shared";
 import styled from "styled-components";
 
-import { ActionWithPayload, RecState } from "../../types";
 import { Button } from "./styled-components";
-import { ControlAction } from "../../constants";
 import { firebaseConfig } from "../config";
 import { read, write } from "../../helpers/model";
 import { useFirebaseAuthState } from "../hooks";

@@ -3,8 +3,12 @@
  *
  * Responsible for recording the DOM events.
  */
-import { ActionWithPayload, ParsedEvent } from "../types";
-import { ControlAction, EventType } from "../constants";
+import {
+  ActionWithPayload,
+  ControlAction,
+  EventType,
+  ParsedEvent,
+} from "shared";
 import finder from "@medv/finder";
 
 let port: chrome.runtime.Port;

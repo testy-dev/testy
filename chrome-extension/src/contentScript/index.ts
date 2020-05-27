@@ -1,4 +1,5 @@
-import { ActionWithPayload } from "../types";
+import { ActionWithPayload } from "shared";
+
 import highlighter from "./highlighter";
 import recorder from "./recorder";
 
