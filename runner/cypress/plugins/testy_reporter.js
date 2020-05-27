@@ -28,7 +28,7 @@ function Base(runner) {
 
   runner.on("end", function () {
     const query = `
-        mutation MyMutation($edges: jsonb, $id: bigint) {
+        mutation($edges: jsonb, $id: bigint) {
           update_run_path(where: {id: {_eq: $id}}, _set: {edges: $edges}) {
             returning {
               id
