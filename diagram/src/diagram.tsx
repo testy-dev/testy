@@ -38,7 +38,7 @@ const getCommandColor = (command: Block["command"]): string => {
   }
 };
 
-const Index: React.FC<IProps> = ({
+const Diagram: React.FC<IProps> = ({
   blocks,
   edges,
   selected,
@@ -109,4 +109,4 @@ const Index: React.FC<IProps> = ({
   );
 };
 
-export default Index;
+export default Diagram;

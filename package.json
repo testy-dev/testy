@@ -4,7 +4,8 @@
   "workspaces": [
     "functions",
     "web-client",
-    "shared"
+    "shared",
+    "diagram"
   ],
   "scripts": {
     "stats": "cloc --exclude-dir=node_modules,lib,out,dist,build ."

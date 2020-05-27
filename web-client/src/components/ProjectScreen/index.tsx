@@ -1,9 +1,11 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 
 import { Box, Button, Heading, Text } from "grommet";
+import { Diagram } from "diagram";
+import { Graph } from "shared";
+import { gql, useSubscription } from "@apollo/client";
 import { graphql } from "@gqless/react";
 import { useParams } from "react-router-dom";
-import { gql, useQuery, useSubscription } from "@apollo/client";
 
 import { fetchQuery, query } from "../../graphql";
 import Logo from "../Logo";
@@ -13,28 +15,27 @@ const ProjectScreen: React.FC = () => {
     orgSlug: string;
     projectSlug: string;
   }>();
+  const [graph, setGraph] = useState<Graph | null>(null);
   return (
     <Box direction="row" fill>
-      {/* User */}
-      <Box basis="1/3" flex={false} pad="medium">
+      <Box basis="1/3" flex={false} pad="medium" background="light-3">
         <Logo />
         <Suspense fallback="Loading ...">
           <ProjectHeader orgSlug={orgSlug} projectSlug={projectSlug} />
-          <ProjectHistory orgSlug={orgSlug} projectSlug={projectSlug} />
+          <ProjectHistory
+            orgSlug={orgSlug}
+            projectSlug={projectSlug}
+            onSelectGraph={graph => setGraph(graph)}
+          />
         </Suspense>
       </Box>
 
-      {/* Screenshot */}
-      <Box
-        flex="grow"
-        background="light-3"
-        pad="medium"
-        justify="center"
-        align="center"
-        gap="medium"
-      >
-        <Text size="large">Tree of commands</Text>
-      </Box>
+      <Diagram
+        blocks={graph?.blocks ?? []}
+        edges={graph?.edges ?? []}
+        onSelectBlock={() => null}
+        selected={null}
+      />
     </Box>
   );
 };
@@ -84,7 +85,15 @@ mutation ($project_id: Int!, $run_by_user: Int!) {
   );
 });
 
-const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
+interface ProjectHistoryProps extends SlugInput {
+  onSelectGraph: (graph: Graph) => void;
+}
+
+const ProjectHistory: React.FC<ProjectHistoryProps> = ({
+  orgSlug,
+  projectSlug,
+  onSelectGraph,
+}) => {
   const { data, loading } = useSubscription(
     gql`
       subscription($projectSlug: String!, $orgSlug: String!) {
@@ -100,11 +109,12 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
             }
           }
           run {
+            id
+            graph
             paths {
               id
               status
             }
-            id
             paths_aggregate {
               aggregate {
                 sum {
@@ -139,7 +149,7 @@ const ProjectHistory = ({ orgSlug, projectSlug }: SlugInput) => {
         {project.run.map((run: any) => {
           const sum = run?.paths_aggregate?.aggregate?.sum;
           return (
-            <Box key={run.id}>
+            <Box key={run.id} onClick={() => onSelectGraph(run.graph)}>
               <Text>
                 <div>
                   Run {run.id}, {sum?.blocks_count} blocks (
