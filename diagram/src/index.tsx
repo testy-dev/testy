@@ -11,7 +11,7 @@ import {
 } from "@projectstorm/react-diagrams";
 import { forOwn } from "lodash";
 
-import { Block, Commands, Edge, UUID } from "../../types";
+import { Block, Commands, Edge, UUID } from "shared";
 import autoDistribute from "./autoDistribute";
 
 interface IProps {
@@ -38,7 +38,7 @@ const getCommandColor = (command: Block["command"]): string => {
   }
 };
 
-const Diagram: React.FC<IProps> = ({
+const Index: React.FC<IProps> = ({
   blocks,
   edges,
   selected,
@@ -109,4 +109,4 @@ const Diagram: React.FC<IProps> = ({
   );
 };
 
-export default Diagram;
+export default Index;
