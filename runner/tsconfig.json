@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "types": ["cypress", "cypress-wait-until", "node"]
   }
 }
