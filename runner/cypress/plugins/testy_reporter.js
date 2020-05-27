@@ -36,9 +36,8 @@ function Base(runner) {
           }
         }
       `;
-    const variables = { id: suiteId, edges: report };
-    console.log(suiteId);
-    console.log(report);
+    const variables = { id: suiteId, edges: JSON.stringify(report) };
+    console.log(variables);
 
     fetch(GRAPHQL_ENDPOINT, {
       method: "POST",
@@ -47,8 +46,9 @@ function Base(runner) {
         "x-hasura-admin-secret": HASURA_ADMIN_SECRET,
       },
       body: JSON.stringify({ query, variables }),
-    }).then(resp => {
-      console.log(resp);
-    });
+      mode: "cors",
+    })
+      .then(console.warn)
+      .catch(console.error);
   });
 }
