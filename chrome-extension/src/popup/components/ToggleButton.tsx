@@ -1,7 +1,7 @@
 import * as React from "react";
+import { ControlAction } from "shared";
 import styled from "styled-components";
 
-import { ControlAction } from "../../constants";
 import { LargeButton } from "./styled-components";
 
 export interface ToggleButtonProps {

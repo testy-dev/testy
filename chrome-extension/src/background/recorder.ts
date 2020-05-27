@@ -6,8 +6,8 @@
  * back to the popup for display to the user.
  */
 
-import { ActionWithPayload, ParsedEvent, Session } from "../types";
-import { ControlAction } from "../constants";
+import { ActionWithPayload, ControlAction, ParsedEvent, Session } from "shared";
+
 import { getStatus, pushBlock, reset, setStatus } from "../helpers/model";
 import codeGenerator from "../helpers/codeGenerator";
 

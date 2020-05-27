@@ -31,7 +31,8 @@
     "styled-components": "^5.0.1",
     "subscriptions-transport-ws": "^0.9.16",
     "typescript": "~3.8.3",
-    "uuid": "^7.0.3"
+    "uuid": "^7.0.3",
+    "diagram": "1.0.0"
   },
   "scripts": {
     "start": "parcel public/index.html",
@@ -40,9 +41,6 @@
     "lint": "yarn eslint src/**",
     "lint:fix": "yarn eslint --fix src/**",
     "generate": "gqless generate"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [

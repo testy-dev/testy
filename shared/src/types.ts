@@ -1,4 +1,4 @@
-import { ControlAction } from "../constants";
+import { ControlAction } from "./constants";
 
 export type RecState = "off" | "on" | "paused";
 
@@ -50,3 +50,5 @@ export interface Block {
 export type UUID = string;
 export type Color = string;
 export type Edge = [UUID, UUID] | [UUID, UUID, Color];
+
+export type Graph = { blocks: Block[]; edges: Edge[] };

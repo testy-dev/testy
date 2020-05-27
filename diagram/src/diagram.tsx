@@ -11,7 +11,7 @@ import {
 } from "@projectstorm/react-diagrams";
 import { forOwn } from "lodash";
 
-import { Block, Commands, Edge, UUID } from "../../types";
+import { Block, Commands, Edge, UUID } from "shared";
 import autoDistribute from "./autoDistribute";
 
 interface IProps {

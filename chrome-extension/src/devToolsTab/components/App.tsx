@@ -1,10 +1,10 @@
 import * as React from "react";
 
+import { Block, UUID } from "shared";
+import { Diagram } from "diagram";
 import styled from "styled-components";
 
-import { Block, UUID } from "../../types";
 import { write } from "../../helpers/model";
-import Diagram from "./Diagram";
 import EditBlock from "./EditBlock";
 import useLocalStorage from "../../helpers/useLocalStorage";
 

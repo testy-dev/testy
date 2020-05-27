@@ -4,8 +4,7 @@
  * Each time the user records, this function will generate a cy.visit command that will
  * store the current url, as well each subsequest user interaction with the browser.
  */
-import { Block, ParsedEvent } from "../types";
-import { EventType } from "../constants";
+import { Block, EventType, ParsedEvent } from "shared";
 import { v4 } from "uuid";
 
 /**

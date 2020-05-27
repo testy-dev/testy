@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 
+import { Block, Commands } from "shared";
 import { map } from "lodash";
 import styled from "styled-components";
-
-import { Block, Commands } from "../../types";
 
 interface IProps {
   block: Block;
