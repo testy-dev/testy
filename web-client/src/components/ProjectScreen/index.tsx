@@ -6,6 +6,7 @@ import { Graph } from "shared";
 import { gql, useSubscription } from "@apollo/client";
 import { graphql } from "@gqless/react";
 import { useParams } from "react-router-dom";
+import TimeAgo from "react-timeago";
 
 import { fetchQuery, query } from "../../graphql";
 import Logo from "../Logo";
@@ -180,23 +181,26 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
                 : "status-unknown",
             }}
           >
+            <Box direction="row" justify="between">
+              <Text>#{run.id}</Text>
+              <Text>
+                <TimeAgo date={run.started_at} />
+              </Text>
+            </Box>
             <Text>
-              {run.started_at}
-              <div>
-                Run {run.id}, {sum?.blocks_count} blocks ({sum?.blocks_success}{" "}
-                success, {sum?.blocks_failed} failed, {sum?.blocks_blocked}{" "}
-                blocked), {sum?.credits} credits
-              </div>
-              {opened && (
-                <div>
-                  {run.paths.map((path: any) => (
-                    <div key={path.id}>
-                      path {path.id}, status {path.status ?? "INITIALIZATION"}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {sum?.blocks_count} blocks ({sum?.blocks_success} success,{" "}
+              {sum?.blocks_failed} failed, {sum?.blocks_blocked} blocked),{" "}
+              {sum?.credits} credits
             </Text>
+            {opened && (
+              <div>
+                {run.paths.map((path: any) => (
+                  <div key={path.id}>
+                    path {path.id}, status {path.status ?? "INITIALIZATION"}
+                  </div>
+                ))}
+              </div>
+            )}
           </Box>
         );
       })}
