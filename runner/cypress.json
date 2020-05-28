@@ -1,7 +1,6 @@
 {
   "testFiles": "browser.js",
   "integrationFolder": "./dist",
-  "reporter": "./cypress/plugins/testy_reporter.js",
   "video": false,
   "chromeWebSecurity": false
 }
