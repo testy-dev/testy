@@ -45,6 +45,8 @@ RUN echo  " node version:    $(node -v) \n" \
 
 WORKDIR "/app"
 
+ENV NO_COLOR=1
+
 COPY dist /app/dist/
 COPY package.json /app/
 COPY yarn.lock /app/
