@@ -34,6 +34,7 @@ createServer((req, resp) => {
       const result = await cypress.run({
         configFile: "cypress.json",
         browser: "chrome",
+        headless: true,
       });
       console.timeEnd("cypress");
 
