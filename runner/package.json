@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "build": "esbuild --outfile=dist/server.js src/server.ts --platform=node && cp src/steps.json dist && esbuild --outfile=dist/browser.js src/browser.ts",
-    "prod-start": "node -r esm dist/server.js"
+    "prod-start": "node -r esm dist/server.js",
+    "image:build": "docker build -f Dockerfile . -t us.gcr.io/testyx/runner:latest",
+    "image:deploy": "docker push us.gcr.io/testyx/runner:latest"
   },
   "dependencies": {
     "concurrently": "^5.2.0",
