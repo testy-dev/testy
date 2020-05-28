@@ -11,6 +11,10 @@ Open console `hasura console`
 Apply migrations `hasura migrate apply`
 
 ## Simulator - Cypress in docker
+
 Start with docker-compose
 
-## Web Client - 
+## Runner
+
+Build with `docker-compose build`
+then tag with `docker tag <image_id> us.gcr.io/testyx/runner`
