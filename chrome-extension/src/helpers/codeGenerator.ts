@@ -23,6 +23,7 @@ const SpecialKeys = new Map([
   ["ArrowRight", "rightarrow"],
   ["ArrowDown", "downarrow"],
   ["ArrowLeft", "leftarrow"],
+  ["Enter", "enter"],
 ]);
 
 function handleKeydown(event: ParsedEvent): Block | null {
