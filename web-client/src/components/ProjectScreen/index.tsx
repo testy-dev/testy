@@ -128,12 +128,13 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             id
             started_at
             graph
-            paths {
+            paths(order_by: { id: asc }) {
               id
               blocks_count
               blocks_success
               blocks_failed
               blocks_blocked
+              credits
             }
             paths_aggregate {
               aggregate {
@@ -177,11 +178,11 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             border={{
               side: "left",
               size: "medium",
-              color: run.status
-                ? run.status === "SUCCESS"
-                  ? "status-ok"
-                  : "status-error"
-                : "status-unknown",
+              color: getStatus(
+                sum.blocks_success,
+                sum.blocks_failed,
+                sum.blocks_count
+              ),
             }}
           >
             <Box direction="row" justify="between">
@@ -198,11 +199,20 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             {opened && (
               <div>
                 {run.paths.map((path: any) => (
-                  <div key={path.id}>
-                    path #{path.id} - {sum?.blocks_count} blocks (
-                    {sum?.blocks_success} success, {sum?.blocks_failed} failed,{" "}
-                    {sum?.blocks_blocked} blocked), {sum?.credits} credits
-                  </div>
+                  <Text
+                    key={path.id}
+                    style={{ display: "block" }}
+                    color={getStatus(
+                      path.blocks_success,
+                      path.blocks_failed,
+                      path.blocks_count
+                    )}
+                  >
+                    path #{path.id} - {path?.blocks_count} blocks (
+                    {path?.blocks_success} success, {path?.blocks_failed}{" "}
+                    failed, {path?.blocks_blocked} blocked), {path?.credits}{" "}
+                    credits
+                  </Text>
                 ))}
               </div>
             )}
@@ -212,5 +222,8 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
     </Box>
   );
 };
+
+const getStatus = (pass: number, fail: number, total: number) =>
+  fail > 0 ? "status-error" : pass === total ? "status-ok" : "status-unknown";
 
 export default ProjectScreen;
