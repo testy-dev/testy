@@ -130,7 +130,10 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             graph
             paths {
               id
-              status
+              blocks_count
+              blocks_success
+              blocks_failed
+              blocks_blocked
             }
             paths_aggregate {
               aggregate {
@@ -196,7 +199,9 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
               <div>
                 {run.paths.map((path: any) => (
                   <div key={path.id}>
-                    path {path.id}, status {path.status ?? "INITIALIZATION"}
+                    path #{path.id} - {sum?.blocks_count} blocks (
+                    {sum?.blocks_success} success, {sum?.blocks_failed} failed,{" "}
+                    {sum?.blocks_blocked} blocked), {sum?.credits} credits
                   </div>
                 ))}
               </div>
