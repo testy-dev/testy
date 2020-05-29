@@ -14,6 +14,23 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
   const [selector, setSelector] = useState<string>();
   const [parameter, setParameter] = useState<string>();
 
+  const [blockResult, setBlockResult] = useState<any>();
+
+  React.useEffect((): (() => void) => {
+    function handleMessageFromBackground({
+      type,
+      payload,
+    }: ActionWithPayload): void {
+      if (type === ControlAction.EXEC_LOCALLY) {
+        setBlockResult(payload);
+      }
+    }
+    chrome.runtime.onMessage.addListener(handleMessageFromBackground);
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessageFromBackground);
+    };
+  }, []);
+
   useEffect(() => {
     setCommand(block.command);
     setSelector(block.selector ?? "");
@@ -44,6 +61,7 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
             chrome.runtime.sendMessage(message);
           }}
         />
+        result: {blockResult?.status ? "true" : "false"}
       </div>
       <div>
         Command:{" "}
