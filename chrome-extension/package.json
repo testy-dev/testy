@@ -50,7 +50,6 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^4.0.0",
-    "jest": "^26.0.1",
     "jest-enzyme": "^7.1.2",
     "parcel": "^1.12.4",
     "sass": "^1.26.5",
@@ -60,15 +59,15 @@
   "dependencies": {
     "@medv/finder": "^2.0.0",
     "closest": "^0.0.1",
+    "diagram": "1.0.0",
     "firebase": "^7.14.3",
     "grommet": "^2.13.0",
     "grommet-icons": "^4.4.0",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "shared": "1.0.0",
     "styled-components": "^5.1.0",
-    "uuid": "^8.0.0",
-    "diagram": "1.0.0",
-    "shared": "1.0.0"
+    "uuid": "^8.0.0"
   }
 }

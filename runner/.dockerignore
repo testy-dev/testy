@@ -1,0 +1,8 @@
+.parcel-cache
+node_modules
+src
+.gitignore
+docker-compose.yml
+Dockerfile
+tsconfig.json
+*.log

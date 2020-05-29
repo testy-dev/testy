@@ -8,27 +8,35 @@ const GRAPHQL_ENDPOINT =
 const HASURA_ADMIN_SECRET =
   process.env.HASURA_ADMIN_SECRET || "lhjkjahfda3w534kjbtkjfdsg";
 
+console.time("Total execution time");
+console.log("Actual time", new Date());
 createServer((req, resp) => {
   const body = [];
   req
     .on("data", chunk => {
+      console.time("Request to response time");
       body.push(chunk);
     })
     .on("end", async () => {
       const data = Buffer.concat(body).toString();
       const newData = JSON.parse(data).event.data.new;
       const edges = JSON.parse(newData.edges);
-      console.log("Writing data");
+
+      console.time("Write steps to json");
       writeFileSync("./dist/steps.json", JSON.stringify(newData), {
         encoding: "utf8",
         flag: "w",
       });
+      console.timeEnd("Write steps to json");
+
       resp.statusCode = 200;
-      console.log("Running cypress ...");
+      console.time("cypress");
       const result = await cypress.run({
         configFile: "cypress.json",
         browser: "chrome",
+        headless: true,
       });
+      console.timeEnd("cypress");
 
       if ("totalTests" in result) {
         const report = result.runs[0].tests.map(({ state }) => ({ state }));
@@ -37,7 +45,6 @@ createServer((req, resp) => {
           Object.assign({}, edge, report[i])
         );
 
-        // language=graphql
         const query = `
             mutation ($input: run_path_set_input!, $id: bigint) {
               update_run_path(where: {id: {_eq: $id}}, _set: $input) {
@@ -61,6 +68,8 @@ createServer((req, resp) => {
           },
         };
 
+        console.time("Send results to hasura");
+        console.log("Endpoint", GRAPHQL_ENDPOINT);
         const gqlResult = await fetch(GRAPHQL_ENDPOINT, {
           method: "POST",
           headers: {
@@ -69,6 +78,7 @@ createServer((req, resp) => {
           },
           body: JSON.stringify({ query, variables }),
         });
+        console.timeEnd("Send results to hasura");
 
         console.log("Hasura done", await gqlResult.json());
       }
@@ -78,7 +88,11 @@ createServer((req, resp) => {
           message: "Request data was saved and will be tested now.",
         })
       );
-      resp.end(() => process.exit());
+      resp.end(() => {
+        console.timeEnd("Request to response time");
+        console.timeEnd("Total execution time");
+        return process.exit();
+      });
     });
 }).listen(8080);
 console.log("Server ready, waiting on http request on 8080...");

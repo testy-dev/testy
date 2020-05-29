@@ -5,6 +5,7 @@
  */
 import {
   ActionWithPayload,
+  Block,
   ControlAction,
   EventType,
   ParsedEvent,
@@ -88,6 +89,59 @@ function removeDOMListeners(): void {
   });
 }
 
+function executeBlockLocally(block: Block) {
+  let doc;
+  switch (block.command) {
+    case "visit":
+      window.location.href = block.parameter as string;
+      break;
+    case "click":
+    case "dblclick":
+      doc = document.querySelector(block.selector as string);
+      if (doc) {
+        // @ts-ignore
+        doc.click();
+      }
+      break;
+    case "type":
+      doc = document.querySelector(block.selector as string);
+      if (doc) {
+        const steps = (block.parameter ?? "")
+          .split(/({\w+})/g)
+          .filter(i => i.length > 0);
+
+        for (const step of steps) {
+          console.log("Type doing step", step);
+          if (step === "{enter}") {
+            const eventData = {
+              view: window,
+              key: "Enter",
+              code: "Enter",
+              keyCode: 13,
+              bubbles: true,
+              cancelable: true,
+              composed: true,
+            };
+            doc.dispatchEvent(new KeyboardEvent("keydown", eventData));
+            doc.dispatchEvent(new KeyboardEvent("keypress", eventData));
+            doc.dispatchEvent(new KeyboardEvent("keyup", eventData));
+          } else {
+            // @ts-ignore
+            doc.value = step;
+          }
+        }
+      }
+      break;
+    case "submit":
+      break;
+    case "check-contains-text":
+      break;
+    default:
+      console.warn("Cannot execute block locally", block);
+  }
+  console.log("Block executed", block);
+}
+
 export default {
   onConnect(p: chrome.runtime.Port) {
     port = p;
@@ -100,6 +154,9 @@ export default {
     if (message.type === ControlAction.STOP && listening) {
       removeDOMListeners();
       listening = false;
+    }
+    if (message.type === ControlAction.EXEC_LOCALLY) {
+      executeBlockLocally(message.payload as Block);
     }
   },
   onDisconnect() {
