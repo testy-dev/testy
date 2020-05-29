@@ -14,7 +14,7 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
   const [selector, setSelector] = useState<string>();
   const [parameter, setParameter] = useState<string>();
 
-  const [blockResult, setBlockResult] = useState<any>();
+  const [runNowStatus, setRunNowStatus] = useState<boolean | null>(null);
 
   React.useEffect((): (() => void) => {
     function handleMessageFromBackground({
@@ -22,7 +22,7 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
       payload,
     }: ActionWithPayload): void {
       if (type === ControlAction.EXEC_LOCALLY) {
-        setBlockResult(payload);
+        setRunNowStatus(payload.status);
       }
     }
     chrome.runtime.onMessage.addListener(handleMessageFromBackground);
@@ -35,6 +35,7 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
     setCommand(block.command);
     setSelector(block.selector ?? "");
     setParameter(block.parameter ?? "");
+    setRunNowStatus(null);
   }, [block.command, block.parameter, block.selector]);
 
   const isChanged =
@@ -47,7 +48,7 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
       <div>
         <input
           type="button"
-          value="Do it now in browser"
+          value="Run now"
           onClick={() => {
             const message: ActionWithPayload = {
               type: ControlAction.EXEC_LOCALLY,
@@ -61,7 +62,8 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
             chrome.runtime.sendMessage(message);
           }}
         />
-        result: {blockResult?.status ? "true" : "false"}
+        {runNowStatus === true && "ok"}
+        {runNowStatus === false && "fail"}
       </div>
       <div>
         Command:{" "}
