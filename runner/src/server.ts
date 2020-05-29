@@ -41,7 +41,7 @@ createServer((req, resp) => {
       if ("totalTests" in result) {
         const report = result.runs[0].tests.map(({ state, error }) => ({
           state,
-          msg: error ?? undefined,
+          msg: error || undefined,
         }));
 
         const statedResults = edges.map((edge, i) =>
