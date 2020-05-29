@@ -36,19 +36,11 @@ const App: React.FC = () => {
   const storage = useLocalStorage();
   const loginState = useFirebaseAuthState();
 
-  const startRecording = (): void => {
-    setRecStatus("on");
-  };
-  const stopRecording = (): void => {
-    setRecStatus("paused");
-  };
-  const resetRecording = (): void => {
-    setRecStatus("off");
-  };
+  const startRecording = (): void => setRecStatus("on");
+  const stopRecording = (): void => setRecStatus("paused");
+  const resetRecording = (): void => setRecStatus("off");
 
-  const onLogout = async () => {
-    await firebase.auth().signOut();
-  };
+  const onLogout = async () => firebase.auth().signOut();
 
   React.useEffect((): void => {
     chrome.storage.local.get(
@@ -72,7 +64,7 @@ const App: React.FC = () => {
     });
   }, [activeProject]);
 
-  React.useEffect((): (() => void) => {
+  React.useEffect(() => {
     function handleMessageFromBackground({ type }: ActionWithPayload): void {
       if (type === ControlAction.START && isValidTab) startRecording();
       else if (type === ControlAction.STOP) stopRecording();
@@ -96,11 +88,11 @@ const App: React.FC = () => {
     // language=graphql
     const result = await callGraphql(
       `
-mutation($project: Int!, $graph: jsonb) {
-    update_project(where: {id: {_eq: $project}}, _set: {graph: $graph}) {
-        affected_rows
-    }
-}
+        mutation($project: Int!, $graph: jsonb) {
+          update_project(where: {id: {_eq: $project}}, _set: {graph: $graph}) {
+            affected_rows
+          }
+        }
       `,
       {
         project: activeProject,
@@ -116,7 +108,7 @@ mutation($project: Int!, $graph: jsonb) {
       console.debug("Graph saved", result);
     } else {
       // Fail
-      console.error("Cannot save graphl", result);
+      console.error("Cannot save graph", result);
     }
   };
 
@@ -126,7 +118,7 @@ mutation($project: Int!, $graph: jsonb) {
       const result = await callGraphql(
         `query($project: Int!) {
                 project(where: {id: {_eq: $project}}) {
-                    graph
+                  graph
                 }
             }`,
         {

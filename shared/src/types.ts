@@ -4,6 +4,7 @@ export type RecState = "off" | "on" | "paused";
 
 export interface ParsedEvent {
   selector: string;
+  altSelectors?: string[];
   action: string;
   tag: string;
   value: string;

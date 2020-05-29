@@ -10,7 +10,7 @@ import {
   EventType,
   ParsedEvent,
 } from "shared";
-import finder from "@medv/finder";
+import { finder } from "@medv/finder";
 
 let port: chrome.runtime.Port;
 let listening = false;
@@ -21,18 +21,18 @@ let listening = false;
  * @returns {ParsedEvent}
  */
 function parseEvent(event: Event): ParsedEvent | null {
-  let selector: string;
-  if ((event.target as Element).hasAttribute("data-cy"))
-    selector = `[data-cy=${(event.target as Element).getAttribute("data-cy")}]`;
-  else if ((event.target as Element).hasAttribute("data-test"))
-    selector = `[data-test=${(event.target as Element).getAttribute(
-      "data-test"
-    )}]`;
-  else if ((event.target as Element).hasAttribute("data-testid"))
-    selector = `[data-testid=${(event.target as Element).getAttribute(
-      "data-testid"
-    )}]`;
-  else selector = finder(event.target as Element);
+  const attributes = ["data-cy", "data-test", "data-testid", "data-qa"];
+
+  let selector = finder(event.target as Element);
+  for (const attribute in attributes) {
+    if ((event.target as Element).hasAttribute(attribute)) {
+      selector = `[${attribute}=${(event.target as Element).getAttribute(
+        attribute
+      )}]`;
+      break;
+    }
+  }
+
   const parsedEvent: ParsedEvent = {
     selector,
     action: event.type,

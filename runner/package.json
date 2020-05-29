@@ -10,7 +10,6 @@
     "image:deploy": "docker push us.gcr.io/testyx/runner:latest"
   },
   "dependencies": {
-    "concurrently": "^5.2.0",
     "cypress": "^4.7.0",
     "cypress-terminal-report": "^1.3.1",
     "cypress-wait-until": "^1.7.1",
