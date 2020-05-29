@@ -10,7 +10,7 @@ import {
   EventType,
   ParsedEvent,
 } from "shared";
-import { finder } from "@medv/finder";
+import finder from "@medv/finder";
 
 let port: chrome.runtime.Port;
 let listening = false;
