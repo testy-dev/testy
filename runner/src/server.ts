@@ -39,7 +39,10 @@ createServer((req, resp) => {
       console.timeEnd("cypress");
 
       if ("totalTests" in result) {
-        const report = result.runs[0].tests.map(({ state }) => ({ state }));
+        const report = result.runs[0].tests.map(({ state, error }) => ({
+          state,
+          msg: error ?? undefined,
+        }));
 
         const statedResults = edges.map((edge, i) =>
           Object.assign({}, edge, report[i])
