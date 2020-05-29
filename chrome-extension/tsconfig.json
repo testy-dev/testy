@@ -25,5 +25,6 @@
   "skipLibCheck": true,
   "include": [
     "src"
-  ]
+  ],
+  "extends": "../tsconfig.json"
 }

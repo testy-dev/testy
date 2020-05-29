@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Block, Commands } from "shared";
+import { ActionWithPayload, Block, Commands, ControlAction } from "shared";
 import { map } from "lodash";
 import styled from "styled-components";
 
@@ -27,6 +27,24 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
 
   return (
     <>
+      <div>
+        <input
+          type="button"
+          value="Do it now in browser"
+          onClick={() => {
+            const message: ActionWithPayload = {
+              type: ControlAction.EXEC_LOCALLY,
+              payload: {
+                ...block,
+                command,
+                selector,
+                parameter,
+              },
+            };
+            chrome.runtime.sendMessage(message);
+          }}
+        />
+      </div>
       <div>
         Command:{" "}
         <select
