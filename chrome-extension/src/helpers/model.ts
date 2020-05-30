@@ -95,3 +95,24 @@ export async function pushBlock(newBlock: Block): Promise<Block> {
 
   return newBlock;
 }
+
+export async function deleteBlock(blockID: UUID) {
+  const { active = null, blocks = [], edges = [] } = (await read([
+    "active",
+    "blocks",
+    "edges",
+  ])) as { active: UUID | null; blocks: Block[]; edges: Edge[] };
+
+  const incomingEdges = edges.filter(([, target]) => target === blockID);
+  const outgoingEdges = edges.filter(([source]) => source === blockID);
+
+  if (incomingEdges.length === 1 && outgoingEdges.length === 1) {
+    edges.push([incomingEdges[0][0], outgoingEdges[0][1]]);
+  }
+
+  await write({
+    active: active === blockID ? null : active,
+    blocks: blocks.filter(({ id }) => id !== blockID),
+    edges,
+  });
+}
