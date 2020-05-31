@@ -81,6 +81,8 @@ const App: React.FC = () => {
 const Root = styled.div`
   display: flex;
   flex-direction: row;
+  width: 100vw;
+  height: 100vh;
 `;
 const Column = styled.div`
   width: 250px;
