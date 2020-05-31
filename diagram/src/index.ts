@@ -1,1 +1,1 @@
-export { default as Diagram } from "./diagramKonva";
+export { default as Diagram } from "./DiagramKonva";

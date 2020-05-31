@@ -3,6 +3,9 @@ import React, { useMemo, useRef, useState } from "react";
 import * as dagre from "dagre";
 import { Arrow, Circle, Layer, Stage, Text } from "react-konva";
 import { Block, Commands, Edge, UUID } from "shared/src";
+import ContextMenu from "./ContextMenu";
+import Konva from "konva";
+import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
 
 interface DiagramKonvaProps {
@@ -23,9 +26,13 @@ const DiagramKonva: React.FC<DiagramKonvaProps> = ({
   edges,
   selected,
   onSelectBlock,
-  onDeleteEdge,
+  // onDeleteEdge,
 }) => {
   const [hover, setHover] = useState<boolean>(false);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const ref = useRef(null);
   const size = useComponentSize(ref);
 
@@ -49,14 +56,7 @@ const DiagramKonva: React.FC<DiagramKonvaProps> = ({
   const onMouseLeave = () => setHover(false);
 
   return (
-    <div
-      ref={ref}
-      style={{
-        flexGrow: 1,
-        overflow: "hidden",
-        cursor: hover ? "pointer" : "initial",
-      }}
-    >
+    <Root ref={ref} hover={hover}>
       <Stage width={size?.width} height={size?.height} draggable={true}>
         <Layer>
           {blocks.map(block => (
@@ -74,14 +74,37 @@ const DiagramKonva: React.FC<DiagramKonvaProps> = ({
             <RenderEdge
               key={edge.v + edge.w}
               position={layout.edge(edge)}
-              onClick={() => onDeleteEdge(edge.v, edge.w)}
+              onContextMenu={e => {
+                setContextMenu({ x: e.evt.x, y: e.evt.y });
+                console.log(e);
+              }}
             />
           ))}
         </Layer>
       </Stage>
-    </div>
+      {contextMenu && (
+        <ContextMenu
+          position={contextMenu}
+          items={[
+            { text: "Create block here", onClick: () => null },
+            {
+              text: "Remove edge",
+              onClick: () => null,
+            },
+          ]}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+    </Root>
   );
 };
+
+const Root = styled.div<{ hover: boolean }>`
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+  cursor: ${p => (p.hover ? "pointer" : "initial")};
+`;
 
 const getCommandColor = (command: Block["command"]): string => {
   switch (command) {
@@ -140,20 +163,28 @@ const RenderBlock: React.FC<{
 
 const RenderEdge: React.FC<{
   position: dagre.GraphEdge;
-  onClick: () => void;
-}> = ({ position, onClick }) => {
+  onContextMenu: (e: Konva.KonvaEventObject<PointerEvent>) => void;
+}> = ({ position, onContextMenu }) => {
   const [hover, setHover] = useState<boolean>(false);
 
   return (
     <Arrow
       x={0}
       y={0}
-      points={position.points.reduce((acc, p) => acc.concat([p.x, p.y]), [])}
-      stroke={hover ? "#b81839" : "#868686"}
+      points={position.points.reduce<number[]>(
+        (acc, p) => acc.concat([p.x, p.y]),
+        []
+      )}
+      stroke={hover ? "#24b1ff" : "#868686"}
       strokeWidth={hover ? 3 : 2}
       pointerLength={5}
       pointerWidth={5}
-      onClick={onClick}
+      onClick={onContextMenu}
+      onTap={onContextMenu}
+      onContextMenu={e => {
+        e.evt.preventDefault();
+        onContextMenu(e);
+      }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     />
