@@ -5,7 +5,7 @@ import { Diagram } from "diagram";
 import debug from "debug";
 import styled from "styled-components";
 
-import { deleteBlock, write } from "../../helpers/model";
+import { write } from "../../helpers/model";
 import EditBlock from "./EditBlock";
 import useLocalStorage from "../../helpers/useLocalStorage";
 
@@ -47,6 +47,9 @@ const App: React.FC = () => {
 
   const handleDeleteEdge = async (from: UUID, to: UUID) => {
     debugDiagram("remove edge from %s to %s", from, to);
+    await write({
+      edges: storage.edges.filter(([f, t]) => f !== from && t !== to),
+    });
   };
 
   const activeBlock =
