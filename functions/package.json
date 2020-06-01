@@ -1,6 +1,6 @@
 {
-  "name": "functions",
-  "version": "1.0.0",
+  "name": "@testy/functions",
+  "version": "0.0.0",
   "description": "Cloud Functions for Firebase",
   "main": "lib/index.js",
   "scripts": {
