@@ -1,58 +1,30 @@
-FROM cypress/browsers:node12.16.2-chrome81-ff75
+FROM node:lts-slim
 
-# avoid too many progress messages
-# https://github.com/cypress-io/cypress/issues/1243
-ENV CI=1
-
-# should be root user
-RUN echo "whoami: $(whoami)"
-RUN npm config -g set user $(whoami)
-
-# command "id" should print:
-# uid=0(root) gid=0(root) groups=0(root)
-# which means the current user is root
-RUN id
-
-# point Cypress at the /root/cache no matter what user account is used
-# see https://on.cypress.io/caching
-ENV CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
-RUN npm install -g "cypress@4.7.0"
-RUN cypress verify
-
-# Cypress cache and installed version
-# should be in the root user's home folder
-RUN cypress cache path
-RUN cypress cache list
-RUN cypress info
-
-# give every user read access to the "/root" folder where the binary is cached
-# we really only need to worry about the top folder, fortunately
-RUN ls -la /root
-RUN chmod 755 /root
-
-# always grab the latest NPM and Yarn
-# otherwise the base image might have old versions
-RUN npm i -g yarn@latest
-#    npm@latest
-
-RUN echo  " node version:    $(node -v) \n" \
-  "npm version:     $(npm -v) \n" \
-  "yarn version:    $(yarn -v) \n" \
-  "debian version:  $(cat /etc/debian_version) \n" \
-  "user:            $(whoami) \n" \
-  "chrome:          $(google-chrome --version || true) \n" \
-  "firefox:         $(firefox --version || true) \n"
+RUN  apt-get update \
+     && apt-get install -y wget gnupg ca-certificates \
+     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+     && apt-get update \
+     # We install Chrome to get all the OS level dependencies, but Chrome itself
+     # is not actually used as it's packaged in the node puppeteer library.
+     # Alternatively, we could could include the entire dep list ourselves
+     # (https://github.com/puppeteer/puppeteer/blob/master/docs/troubleshooting.md#chrome-headless-doesnt-launch-on-unix)
+     # but that seems too easy to get out of date.
+     && apt-get install -y google-chrome-stable apt-transport-https curl \
+     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+     && apt-get install -y yarn \
+     && apt-get remove --purge -y apt-transport-https curl \
+     && rm /etc/apt/sources.list.d/yarn.list \
+     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR "/app"
-
-ENV NO_COLOR=1
 
 COPY dist /app/dist/
 COPY package.json /app/
 COPY yarn.lock /app/
-COPY cypress.json /app/
 COPY .env /
-COPY cypress /app/cypress/
+
 RUN yarn install --prod
 
 ENTRYPOINT ["yarn", "run", "prod-start"]

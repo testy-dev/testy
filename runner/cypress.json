@@ -1,6 +1,0 @@
-{
-  "testFiles": "browser.js",
-  "integrationFolder": "./dist",
-  "video": false,
-  "chromeWebSecurity": false
-}

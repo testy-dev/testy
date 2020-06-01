@@ -4,6 +4,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "target": "ES6",
-    "types": ["cypress", "cypress-wait-until", "node"]
+    "types": ["node"]
   }
 }

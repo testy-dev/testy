@@ -1,4 +1,4 @@
-import { EdgeProps } from "shared/src";
+import { EdgeProps } from "@testy/shared";
 
 import { createServer } from "http";
 import fetch from "node-fetch";
@@ -25,16 +25,19 @@ createServer((req, resp) => {
 
       resp.statusCode = 200;
 
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
       const page = await browser.newPage();
 
       const tsBeforeTests = new Date().valueOf();
+      console.log("Time before tests: ", tsBeforeTests);
+      console.log("Starting puppeteer");
       const statedResults = [];
 
       for (const { command, parameter, selector } of edges) {
         switch (command) {
           case "visit":
             try {
+              console.log("visit", parameter);
               await page.goto(parameter);
               statedResults.push({ state: "success" });
             } catch (e) {
@@ -43,34 +46,46 @@ createServer((req, resp) => {
             break;
           case "click":
             try {
-              await Promise.all([
-                page.click(selector),
-                page.waitForNavigation({
-                  waitUntil: "networkidle0",
-                }),
-              ]);
+              console.log("click", selector);
+              const item = await page.$(selector);
+              if (item === null) throw "Element not found";
+              await page.click(selector);
               statedResults.push({ state: "success" });
             } catch (e) {
+              console.log("Sracka");
+              console.log(e);
               statedResults.push({ state: "failed", msg: e.message });
             }
-            return;
+            break;
           case "check-contains-text":
-            const selectorHasText = await page.evaluate(() =>
-              [...document.querySelectorAll(selector)].some(el =>
-                el.textContent.includes(parameter)
-              )
-            );
-            if (selectorHasText) {
-              statedResults.push({ state: "success" });
-            } else {
+            try {
+              console.log("check test");
+              await page.waitForSelector(selector);
+              const selectorHasText = await page.evaluate(
+                ({ selector, parameter }) =>
+                  [...document.querySelectorAll(selector)].some(el =>
+                    el.textContent.includes(parameter)
+                  ),
+                { selector, parameter }
+              );
+              if (selectorHasText) {
+                statedResults.push({ state: "success" });
+              } else {
+                statedResults.push({
+                  state: "failed",
+                  msg: "Selector not found",
+                });
+              }
+            } catch (e) {
               statedResults.push({
                 state: "failed",
                 msg: "Selector not found",
               });
             }
-            return;
+            break;
           case "type":
             try {
+              console.log("type");
               await page.type(selector, parameter);
 
               statedResults.push({ state: "success" });
@@ -83,6 +98,9 @@ createServer((req, resp) => {
 
       const tsAfterTests = new Date().valueOf();
 
+      console.log("Time after: ", tsAfterTests);
+      console.log("Sending to hasura");
+
       const query = `
         mutation ($input: run_path_set_input!, $id: bigint) {
           update_run_path(where: {id: {_eq: $id}}, _set: $input) {
@@ -92,12 +110,16 @@ createServer((req, resp) => {
           }
         }
       `;
+
+      const mergedArr = edges.map((item, i) =>
+        Object.assign({}, item, statedResults[i])
+      );
       const variables = {
         id: newData.id,
         input: {
-          edges: JSON.stringify(statedResults),
-          started_at: tsBeforeTests,
-          finished_at: tsAfterTests,
+          edges: JSON.stringify(mergedArr),
+          started_at: new Date(tsBeforeTests),
+          finished_at: new Date(tsAfterTests),
           credits: Math.round((tsAfterTests - tsBeforeTests) / 1000),
           blocks_count: statedResults.length,
           blocks_success: statedResults.filter(res => res.state === "success")
