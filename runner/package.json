@@ -4,7 +4,7 @@
   "license": "proprietary",
   "private": true,
   "scripts": {
-    "build": "esbuild --outfile=dist/server.js src/server.ts --platform=node && cp src/steps.json dist && esbuild --outfile=dist/browser.js src/browser.ts",
+    "build": "esbuild --outfile=dist/server.js src/server.ts --platform=node",
     "prod-start": "node -r esm dist/server.js",
     "image:build": "yarn build && docker build -f Dockerfile . -t us.gcr.io/testyx/runner:latest",
     "image:deploy": "docker push us.gcr.io/testyx/runner:latest"

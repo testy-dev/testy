@@ -29,12 +29,15 @@ createServer((req, resp) => {
       const page = await browser.newPage();
 
       const tsBeforeTests = new Date().valueOf();
+      console.log("Time before tests: ", tsBeforeTests);
+      console.log("Starting puppeteer");
       const statedResults = [];
 
       for (const { command, parameter, selector } of edges) {
         switch (command) {
           case "visit":
             try {
+              console.log("visit", parameter);
               await page.goto(parameter);
               statedResults.push({ state: "success" });
             } catch (e) {
@@ -43,18 +46,25 @@ createServer((req, resp) => {
             break;
           case "click":
             try {
-              await Promise.all([
+              console.log("click", selector);
+              const item = await page.$(selector);
+              console.log("Item", item);
+              if (item === null) throw "Element not found";
+              const results = await Promise.all([
                 page.click(selector),
                 page.waitForNavigation({
-                  waitUntil: "networkidle0",
+                  waitUntil: "domcontentloaded",
                 }),
               ]);
+              console.log(results);
               statedResults.push({ state: "success" });
             } catch (e) {
+              console.log("Sracka");
               statedResults.push({ state: "failed", msg: e.message });
             }
-            return;
+            break;
           case "check-contains-text":
+            console.log("check test");
             const selectorHasText = await page.evaluate(() =>
               [...document.querySelectorAll(selector)].some(el =>
                 el.textContent.includes(parameter)
@@ -68,7 +78,7 @@ createServer((req, resp) => {
                 msg: "Selector not found",
               });
             }
-            return;
+            break;
           case "type":
             try {
               await page.type(selector, parameter);
@@ -83,6 +93,9 @@ createServer((req, resp) => {
 
       const tsAfterTests = new Date().valueOf();
 
+      console.log("Time after: ", tsAfterTests);
+      console.log("Sending to hasura");
+
       const query = `
         mutation ($input: run_path_set_input!, $id: bigint) {
           update_run_path(where: {id: {_eq: $id}}, _set: $input) {
@@ -92,12 +105,16 @@ createServer((req, resp) => {
           }
         }
       `;
+
+      const mergedArr = edges.map((item, i) =>
+        Object.assign({}, item, statedResults[i])
+      );
       const variables = {
         id: newData.id,
         input: {
-          edges: JSON.stringify(statedResults),
-          started_at: tsBeforeTests,
-          finished_at: tsAfterTests,
+          edges: JSON.stringify(mergedArr),
+          started_at: new Date(tsBeforeTests),
+          finished_at: new Date(tsAfterTests),
           credits: Math.round((tsAfterTests - tsBeforeTests) / 1000),
           blocks_count: statedResults.length,
           blocks_success: statedResults.filter(res => res.state === "success")
