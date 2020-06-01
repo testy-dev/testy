@@ -66,11 +66,11 @@ createServer((req, resp) => {
           case "check-contains-text":
             console.log("check test");
             const selectorHasText = await page.evaluate(
-              selector =>
+              ({ selector, parameter }) =>
                 [...document.querySelectorAll(selector)].some(el =>
                   el.textContent.includes(parameter)
                 ),
-              selector
+              { selector, parameter }
             );
             if (selectorHasText) {
               statedResults.push({ state: "success" });
