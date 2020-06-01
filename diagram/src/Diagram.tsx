@@ -21,7 +21,7 @@ interface DiagramKonvaProps {
 const BLOCK_WIDTH = 70;
 const BLOCK_HEIGHT = 30;
 
-const DiagramKonva: React.FC<DiagramKonvaProps> = ({
+const Diagram: React.FC<DiagramKonvaProps> = ({
   blocks,
   edges,
   selected,
@@ -191,4 +191,4 @@ const RenderEdge: React.FC<{
   );
 };
 
-export default DiagramKonva;
+export default Diagram;

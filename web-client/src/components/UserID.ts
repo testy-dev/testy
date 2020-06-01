@@ -6,5 +6,5 @@ export default {
   },
   setUser(value: number) {
     userID = value;
-  }
+  },
 };

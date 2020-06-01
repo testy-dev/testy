@@ -1,7 +1,0 @@
-{
-  "testFiles": "browser.js",
-  "integrationFolder": "./dist",
-  "video": false,
-  "defaultCommandTimeout": 1000000000,
-  "chromeWebSecurity": false
-}

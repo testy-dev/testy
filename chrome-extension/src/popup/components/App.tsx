@@ -2,7 +2,7 @@ import * as React from "react";
 
 import "firebase/auth";
 import * as firebase from "firebase/app";
-import { ActionWithPayload, ControlAction, RecState } from "shared";
+import { ActionWithPayload, ControlAction, RecState } from "@testy/shared";
 import styled from "styled-components";
 
 import { Button } from "./styled-components";

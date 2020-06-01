@@ -1,17 +1,17 @@
 {
-  "name": "diagram",
-  "version": "1.0.0",
+  "name": "@testy/diagram",
+  "version": "0.0.0",
   "main": "src/index.ts",
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
     "@rehooks/component-size": "^1.0.3",
+    "@testy/shared": "0.0.0",
     "dagre": "^0.8.5",
     "konva": "^6.0.0",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "react-konva": "^16.13.0-3",
-    "shared": "1.0.0",
     "styled-components": "^5.1.1"
   }
 }

@@ -41,15 +41,17 @@ export const Commands = {
   "check-contains-text": "Contains text",
 };
 
+export type CommandKey =
+  | "visit"
+  | "click"
+  | "dblclick"
+  | "type"
+  | "submit"
+  | "check-contains-text";
+
 export interface Block {
   id: string;
-  command:
-    | "visit"
-    | "click"
-    | "dblclick"
-    | "type"
-    | "submit"
-    | "check-contains-text";
+  command: CommandKey;
   selector?: string;
   parameter?: string;
 }

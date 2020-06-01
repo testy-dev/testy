@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Block, Edge, RecState, UUID } from "shared";
+import { Block, Edge, RecState, UUID } from "@testy/shared";
 
 type Data = {
   blocks: Block[];

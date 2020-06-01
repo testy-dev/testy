@@ -2,7 +2,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "shared/*": ["shared/*"]
+      "@testy/chrome-ext/*": ["chrome-extension/src/*"],
+      "@testy/diagram": ["diagram/src/index"],
+      "@testy/diagram/*": ["diagram/src/*"],
+      "@testy/functions/*": ["functions/src/*"],
+      "@testy/runner/*": ["runner/src/*"],
+      "@testy/shared": ["shared/src/index"],
+      "@testy/shared/*": ["shared/src/*"],
+      "@testy/web-client/*": ["web-client/src/*"]
     }
   }
 }

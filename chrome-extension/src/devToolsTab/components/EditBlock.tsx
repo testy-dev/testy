@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-import { ActionWithPayload, Block, Commands, ControlAction } from "shared";
+import {
+  ActionWithPayload,
+  Block,
+  Commands,
+  ControlAction,
+} from "@testy/shared";
 import { map } from "lodash";
 import styled from "styled-components";
 

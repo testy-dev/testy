@@ -1,7 +1,9 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "target": "ES5",
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react",
+    "strict": true
   }
 }

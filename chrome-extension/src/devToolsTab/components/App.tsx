@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import { Block, UUID } from "shared";
-import { Diagram } from "diagram";
+import { Block, UUID } from "@testy/shared/types";
+import { Diagram } from "@testy/diagram";
 import debug from "debug";
 import styled from "styled-components";
 

@@ -1,6 +1,0 @@
-{
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "types": ["cypress", "cypress-wait-until"]
-  }
-}

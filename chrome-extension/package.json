@@ -1,6 +1,6 @@
 {
-  "name": "testy",
-  "version": "0.0.1",
+  "name": "@testy/chrome-ext",
+  "version": "0.0.0",
   "description": "Records a user session for automation and testing purposes.",
   "main": "index.js",
   "scripts": {
@@ -59,16 +59,16 @@
   },
   "dependencies": {
     "@medv/finder": "^2.0.0",
+    "@testy/diagram": "0.0.0",
+    "@testy/shared": "0.0.0",
     "closest": "^0.0.1",
     "debug": "^4.1.1",
-    "diagram": "1.0.0",
     "firebase": "^7.14.3",
     "grommet": "^2.13.0",
     "grommet-icons": "^4.4.0",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "shared": "1.0.0",
     "styled-components": "^5.1.0",
     "uuid": "^8.0.0"
   }

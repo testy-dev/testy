@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ControlAction } from "shared";
+import { ControlAction } from "@testy/shared";
 import styled from "styled-components";
 
 import { LargeButton } from "./styled-components";
