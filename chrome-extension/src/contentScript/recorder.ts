@@ -9,7 +9,7 @@ import {
   ControlAction,
   EventType,
   ParsedEvent,
-} from "shared";
+} from "@testy/shared";
 import { finder } from "@medv/finder";
 
 let port: chrome.runtime.Port;

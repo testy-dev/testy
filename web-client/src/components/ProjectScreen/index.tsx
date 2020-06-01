@@ -1,8 +1,8 @@
 import React, { Suspense, useState } from "react";
 
 import { Box, Button, Heading, Text } from "grommet";
-import { Diagram } from "diagram";
-import { Graph } from "shared";
+import { Diagram } from "@testy/diagram";
+import { Graph } from "@testy/shared";
 import { gql, useSubscription } from "@apollo/client";
 import { graphql } from "@gqless/react";
 import { useParams } from "react-router-dom";

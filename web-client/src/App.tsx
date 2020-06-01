@@ -4,14 +4,15 @@ import {
   ApolloClient,
   ApolloProvider,
   HttpLink,
-  InMemoryCache, split,
+  InMemoryCache,
+  split,
 } from "@apollo/client";
 import { BrowserRouter } from "react-router-dom";
 import { Grommet, generate, grommet } from "grommet";
-import { deepMerge } from "grommet/utils";
-import { setContext } from "@apollo/link-context";
 import { WebSocketLink } from "@apollo/link-ws";
+import { deepMerge } from "grommet/utils";
 import { getMainDefinition } from "@apollo/client/utilities";
+import { setContext } from "@apollo/link-context";
 
 import "firebase/auth";
 import firebase from "firebase/app";
@@ -33,10 +34,11 @@ const wsLink = new WebSocketLink({
     lazy: true,
     connectionParams: async () => ({
       headers: {
-        authorization: "Bearer " + await firebase.auth().currentUser?.getIdToken()
-      }
-    })
-  }
+        authorization:
+          "Bearer " + (await firebase.auth().currentUser?.getIdToken()),
+      },
+    }),
+  },
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -58,8 +60,8 @@ const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
     return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
     );
   },
   wsLink,

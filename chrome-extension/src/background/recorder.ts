@@ -6,7 +6,7 @@
  * back to the popup for display to the user.
  */
 
-import { ActionWithPayload, ControlAction, Session } from "shared";
+import { ActionWithPayload, ControlAction, Session } from "@testy/shared";
 
 import { getStatus, pushBlock, reset, setStatus } from "../helpers/model";
 import codeGenerator from "../helpers/codeGenerator";

@@ -1,4 +1,4 @@
-import { Block, Edge, RecState, UUID } from "shared";
+import { Block, Edge, RecState, UUID } from "@testy/shared";
 
 export function read(
   keys: string | string[] | Record<string, any> | null

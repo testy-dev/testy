@@ -1,4 +1,4 @@
-import { ActionWithPayload } from "shared";
+import { ActionWithPayload } from "@testy/shared";
 
 let highlighter: HTMLElement | undefined;
 
