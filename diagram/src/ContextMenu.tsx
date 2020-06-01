@@ -14,7 +14,7 @@ interface IProps {
 }
 
 const ContextMenu: React.FC<IProps> = ({ items, position, onClose }) => {
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement | null>(null);
   useOnClickOutside(ref, () => onClose());
 
   return (
@@ -54,12 +54,15 @@ const MenuItem = styled.div`
   }
 `;
 
-function useOnClickOutside(ref, handler) {
+function useOnClickOutside(
+  ref: React.MutableRefObject<HTMLDivElement | null>,
+  handler: (event: MouseEvent | TouchEvent) => void
+) {
   useEffect(
     () => {
-      const listener = event => {
+      const listener = (event: MouseEvent | TouchEvent) => {
         // Do nothing if clicking ref's element or descendent elements
-        if (!ref.current || ref.current.contains(event.target)) {
+        if (!ref.current || ref.current.contains(event.target as Node)) {
           return;
         }
 

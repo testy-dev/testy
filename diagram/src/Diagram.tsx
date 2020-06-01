@@ -2,11 +2,12 @@ import React, { useMemo, useRef, useState } from "react";
 
 import * as dagre from "dagre";
 import { Arrow, Circle, Layer, Stage, Text } from "react-konva";
-import { Block, Commands, Edge, UUID } from "shared/src";
-import ContextMenu from "./ContextMenu";
+import { Block, Commands, Edge, UUID } from "@testy/shared";
 import Konva from "konva";
 import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
+
+import ContextMenu from "./ContextMenu";
 
 interface DiagramKonvaProps {
   blocks: Block[];
