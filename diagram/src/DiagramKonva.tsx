@@ -111,13 +111,13 @@ const getCommandColor = (command: Block["command"]): string => {
     case "click":
     case "dblclick":
     case "submit":
-      return "#02a323";
+      return "#48d760";
     case "check-contains-text":
-      return "#126dcd";
+      return "#4e90d5";
     case "type":
       return "#e7e630";
     case "visit":
-      return "#ac056e";
+      return "#d285b6";
     default:
       return "#5f5f5f";
   }
@@ -139,8 +139,8 @@ const RenderBlock: React.FC<{
         y={position.y}
         radius={active ? 12 : 10}
         fill={getCommandColor(block.command)}
-        strokeWidth={active ? 3 : 1}
-        stroke={hover || active ? "#000" : "#555"}
+        strokeWidth={active ? 3 : 0}
+        stroke={hover || active ? "#0d64d2" : "#555"}
         onClick={onClick}
         onMouseEnter={() => {
           onMouseEnter();
@@ -175,7 +175,7 @@ const RenderEdge: React.FC<{
         (acc, p) => acc.concat([p.x, p.y]),
         []
       )}
-      stroke={hover ? "#24b1ff" : "#868686"}
+      stroke={hover ? "#24b1ff" : "#a8a8a8"}
       strokeWidth={hover ? 3 : 2}
       pointerLength={5}
       pointerWidth={5}
