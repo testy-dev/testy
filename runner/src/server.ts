@@ -48,33 +48,35 @@ createServer((req, resp) => {
             try {
               console.log("click", selector);
               const item = await page.$(selector);
-              console.log("Item", item);
               if (item === null) throw "Element not found";
-              const results = await Promise.all([
-                page.click(selector),
-                page.waitForNavigation({
-                  waitUntil: "domcontentloaded",
-                }),
-              ]);
-              console.log(results);
+              await page.click(selector);
               statedResults.push({ state: "success" });
             } catch (e) {
               console.log("Sracka");
+              console.log(e);
               statedResults.push({ state: "failed", msg: e.message });
             }
             break;
           case "check-contains-text":
-            console.log("check test");
-            const selectorHasText = await page.evaluate(
-              ({ selector, parameter }) =>
-                [...document.querySelectorAll(selector)].some(el =>
-                  el.textContent.includes(parameter)
-                ),
-              { selector, parameter }
-            );
-            if (selectorHasText) {
-              statedResults.push({ state: "success" });
-            } else {
+            try {
+              console.log("check test");
+              await page.waitForSelector(selector);
+              const selectorHasText = await page.evaluate(
+                ({ selector, parameter }) =>
+                  [...document.querySelectorAll(selector)].some(el =>
+                    el.textContent.includes(parameter)
+                  ),
+                { selector, parameter }
+              );
+              if (selectorHasText) {
+                statedResults.push({ state: "success" });
+              } else {
+                statedResults.push({
+                  state: "failed",
+                  msg: "Selector not found",
+                });
+              }
+            } catch (e) {
               statedResults.push({
                 state: "failed",
                 msg: "Selector not found",
