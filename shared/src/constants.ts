@@ -17,4 +17,5 @@ export enum ControlAction {
   HIGHLIGHT = "highlight",
   REPLAY = "replay",
   EXEC_LOCALLY = "exec_locally",
+  RECORDED_EVENT = "recorded_event",
 }

@@ -14,10 +14,28 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
   const [selector, setSelector] = useState<string>();
   const [parameter, setParameter] = useState<string>();
 
+  const [runNowStatus, setRunNowStatus] = useState<boolean | null>(null);
+
+  React.useEffect((): (() => void) => {
+    function handleMessageFromBackground({
+      type,
+      payload,
+    }: ActionWithPayload): void {
+      if (type === ControlAction.EXEC_LOCALLY) {
+        setRunNowStatus(payload.status);
+      }
+    }
+    chrome.runtime.onMessage.addListener(handleMessageFromBackground);
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessageFromBackground);
+    };
+  }, []);
+
   useEffect(() => {
     setCommand(block.command);
     setSelector(block.selector ?? "");
     setParameter(block.parameter ?? "");
+    setRunNowStatus(null);
   }, [block.command, block.parameter, block.selector]);
 
   const isChanged =
@@ -30,7 +48,7 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
       <div>
         <input
           type="button"
-          value="Do it now in browser"
+          value="Run now"
           onClick={() => {
             const message: ActionWithPayload = {
               type: ControlAction.EXEC_LOCALLY,
@@ -44,6 +62,8 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
             chrome.runtime.sendMessage(message);
           }}
         />
+        {runNowStatus === true && "ok"}
+        {runNowStatus === false && "fail"}
       </div>
       <div>
         Command:{" "}

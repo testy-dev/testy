@@ -10,7 +10,7 @@ import {
   EventType,
   ParsedEvent,
 } from "shared";
-import { finder } from "@medv/finder";
+import finder from "@medv/finder";
 
 let port: chrome.runtime.Port;
 let listening = false;
@@ -64,7 +64,11 @@ function parseEvent(event: Event): ParsedEvent | null {
 function handleEvent(event: Event): void {
   if (event.isTrusted) {
     const parsedEvent = parseEvent(event);
-    if (parsedEvent) port.postMessage(parsedEvent);
+    const message: ActionWithPayload = {
+      type: ControlAction.RECORDED_EVENT,
+      payload: parsedEvent,
+    };
+    if (parsedEvent) port.postMessage(message);
   }
 }
 
@@ -99,8 +103,7 @@ function executeBlockLocally(block: Block) {
     case "dblclick":
       doc = document.querySelector(block.selector as string);
       if (doc) {
-        // @ts-ignore
-        doc.click();
+        (doc as HTMLElement).click();
       }
       break;
     case "type":
@@ -126,8 +129,7 @@ function executeBlockLocally(block: Block) {
             doc.dispatchEvent(new KeyboardEvent("keypress", eventData));
             doc.dispatchEvent(new KeyboardEvent("keyup", eventData));
           } else {
-            // @ts-ignore
-            doc.value = step;
+            (doc as HTMLInputElement).value = step;
           }
         }
       }
@@ -135,6 +137,17 @@ function executeBlockLocally(block: Block) {
     case "submit":
       break;
     case "check-contains-text":
+      doc = document.querySelector(block.selector as string);
+      const result =
+        doc && (doc as HTMLElement).innerText.includes(block.parameter ?? "");
+      const message: ActionWithPayload = {
+        type: ControlAction.EXEC_LOCALLY,
+        payload: {
+          ...block,
+          status: result,
+        },
+      };
+      port.postMessage(message);
       break;
     default:
       console.warn("Cannot execute block locally", block);

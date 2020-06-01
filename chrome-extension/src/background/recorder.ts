@@ -6,7 +6,7 @@
  * back to the popup for display to the user.
  */
 
-import { ActionWithPayload, ControlAction, ParsedEvent, Session } from "shared";
+import { ActionWithPayload, ControlAction, Session } from "shared";
 
 import { getStatus, pushBlock, reset, setStatus } from "../helpers/model";
 import codeGenerator from "../helpers/codeGenerator";
@@ -54,12 +54,15 @@ function control(
 
 /**
  * Handles events sent from the event recorder.
- * @param event
  */
-function handleEvents(event: ParsedEvent): void {
-  const block = codeGenerator.createBlock(event);
-  if (block !== null) {
-    pushBlock(block).catch(err => new Error(err));
+function handleContentScriptMessage(message: ActionWithPayload): void {
+  if (message.type === ControlAction.RECORDED_EVENT) {
+    const block = codeGenerator.createBlock(message.payload);
+    if (block !== null) {
+      pushBlock(block).catch(err => new Error(err));
+    }
+  } else {
+    chrome.runtime.sendMessage(message);
   }
 }
 
@@ -98,7 +101,7 @@ async function handleNewConnection(portToEventRecorder: chrome.runtime.Port) {
     ports.set(portToEventRecorder.sender?.tab?.id, portToEventRecorder);
   }
 
-  portToEventRecorder.onMessage.addListener(handleEvents);
+  portToEventRecorder.onMessage.addListener(handleContentScriptMessage);
   portToEventRecorder.onDisconnect.addListener(port => {
     if (port.sender?.tab?.id) ports.delete(port.sender?.tab?.id);
   });
