@@ -13,6 +13,7 @@ interface DiagramKonvaProps {
   blocks: Block[];
   edges: Edge[];
   selected: UUID | null;
+  path?: UUID[];
   onSelectBlock: (blockID: UUID | null) => void;
   onDeleteBlock?: (blockID: UUID) => void;
   onCreateEdge?: (from: UUID, to: UUID) => void;
@@ -26,6 +27,7 @@ const Diagram: React.FC<DiagramKonvaProps> = ({
   blocks,
   edges,
   selected,
+  path = [],
   onSelectBlock,
   // onDeleteEdge,
 }) => {
@@ -63,7 +65,7 @@ const Diagram: React.FC<DiagramKonvaProps> = ({
           {blocks.map(block => (
             <RenderBlock
               key={block.id}
-              active={block.id === selected}
+              active={block.id === selected || path.includes(block.id)}
               block={block}
               position={layout.node(block.id)}
               onClick={() => onSelectBlock(block.id)}

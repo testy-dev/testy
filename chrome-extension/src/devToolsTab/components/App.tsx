@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 
 import { Block, UUID } from "@testy/shared/types";
 import { Diagram } from "@testy/diagram";
@@ -7,6 +8,7 @@ import styled from "styled-components";
 
 import { write } from "../../helpers/model";
 import EditBlock from "./EditBlock";
+import createPath from "../../helpers/createPath";
 import useLocalStorage from "../../helpers/useLocalStorage";
 
 const debugDiagram = debug("devtools:diagram");
@@ -23,8 +25,10 @@ const App: React.FC = () => {
   }, []);
 
   const storage = useLocalStorage();
+  const [path, setPath] = useState<string[]>([]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
+    if (blockID) setPath(createPath(storage.edges, path, blockID));
     await write({ active: blockID });
   };
 
@@ -60,6 +64,7 @@ const App: React.FC = () => {
         blocks={storage.blocks}
         edges={storage.edges}
         selected={storage.active}
+        path={path}
         onSelectBlock={handleSelectBlock}
         onDeleteBlock={handleDeleteBlock}
         onCreateEdge={handleCreateEdge}
