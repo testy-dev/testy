@@ -88,7 +88,7 @@ const Root = styled.div`
   height: 100vh;
 `;
 const Column = styled.div`
-  width: 250px;
+  width: 300px;
   padding: 5px;
   border-left: 1px solid #cccccc;
   background: #f3f3f3;
