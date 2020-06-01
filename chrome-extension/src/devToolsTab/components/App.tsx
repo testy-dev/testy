@@ -2,11 +2,15 @@ import * as React from "react";
 
 import { Block, UUID } from "shared";
 import { Diagram } from "diagram";
+import debug from "debug";
 import styled from "styled-components";
 
 import { write } from "../../helpers/model";
 import EditBlock from "./EditBlock";
 import useLocalStorage from "../../helpers/useLocalStorage";
+
+const debugDiagram = debug("devtools:diagram");
+debug.enable("*");
 
 const App: React.FC = () => {
   // Register tab in dev tools
@@ -25,8 +29,26 @@ const App: React.FC = () => {
   };
 
   const handleUpdateBlock = async (block: Block) => {
+    debugDiagram("update block %O", block);
+
     await write({
       blocks: [...storage.blocks?.filter(b => b.id !== block.id), block],
+    });
+  };
+
+  const handleDeleteBlock = async (blockID: UUID) => {
+    debugDiagram("remove block %s", blockID);
+    // await deleteBlock(blockID); // this will break diagram :(
+  };
+
+  const handleCreateEdge = async (from: UUID, to: UUID) => {
+    debugDiagram("create edge from %s to %s", from, to);
+  };
+
+  const handleDeleteEdge = async (from: UUID, to: UUID) => {
+    debugDiagram("remove edge from %s to %s", from, to);
+    await write({
+      edges: storage.edges.filter(([f, t]) => f !== from && t !== to),
     });
   };
 
@@ -39,6 +61,9 @@ const App: React.FC = () => {
         edges={storage.edges}
         selected={storage.active}
         onSelectBlock={handleSelectBlock}
+        onDeleteBlock={handleDeleteBlock}
+        onCreateEdge={handleCreateEdge}
+        onDeleteEdge={handleDeleteEdge}
       />
       <Column>
         <Header>Testy</Header>
@@ -59,6 +84,8 @@ const App: React.FC = () => {
 const Root = styled.div`
   display: flex;
   flex-direction: row;
+  width: 100vw;
+  height: 100vh;
 `;
 const Column = styled.div`
   width: 250px;

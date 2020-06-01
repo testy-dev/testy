@@ -19,6 +19,9 @@ interface IProps {
   edges: Edge[];
   selected: UUID | null;
   onSelectBlock: (blockID: UUID | null) => void;
+  onDeleteBlock?: (blockID: UUID) => void;
+  onCreateEdge?: (from: UUID, to: UUID) => void;
+  onDeleteEdge?: (from: UUID, to: UUID) => void;
 }
 
 const getCommandColor = (command: Block["command"]): string => {
@@ -38,11 +41,19 @@ const getCommandColor = (command: Block["command"]): string => {
   }
 };
 
+interface Node extends DefaultNodeModel {
+  extras: {
+    blockID: UUID;
+  };
+}
+
 const Diagram: React.FC<IProps> = ({
   blocks,
   edges,
   selected,
   onSelectBlock,
+  onDeleteBlock,
+  onDeleteEdge,
 }) => {
   const engine = useMemo(() => {
     const engine = new DiagramEngine();
@@ -83,21 +94,41 @@ const Diagram: React.FC<IProps> = ({
       node.addListener({
         selectionChanged: e => {
           if (e.isSelected) {
-            // @ts-ignore extras exists
-            onSelectBlock(e.entity.extras.blockID);
+            onSelectBlock((e.entity as Node).extras.blockID);
           } else onSelectBlock(null);
+        },
+        entityRemoved: e => {
+          if (onDeleteBlock) onDeleteBlock((e.entity as Node).extras.blockID);
+        },
+      })
+    );
+    forOwn(engine.getDiagramModel().getLinks(), link =>
+      link.addListener({
+        entityRemoved: e => {
+          if (onDeleteEdge)
+            onDeleteEdge(
+              (e.entity as any).sourcePort.parent.extras.blockID,
+              (e.entity as any).targetPort.parent.extras.blockID
+            );
         },
       })
     );
     engine.getDiagramModel().addListener({
       linksUpdated(event: BaseEvent & { link: LinkModel; isCreated: boolean }) {
-        // @ts-ignore setColor is not documented
-        event.link.setColor("#898989");
+        (event.link as any).setColor("#898989");
       },
     });
     // engine.repaintCanvas();
     engine.zoomToFit();
-  }, [blocks, edges, engine, onSelectBlock, selected]);
+  }, [
+    blocks,
+    edges,
+    engine,
+    onDeleteBlock,
+    onDeleteEdge,
+    onSelectBlock,
+    selected,
+  ]);
 
   return (
     <DiagramWidget

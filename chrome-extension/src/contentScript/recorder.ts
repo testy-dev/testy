@@ -103,6 +103,8 @@ function executeBlockLocally(block: Block) {
     case "dblclick":
       doc = document.querySelector(block.selector as string);
       if (doc) {
+        // doc.dispatchEvent(new MouseEvent("mousedown", {})); // TODO real simulation click events
+        // doc.dispatchEvent(new MouseEvent("mouseup", {}));
         (doc as HTMLElement).click();
       }
       break;

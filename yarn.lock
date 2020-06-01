@@ -2769,11 +2769,6 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
-"@projectstorm/react-diagrams@5.3.2":
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams/-/react-diagrams-5.3.2.tgz#1ff42cafc3f3877b917e848514afa6bf1b6d6f0f"
-  integrity sha512-1XX41RhmpWB6844SlJVV63Jp8XHZpRhQuL8l6Y8ePDGzdiro6t/6ItZINusyGogbb3C8ifYyjbgNJanYXQx66Q==
-
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
@@ -2826,6 +2821,11 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
+
+"@rehooks/component-size@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@rehooks/component-size/-/component-size-1.0.3.tgz#823eabeb42084893d46d43e3a9d1d0e34252b3cb"
+  integrity sha512-pnYld+8SSF2vXwdLOqBGUyOrv/SjzwLjIUcs/4c1JJgR0q4E9eBtBfuZMD6zUD51fvSehSsbnlQMzotSmPTXPg==
 
 "@sindresorhus/is@^2.0.0":
   version "2.1.1"
@@ -3070,6 +3070,11 @@
   version "0.7.44"
   resolved "https://registry.yarnpkg.com/@types/dagre/-/dagre-0.7.44.tgz#8f4b796b118ca29c132da7068fbc0d0351ee5851"
   integrity sha512-N6HD+79w77ZVAaVO7JJDW5yJ9LAxM62FpgNGO9xEde+KVYjDRyhIMzfiErXpr1g0JPon9kwlBzoBK6s4fOww9Q==
+
+"@types/debug@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.5.tgz#b14efa8852b7768d898906613c23f688713e02cd"
+  integrity sha512-Q1y515GcOdTHgagaVFhHnIFQ38ygs/kmxdNpvpou+raI9UO3YZcHDngBSYKQklcKlvA7iuQlmIKbzvmxcOE9CQ==
 
 "@types/duplexify@^3.6.0":
   version "3.6.0"
@@ -8062,17 +8067,7 @@ fs-minipass@^2.0.0:
   dependencies:
     minipass "^3.0.0"
 
-fs-write-stream-atomic@^1.0.8:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/fs-write-stream-atomic/-/fs-write-stream-atomic-1.0.10.tgz#b47df53493ef911df75731e70a9ded0189db40c9"
-  integrity sha1-tH31NJPvkR33VzHnCp3tAYnbQMk=
-  dependencies:
-    graceful-fs "^4.1.2"
-    iferr "^0.1.5"
-    imurmurhash "^0.1.4"
-    readable-stream "1 || 2"
-
-"fs-write-stream-atomic@github:atlassian-forks/fs-write-stream-atomic#4edf1a95433a9936229c7f768c9ea9bb5884b487":
+fs-write-stream-atomic@^1.0.8, "fs-write-stream-atomic@github:atlassian-forks/fs-write-stream-atomic#4edf1a95433a9936229c7f768c9ea9bb5884b487":
   version "1.0.10"
   resolved "https://codeload.github.com/atlassian-forks/fs-write-stream-atomic/tar.gz/4edf1a95433a9936229c7f768c9ea9bb5884b487"
   dependencies:
@@ -8740,11 +8735,6 @@ he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
-
-heap@0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.5.tgz#713b65590ebcc40fcbeeaf55e851694092b39af1"
-  integrity sha1-cTtlWQ68xA/L7q9V6FFpQJKzmvE=
 
 hex-color-regex@^1.1.0:
   version "1.1.0"
@@ -10614,6 +10604,11 @@ kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
+
+konva@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/konva/-/konva-6.0.0.tgz#9b3d13a4622f353c4ce736fbf1fa4b6483240649"
+  integrity sha512-YTwmtz3KzbzdC0KDRHWLzuk0KXB4NUdaQqytrxacXE1C39V6wCk7Nnu0wgq+GdGbG6m8A1qiEU9TSJ19qdIzDw==
 
 kuler@1.0.x:
   version "1.0.1"
@@ -12625,18 +12620,6 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pathfinding@^0.4.18:
-  version "0.4.18"
-  resolved "https://registry.yarnpkg.com/pathfinding/-/pathfinding-0.4.18.tgz#a9990f6fa22b7ef196e5651b049165403a045fe8"
-  integrity sha1-qZkPb6IrfvGW5WUbBJFlQDoEX+g=
-  dependencies:
-    heap "0.2.5"
-
-paths-js@^0.4.10:
-  version "0.4.10"
-  resolved "https://registry.yarnpkg.com/paths-js/-/paths-js-0.4.10.tgz#a3575f409b4a36f8aa795ba4d051989021be58c7"
-  integrity sha512-JZoqlRSHtx+bc+xKI9o4bropEbqZBF4ZfYImiB1T9RYpHB73h5I8XZ7FfSBbHbBMtdD1c04ujjAPH8wUuu4+Gw==
-
 pbkdf2@^3.0.3:
   version "3.0.17"
   resolved "https://registry.yarnpkg.com/pbkdf2/-/pbkdf2-3.0.17.tgz#976c206530617b14ebb32114239f7b09336e93a6"
@@ -13977,10 +13960,28 @@ react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-i
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-konva@^16.13.0-3:
+  version "16.13.0-3"
+  resolved "https://registry.yarnpkg.com/react-konva/-/react-konva-16.13.0-3.tgz#9ef1e813c8b2dd61b54b26151ccbdeed52b89a80"
+  integrity sha512-U9az1RidQD4c64oZoHiiv6GU6h2ggHO30nZDqfQWuBTH+Bl2wij6Z0NgbUyVyN1IpKIgXRiEKMS9idlxhAzTXQ==
+  dependencies:
+    react-reconciler "^0.25.1"
+    scheduler "^0.19.1"
+
 react-lifecycles-compat@^3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+
+react-reconciler@^0.25.1:
+  version "0.25.1"
+  resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.25.1.tgz#f9814d59d115e1210762287ce987801529363aaa"
+  integrity sha512-R5UwsIvRcSs3w8n9k3tBoTtUHdVhu9u84EG7E5M0Jk9F5i6DA1pQzPfUZd6opYWGy56MJOtV3VADzy6DRwYDjw==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.19.1"
 
 react-refresh@^0.6.0:
   version "0.6.0"
@@ -15562,7 +15563,7 @@ style-loader@0.23.1:
     loader-utils "^1.1.0"
     schema-utils "^1.0.0"
 
-styled-components@^5.0.1, styled-components@^5.1.0:
+styled-components@^5.0.1, styled-components@^5.1.0, styled-components@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-5.1.1.tgz#96dfb02a8025794960863b9e8e365e3b6be5518d"
   integrity sha512-1ps8ZAYu2Husx+Vz8D+MvXwEwvMwFv+hqqUwhNlDN5ybg6A+3xyW1ECrAgywhvXapNfXiz79jJyU0x22z0FFTg==
