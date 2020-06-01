@@ -65,10 +65,12 @@ createServer((req, resp) => {
             break;
           case "check-contains-text":
             console.log("check test");
-            const selectorHasText = await page.evaluate(() =>
-              [...document.querySelectorAll(selector)].some(el =>
-                el.textContent.includes(parameter)
-              )
+            const selectorHasText = await page.evaluate(
+              selector =>
+                [...document.querySelectorAll(selector)].some(el =>
+                  el.textContent.includes(parameter)
+                ),
+              selector
             );
             if (selectorHasText) {
               statedResults.push({ state: "success" });
@@ -81,6 +83,7 @@ createServer((req, resp) => {
             break;
           case "type":
             try {
+              console.log("type");
               await page.type(selector, parameter);
 
               statedResults.push({ state: "success" });
