@@ -15,6 +15,12 @@ export interface ParsedEvent {
   selectedText?: string;
 }
 
+export interface EdgeProps {
+  command: string;
+  parameter: string;
+  selector: string;
+}
+
 export interface Session {
   isPending: boolean;
   lastURL: string;
