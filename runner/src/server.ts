@@ -1,4 +1,4 @@
-import { EdgeProps } from "shared/src";
+import { EdgeProps } from "@testy/shared";
 
 import { createServer } from "http";
 import fetch from "node-fetch";
@@ -25,7 +25,7 @@ createServer((req, resp) => {
 
       resp.statusCode = 200;
 
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
       const page = await browser.newPage();
 
       const tsBeforeTests = new Date().valueOf();
