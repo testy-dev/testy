@@ -78,9 +78,13 @@ const App: React.FC = () => {
           edges
         </div>
         <div>Active block: {storage.active ?? "not set"}</div>
-        {activeBlock && (
-          <EditBlock block={activeBlock} onSave={handleUpdateBlock} />
-        )}
+        {path.map(blockID => {
+          const block = storage.blocks.find(b => b.id === blockID);
+          if (!block) return null;
+          return (
+            <EditBlock key={blockID} block={block} onSave={handleUpdateBlock} />
+          );
+        })}
       </Column>
     </Root>
   );
@@ -93,12 +97,13 @@ const Root = styled.div`
   height: 100vh;
 `;
 const Column = styled.div`
-  width: 300px;
+  width: 350px;
   padding: 5px;
   border-left: 1px solid #cccccc;
   background: #f3f3f3;
   color: #444444;
   line-height: 1.5;
+  overflow-y: auto;
 `;
 const Header = styled.h1`
   margin: 0 0 5px;
