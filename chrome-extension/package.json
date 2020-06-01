@@ -23,11 +23,8 @@
       "tsx",
       "js"
     ],
-    "moduleNameMapper": {
-      "\\.(scss)$": "<rootDir>/src/__mocks__/styleMock.ts"
-    },
     "testMatch": [
-      "**/__tests__/*.(test|spec).(ts|tsx|js)"
+      "**/*.(test|spec).(ts|tsx|js)"
     ]
   },
   "devDependencies": {
@@ -51,10 +48,11 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^4.0.0",
+    "jest": "^26.0.1",
     "jest-enzyme": "^7.1.2",
     "parcel": "^1.12.4",
     "sass": "^1.26.5",
-    "ts-jest": "^25.5.1",
+    "ts-jest": "^26.1.0",
     "typescript": "^3.9.2"
   },
   "dependencies": {
