@@ -1,8 +1,9 @@
-import { EdgeProps } from "@testy/shared";
-
 import { createServer } from "http";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
+
+import { EdgeProps } from "@testy/shared";
+import { checkContainsText, click, type, visit } from "./modules";
 
 const GRAPHQL_ENDPOINT =
   process.env.GRAPHQL_ENDPOINT || "https://testy-dev.herokuapp.com/v1/graphql";
@@ -34,65 +35,25 @@ createServer((req, resp) => {
       const statedResults = [];
 
       for (const { command, parameter, selector } of edges) {
-        switch (command) {
-          case "visit":
-            try {
-              console.log("visit", parameter);
-              await page.goto(parameter);
-              statedResults.push({ state: "success" });
-            } catch (e) {
-              statedResults.push({ state: "failed", msg: e.message });
-            }
-            break;
-          case "click":
-            try {
-              console.log("click", selector);
-              const item = await page.$(selector);
-              if (item === null) throw "Element not found";
-              await page.click(selector);
-              statedResults.push({ state: "success" });
-            } catch (e) {
-              console.log("Sracka");
-              console.log(e);
-              statedResults.push({ state: "failed", msg: e.message });
-            }
-            break;
-          case "check-contains-text":
-            try {
-              console.log("check test");
-              await page.waitForSelector(selector);
-              const selectorHasText = await page.evaluate(
-                ({ selector, parameter }) =>
-                  [...document.querySelectorAll(selector)].some(el =>
-                    el.textContent.includes(parameter)
-                  ),
-                { selector, parameter }
+        try {
+          switch (command) {
+            case "visit":
+              statedResults.push(await visit(page, parameter));
+              break;
+            case "click":
+              statedResults.push(await click(page, parameter, selector));
+              break;
+            case "check-contains-text":
+              statedResults.push(
+                await checkContainsText(page, parameter, selector)
               );
-              if (selectorHasText) {
-                statedResults.push({ state: "success" });
-              } else {
-                statedResults.push({
-                  state: "failed",
-                  msg: "Selector not found",
-                });
-              }
-            } catch (e) {
-              statedResults.push({
-                state: "failed",
-                msg: "Selector not found",
-              });
-            }
-            break;
-          case "type":
-            try {
-              console.log("type");
-              await page.type(selector, parameter);
-
-              statedResults.push({ state: "success" });
-            } catch (e) {
-              statedResults.push({ state: "failed", msg: e.message });
-            }
-            break;
+              break;
+            case "type":
+              statedResults.push(type(page, parameter, selector));
+              break;
+          }
+        } catch (e) {
+          statedResults.push({ state: "failed", msg: e.message });
         }
       }
 
@@ -114,6 +75,7 @@ createServer((req, resp) => {
       const mergedArr = edges.map((item, i) =>
         Object.assign({}, item, statedResults[i])
       );
+      console.log(mergedArr);
       const variables = {
         id: newData.id,
         input: {
