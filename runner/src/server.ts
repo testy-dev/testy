@@ -34,14 +34,16 @@ createServer((req, resp) => {
       console.log("Starting puppeteer");
       const statedResults = [];
 
-      for (const { command, parameter, selector } of edges) {
+      for (const { command, parameter, selector, parentsSelectors } of edges) {
         try {
           switch (command) {
             case "visit":
               statedResults.push(await visit(page, parameter));
               break;
             case "click":
-              statedResults.push(await click(page, parameter, selector));
+              statedResults.push(
+                await click(page, parameter, selector, parentsSelectors[0])
+              );
               break;
             case "check-contains-text":
               statedResults.push(
@@ -49,10 +51,15 @@ createServer((req, resp) => {
               );
               break;
             case "type":
-              statedResults.push(type(page, parameter, selector));
+              statedResults.push(await type(page, parameter, selector));
               break;
           }
         } catch (e) {
+          await page.screenshot({
+            path: "./screenshot.jpg",
+            type: "jpeg",
+            fullPage: true,
+          });
           statedResults.push({ state: "failed", msg: e.message });
         }
       }

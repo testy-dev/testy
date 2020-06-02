@@ -6,12 +6,37 @@ export async function visit(page: Page, parameter: string) {
   return { state: "success" };
 }
 
-export async function click(page: Page, parameter: string, selector: string) {
+export async function click(
+  page: Page,
+  parameter: string,
+  selector: string,
+  parent: string
+) {
   console.log("click", selector);
-  const item = await page.$(selector);
+  await page.waitForSelector(parent);
 
-  if (item === null) throw "Element not found";
-  await page.click(selector);
+  async function hoverParent(): Promise<void> {
+    console.log("parent:", parent);
+    const { x, y, height, width } = await page.evaluate(parent => {
+      document.querySelector(parent).scrollIntoView();
+      const data = document.querySelector(parent).getBoundingClientRect();
+      return { x: data.x, y: data.y, height: data.height, width: data.width };
+    }, parent);
+    await page.mouse.move(x + width / 2, y + height / 2);
+  }
+
+  const item = await page.$(selector);
+  if (item === null) {
+    await hoverParent();
+  } else {
+    try {
+      await page.click(selector);
+    } catch (e) {
+      await hoverParent();
+      await page.click(selector);
+    }
+  }
+
   return { state: "success" };
 }
 
@@ -34,6 +59,12 @@ export async function checkContainsText(
 }
 
 export async function type(page: Page, parameter: string, selector: string) {
-  await page.type(selector, parameter);
+  console.log("Typing", selector);
+  const typeArr = parameter.split("{enter}");
+  for (const typedStr of typeArr) {
+    await page.type(selector, typedStr);
+    await page.keyboard.press("Enter");
+  }
+  console.log("return type");
   return { state: "success" };
 }

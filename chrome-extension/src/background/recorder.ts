@@ -20,9 +20,7 @@ const session: Session = {
 
 async function getActiveTab(): Promise<chrome.tabs.Tab | null> {
   return new Promise(resolve =>
-    chrome.tabs.query({ active: true }, result => {
-      resolve(result?.[0]);
-    })
+    chrome.tabs.query({ active: true }, result => resolve(result?.[0]))
   );
 }
 
@@ -34,11 +32,7 @@ async function getActivePort() {
   return port;
 }
 
-/**
- * Controls the flow of execution by enforcing synchronicity.
- * @param cb
- * @param cmd
- */
+/** Controls the flow of execution by enforcing synchronicity */
 function control(
   cb: (...args: any) => Promise<void>,
   cmd?: string | ActionWithPayload
@@ -52,9 +46,7 @@ function control(
     });
 }
 
-/**
- * Handles events sent from the event recorder.
- */
+/** Handles events sent from the event recorder. */
 function handleContentScriptMessage(message: ActionWithPayload): void {
   if (message.type === ControlAction.RECORDED_EVENT) {
     const block = codeGenerator.createBlock(message.payload);

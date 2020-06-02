@@ -20,6 +20,7 @@ export interface EdgeProps {
   command: string;
   parameter: string;
   selector: string;
+  parentsSelectors?: string[];
 }
 
 export interface Session {
