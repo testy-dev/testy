@@ -9,7 +9,7 @@ import useComponentSize from "@rehooks/component-size";
 
 import ContextMenu from "./ContextMenu";
 
-interface DiagramKonvaProps {
+interface DiagramProps {
   blocks: Block[];
   edges: Edge[];
   selected: UUID | null;
@@ -23,7 +23,7 @@ interface DiagramKonvaProps {
 const BLOCK_WIDTH = 70;
 const BLOCK_HEIGHT = 30;
 
-const Diagram: React.FC<DiagramKonvaProps> = ({
+const Diagram: React.FC<DiagramProps> = ({
   blocks,
   edges,
   selected,
@@ -65,7 +65,7 @@ const Diagram: React.FC<DiagramKonvaProps> = ({
           {blocks.map(block => (
             <RenderBlock
               key={block.id}
-              active={block.id === selected || path.includes(block.id)}
+              active={block.id === selected}
               block={block}
               position={layout.node(block.id)}
               onClick={() => onSelectBlock(block.id)}
@@ -76,6 +76,7 @@ const Diagram: React.FC<DiagramKonvaProps> = ({
           {layout.edges().map(edge => (
             <RenderEdge
               key={edge.v + edge.w}
+              inPath={path.includes(edge.v) && path.includes(edge.w)}
               position={layout.edge(edge)}
               onContextMenu={e => {
                 setContextMenu({ x: e.evt.x, y: e.evt.y });
@@ -165,9 +166,10 @@ const RenderBlock: React.FC<{
 };
 
 const RenderEdge: React.FC<{
+  inPath: boolean;
   position: dagre.GraphEdge;
   onContextMenu: (e: Konva.KonvaEventObject<PointerEvent>) => void;
-}> = ({ position, onContextMenu }) => {
+}> = ({ inPath, position, onContextMenu }) => {
   const [hover, setHover] = useState<boolean>(false);
 
   return (
@@ -178,7 +180,7 @@ const RenderEdge: React.FC<{
         (acc, p) => acc.concat([p.x, p.y]),
         []
       )}
-      stroke={hover ? "#24b1ff" : "#a8a8a8"}
+      stroke={hover ? "#24b1ff" : inPath ? "#494949" : "#a8a8a8"}
       strokeWidth={hover ? 3 : 2}
       pointerLength={5}
       pointerWidth={5}

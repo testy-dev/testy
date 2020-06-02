@@ -85,7 +85,12 @@ const App: React.FC = () => {
           const block = storage.blocks.find(b => b.id === blockID);
           if (!block) return null;
           return (
-            <EditBlock key={blockID} block={block} onSave={handleUpdateBlock} />
+            <EditBlock
+              key={blockID}
+              active={blockID === storage.active}
+              block={block}
+              onSave={handleUpdateBlock}
+            />
           );
         })}
       </Column>

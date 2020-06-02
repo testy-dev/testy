@@ -11,11 +11,12 @@ import { map } from "lodash";
 import styled from "styled-components";
 
 interface IProps {
+  active?: boolean;
   block: Block;
   onSave: (block: Block) => void;
 }
 
-const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
+const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
   const [command, setCommand] = useState<Block["command"]>("click");
   const [selector, setSelector] = useState<string>();
   const [parameter, setParameter] = useState<string>();
@@ -50,7 +51,7 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
     block.parameter !== parameter;
 
   return (
-    <BlockContainer>
+    <BlockContainer active={active}>
       <Line>
         <Input type="text" />
         <input
@@ -131,12 +132,14 @@ const EditBlock: React.FC<IProps> = ({ block, onSave }) => {
   );
 };
 
-const BlockContainer = styled(props => (
-  <Box direction="column" gap="xsmall" {...props} />
-))`
+const BlockContainer = styled(
+  (props: { active?: boolean; children: React.ReactNode }) => (
+    <Box direction="column" gap="xsmall" {...props} />
+  )
+)`
   padding: 5px;
   margin: 5px 0;
-  border: 2px solid white;
+  border: 2px solid ${p => (p.active ? "blue" : "white")};
   border-radius: 5px;
   box-shadow: 2px 2px 10px -3px gray;
   background: white;
