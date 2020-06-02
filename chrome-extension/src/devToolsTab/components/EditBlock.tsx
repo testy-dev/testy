@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 
 import {
   ActionWithPayload,
@@ -7,6 +7,7 @@ import {
   ControlAction,
 } from "@testy/shared";
 import { Box } from "grommet";
+import { BoxProps } from "grommet/components/Box";
 import { map } from "lodash";
 import styled from "styled-components";
 
@@ -17,13 +18,22 @@ interface IProps {
 }
 
 const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
   const [command, setCommand] = useState<Block["command"]>("click");
   const [selector, setSelector] = useState<string>();
   const [parameter, setParameter] = useState<string>();
 
   const [runNowStatus, setRunNowStatus] = useState<boolean | null>(null);
 
-  React.useEffect((): (() => void) => {
+  // Scroll to active block
+  useEffect(() => {
+    if (active && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [active]);
+
+  // Get status when run element
+  useEffect((): (() => void) => {
     function handleMessageFromBackground({
       type,
       payload,
@@ -38,6 +48,7 @@ const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
     };
   }, []);
 
+  // Update form if change input
   useEffect(() => {
     setCommand(block.command);
     setSelector(block.selector ?? "");
@@ -51,7 +62,7 @@ const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
     block.parameter !== parameter;
 
   return (
-    <BlockContainer active={active}>
+    <BlockContainer ref={ref} active={active}>
       <Line>
         <Input type="text" />
         <input
@@ -133,9 +144,12 @@ const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
 };
 
 const BlockContainer = styled(
-  (props: { active?: boolean; children: React.ReactNode }) => (
-    <Box direction="column" gap="xsmall" {...props} />
-  )
+  forwardRef<
+    HTMLDivElement,
+    { active?: boolean } & BoxProps & JSX.IntrinsicElements["div"]
+  >((props, ref) => (
+    <Box direction="column" gap="xsmall" ref={ref} {...props} />
+  ))
 )`
   padding: 5px;
   margin: 5px 0;
