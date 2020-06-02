@@ -12,12 +12,20 @@ import { map } from "lodash";
 import styled from "styled-components";
 
 interface IProps {
-  active?: boolean;
+  active: boolean;
+  hover: boolean;
+  setHover: (hover: boolean) => void;
   block: Block;
   onSave: (block: Block) => void;
 }
 
-const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
+const EditBlock: React.FC<IProps> = ({
+  active,
+  block,
+  hover,
+  setHover,
+  onSave,
+}) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [command, setCommand] = useState<Block["command"]>("click");
   const [selector, setSelector] = useState<string>();
@@ -62,7 +70,12 @@ const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
     block.parameter !== parameter;
 
   return (
-    <BlockContainer ref={ref} active={active}>
+    <BlockContainer
+      ref={ref}
+      active={active || hover}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <Line>
         <Input type="text" />
         <input
