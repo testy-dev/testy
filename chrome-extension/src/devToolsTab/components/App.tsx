@@ -109,7 +109,7 @@ const Root = styled.div`
   height: 100vh;
 `;
 const Column = styled.div`
-  width: 350px;
+  flex: 350px 0 0;
   padding: 5px;
   border-left: 1px solid #cccccc;
   background: #f3f3f3;

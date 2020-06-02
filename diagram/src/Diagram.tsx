@@ -1,8 +1,9 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as dagre from "dagre";
 import { Arrow, Circle, Layer, Stage, Text } from "react-konva";
 import { Block, Commands, Edge, UUID } from "@testy/shared";
+import { throttle } from "lodash";
 import Konva from "konva";
 import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
@@ -23,6 +24,17 @@ interface DiagramProps {
 const BLOCK_WIDTH = 70;
 const BLOCK_HEIGHT = 30;
 
+function useThrottleValue<T>(input: T, waitMs: number) {
+  const [value, setValue] = useState<T>(input);
+  const throttled = useRef(
+    throttle((newValue: T) => setValue(newValue), waitMs)
+  );
+
+  useEffect(() => throttled.current(input), [input]);
+
+  return value;
+}
+
 const Diagram: React.FC<DiagramProps> = ({
   blocks,
   edges,
@@ -37,7 +49,8 @@ const Diagram: React.FC<DiagramProps> = ({
     y: number;
   } | null>(null);
   const ref = useRef(null);
-  const size = useComponentSize(ref);
+  const _realtimeSize = useComponentSize(ref);
+  const size = useThrottleValue(_realtimeSize, 1000);
 
   const layout = useMemo(() => {
     const g = new dagre.graphlib.Graph();
@@ -105,7 +118,8 @@ const Diagram: React.FC<DiagramProps> = ({
 
 const Root = styled.div<{ hover: boolean }>`
   display: flex;
-  flex-grow: 1;
+  flex: auto 1 1;
+  overflow: hidden;
   position: relative;
   cursor: ${p => (p.hover ? "pointer" : "initial")};
 `;
