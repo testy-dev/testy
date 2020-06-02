@@ -86,6 +86,17 @@ const Diagram: React.FC<DiagramProps> = ({
     <Root ref={ref} hover={hoverCursor}>
       <Stage width={size?.width} height={size?.height} draggable={true}>
         <Layer>
+          {layout.edges().map(edge => (
+            <RenderEdge
+              key={edge.v + edge.w}
+              inPath={path.includes(edge.v) && path.includes(edge.w)}
+              position={layout.edge(edge)}
+              onContextMenu={e => {
+                setContextMenu({ x: e.evt.x, y: e.evt.y });
+                console.log(e);
+              }}
+            />
+          ))}
           {blocks.map(block => (
             <RenderBlock
               key={block.id}
@@ -96,17 +107,6 @@ const Diagram: React.FC<DiagramProps> = ({
               onClick={() => onSelectBlock(block.id)}
               onMouseEnter={() => onMouseEnter(block.id)}
               onMouseLeave={() => onMouseLeave()}
-            />
-          ))}
-          {layout.edges().map(edge => (
-            <RenderEdge
-              key={edge.v + edge.w}
-              inPath={path.includes(edge.v) && path.includes(edge.w)}
-              position={layout.edge(edge)}
-              onContextMenu={e => {
-                setContextMenu({ x: e.evt.x, y: e.evt.y });
-                console.log(e);
-              }}
             />
           ))}
         </Layer>
@@ -212,6 +212,7 @@ const RenderEdge: React.FC<{
       )}
       stroke={hover ? "#24b1ff" : inPath ? "#494949" : "#a8a8a8"}
       strokeWidth={hover ? 3 : 2}
+      hitStrokeWidth={15}
       pointerLength={5}
       pointerWidth={5}
       onClick={onContextMenu}
