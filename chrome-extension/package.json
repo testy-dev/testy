@@ -2,20 +2,16 @@
   "name": "@testy/chrome-ext",
   "version": "0.0.0",
   "description": "Records a user session for automation and testing purposes.",
-  "main": "index.js",
+  "license": "UNLICENSED",
+  "private": true,
   "scripts": {
-    "start": "npx tsc --noEmit && npx parcel ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.ts ./src/devToolsTab/index.html",
+    "start": "npx tsc --noEmit && npx parcel --no-hmr ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.ts ./src/devToolsTab/index.html",
     "build": "npx tsc --noEmit && npx parcel build ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.ts ./src/devToolsTab/index.html",
     "test": "jest --verbose",
     "clean": "rm -rf dist .cache && mkdir dist && cp ./src/manifest.json dist && cp -r ./src/assets/images/. dist",
     "tsc": "npx tsc --noEmit",
     "rebuild": "npm run clean && npm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.com/Myiyk/testy"
-  },
-  "license": "ISC",
   "jest": {
     "preset": "ts-jest",
     "moduleFileExtensions": [
@@ -23,11 +19,8 @@
       "tsx",
       "js"
     ],
-    "moduleNameMapper": {
-      "\\.(scss)$": "<rootDir>/src/__mocks__/styleMock.ts"
-    },
     "testMatch": [
-      "**/__tests__/*.(test|spec).(ts|tsx|js)"
+      "**/*.(test|spec).(ts|tsx|js)"
     ]
   },
   "devDependencies": {
@@ -51,10 +44,11 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^4.0.0",
+    "jest": "^26.0.1",
     "jest-enzyme": "^7.1.2",
     "parcel": "^1.12.4",
     "sass": "^1.26.5",
-    "ts-jest": "^25.5.1",
+    "ts-jest": "^26.1.0",
     "typescript": "^3.9.2"
   },
   "dependencies": {

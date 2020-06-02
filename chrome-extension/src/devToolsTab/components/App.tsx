@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Block, UUID } from "@testy/shared/types";
 import { Diagram } from "@testy/diagram";
@@ -7,6 +7,7 @@ import styled from "styled-components";
 
 import { write } from "../../helpers/model";
 import EditBlock from "./EditBlock";
+import createPath from "../../helpers/createPath";
 import useLocalStorage from "../../helpers/useLocalStorage";
 
 const debugDiagram = debug("devtools:diagram");
@@ -14,7 +15,7 @@ debug.enable("*");
 
 const App: React.FC = () => {
   // Register tab in dev tools
-  React.useEffect(() => {
+  useEffect(() => {
     chrome.devtools.panels.create(
       "Testy",
       "cypresscone16.png",
@@ -23,8 +24,20 @@ const App: React.FC = () => {
   }, []);
 
   const storage = useLocalStorage();
+  const [path, setPath] = useState<string[]>([]);
+
+  // Update path on change incoming data
+  useEffect(() => {
+    if (storage.active) {
+      const newPath = createPath(storage.edges, path, storage.active);
+      if (newPath !== path) {
+        setPath(newPath);
+      }
+    }
+  }, [path, storage.active, storage.edges]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
+    if (blockID) setPath(createPath(storage.edges, path, blockID));
     await write({ active: blockID });
   };
 
@@ -52,14 +65,13 @@ const App: React.FC = () => {
     });
   };
 
-  const activeBlock =
-    storage.active && storage.blocks.find(b => b.id === storage.active);
   return (
     <Root>
       <Diagram
         blocks={storage.blocks}
         edges={storage.edges}
         selected={storage.active}
+        path={path}
         onSelectBlock={handleSelectBlock}
         onDeleteBlock={handleDeleteBlock}
         onCreateEdge={handleCreateEdge}
@@ -73,9 +85,18 @@ const App: React.FC = () => {
           edges
         </div>
         <div>Active block: {storage.active ?? "not set"}</div>
-        {activeBlock && (
-          <EditBlock block={activeBlock} onSave={handleUpdateBlock} />
-        )}
+        {path.map(blockID => {
+          const block = storage.blocks.find(b => b.id === blockID);
+          if (!block) return null;
+          return (
+            <EditBlock
+              key={blockID}
+              active={blockID === storage.active}
+              block={block}
+              onSave={handleUpdateBlock}
+            />
+          );
+        })}
       </Column>
     </Root>
   );
@@ -88,12 +109,13 @@ const Root = styled.div`
   height: 100vh;
 `;
 const Column = styled.div`
-  width: 250px;
+  flex: 350px 0 0;
   padding: 5px;
   border-left: 1px solid #cccccc;
   background: #f3f3f3;
   color: #444444;
   line-height: 1.5;
+  overflow-y: auto;
 `;
 const Header = styled.h1`
   margin: 0 0 5px;

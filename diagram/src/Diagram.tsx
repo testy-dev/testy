@@ -1,17 +1,20 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as dagre from "dagre";
 import { Arrow, Circle, Layer, Stage, Text } from "react-konva";
-import { Block, Commands, Edge, UUID } from "shared/src";
-import ContextMenu from "./ContextMenu";
+import { Block, Commands, Edge, UUID } from "@testy/shared";
+import { throttle } from "lodash";
 import Konva from "konva";
 import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
 
-interface DiagramKonvaProps {
+import ContextMenu from "./ContextMenu";
+
+interface DiagramProps {
   blocks: Block[];
   edges: Edge[];
   selected: UUID | null;
+  path?: UUID[];
   onSelectBlock: (blockID: UUID | null) => void;
   onDeleteBlock?: (blockID: UUID) => void;
   onCreateEdge?: (from: UUID, to: UUID) => void;
@@ -21,10 +24,22 @@ interface DiagramKonvaProps {
 const BLOCK_WIDTH = 70;
 const BLOCK_HEIGHT = 30;
 
-const Diagram: React.FC<DiagramKonvaProps> = ({
+function useThrottleValue<T>(input: T, waitMs: number) {
+  const [value, setValue] = useState<T>(input);
+  const throttled = useRef(
+    throttle((newValue: T) => setValue(newValue), waitMs)
+  );
+
+  useEffect(() => throttled.current(input), [input]);
+
+  return value;
+}
+
+const Diagram: React.FC<DiagramProps> = ({
   blocks,
   edges,
   selected,
+  path = [],
   onSelectBlock,
   // onDeleteEdge,
 }) => {
@@ -34,7 +49,8 @@ const Diagram: React.FC<DiagramKonvaProps> = ({
     y: number;
   } | null>(null);
   const ref = useRef(null);
-  const size = useComponentSize(ref);
+  const _realtimeSize = useComponentSize(ref);
+  const size = useThrottleValue(_realtimeSize, 1000);
 
   const layout = useMemo(() => {
     const g = new dagre.graphlib.Graph();
@@ -73,6 +89,7 @@ const Diagram: React.FC<DiagramKonvaProps> = ({
           {layout.edges().map(edge => (
             <RenderEdge
               key={edge.v + edge.w}
+              inPath={path.includes(edge.v) && path.includes(edge.w)}
               position={layout.edge(edge)}
               onContextMenu={e => {
                 setContextMenu({ x: e.evt.x, y: e.evt.y });
@@ -101,7 +118,8 @@ const Diagram: React.FC<DiagramKonvaProps> = ({
 
 const Root = styled.div<{ hover: boolean }>`
   display: flex;
-  flex-grow: 1;
+  flex: auto 1 1;
+  overflow: hidden;
   position: relative;
   cursor: ${p => (p.hover ? "pointer" : "initial")};
 `;
@@ -162,9 +180,10 @@ const RenderBlock: React.FC<{
 };
 
 const RenderEdge: React.FC<{
+  inPath: boolean;
   position: dagre.GraphEdge;
   onContextMenu: (e: Konva.KonvaEventObject<PointerEvent>) => void;
-}> = ({ position, onContextMenu }) => {
+}> = ({ inPath, position, onContextMenu }) => {
   const [hover, setHover] = useState<boolean>(false);
 
   return (
@@ -175,7 +194,7 @@ const RenderEdge: React.FC<{
         (acc, p) => acc.concat([p.x, p.y]),
         []
       )}
-      stroke={hover ? "#24b1ff" : "#a8a8a8"}
+      stroke={hover ? "#24b1ff" : inPath ? "#494949" : "#a8a8a8"}
       strokeWidth={hover ? 3 : 2}
       pointerLength={5}
       pointerWidth={5}
