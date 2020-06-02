@@ -139,7 +139,7 @@ const BlockContainer = styled(
 )`
   padding: 5px;
   margin: 5px 0;
-  border: 2px solid ${p => (p.active ? "blue" : "white")};
+  border: 2px solid ${p => (p.active ? "#0d64d2" : "#fff")};
   border-radius: 5px;
   box-shadow: 2px 2px 10px -3px gray;
   background: white;

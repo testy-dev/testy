@@ -92,4 +92,13 @@ describe("createPath", () => {
       "a3",
     ]);
   });
+
+  it("selected block is on same path", () => {
+    expect(createPath(graph, ["a6", "a7", "a8", "a9"], "a7")).toStrictEqual([
+      "a6",
+      "a7",
+      "a8",
+      "a9",
+    ]);
+  });
 });

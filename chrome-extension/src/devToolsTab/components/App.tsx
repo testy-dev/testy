@@ -28,8 +28,12 @@ const App: React.FC = () => {
 
   // Update path on change incoming data
   useEffect(() => {
-    if (storage.active)
-      setPath(createPath(storage.edges, path, storage.active));
+    if (storage.active) {
+      const newPath = createPath(storage.edges, path, storage.active);
+      if (newPath !== path) {
+        setPath(newPath);
+      }
+    }
   }, [path, storage.active, storage.edges]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
