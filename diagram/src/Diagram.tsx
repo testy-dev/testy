@@ -9,12 +9,15 @@ import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
 
 import ContextMenu from "./ContextMenu";
+import KonvaEventObject = Konva.KonvaEventObject;
 
 interface DiagramProps {
   blocks: Block[];
   edges: Edge[];
   selected: UUID | null;
   path?: UUID[];
+  hoverBlock: UUID | null;
+  setHoverBlock: (id: UUID | null) => void;
   onSelectBlock: (blockID: UUID | null) => void;
   onDeleteBlock?: (blockID: UUID) => void;
   onCreateEdge?: (from: UUID, to: UUID) => void;
@@ -40,10 +43,12 @@ const Diagram: React.FC<DiagramProps> = ({
   edges,
   selected,
   path = [],
+  hoverBlock,
+  setHoverBlock,
   onSelectBlock,
   // onDeleteEdge,
 }) => {
-  const [hover, setHover] = useState<boolean>(false);
+  const [hoverCursor, setHoverCursor] = useState<boolean>(false);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -68,11 +73,17 @@ const Diagram: React.FC<DiagramProps> = ({
     return g;
   }, [blocks, edges]);
 
-  const onMouseEnter = () => setHover(true);
-  const onMouseLeave = () => setHover(false);
+  const onMouseEnter = (blockID: string) => {
+    setHoverCursor(true);
+    setHoverBlock(blockID);
+  };
+  const onMouseLeave = () => {
+    setHoverCursor(false);
+    setHoverBlock(null);
+  };
 
   return (
-    <Root ref={ref} hover={hover}>
+    <Root ref={ref} hover={hoverCursor}>
       <Stage width={size?.width} height={size?.height} draggable={true}>
         <Layer>
           {blocks.map(block => (
@@ -81,9 +92,10 @@ const Diagram: React.FC<DiagramProps> = ({
               active={block.id === selected}
               block={block}
               position={layout.node(block.id)}
+              hover={hoverBlock === block.id}
               onClick={() => onSelectBlock(block.id)}
-              onMouseEnter={onMouseEnter}
-              onMouseLeave={onMouseLeave}
+              onMouseEnter={() => onMouseEnter(block.id)}
+              onMouseLeave={() => onMouseLeave()}
             />
           ))}
           {layout.edges().map(edge => (
@@ -146,38 +158,42 @@ const RenderBlock: React.FC<{
   block: Block;
   position: dagre.Node;
   onClick: () => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-}> = ({ active, block, position, onClick, onMouseEnter, onMouseLeave }) => {
-  const [hover, setHover] = useState<boolean>(false);
-  return (
-    <>
-      <Circle
-        x={position.x}
-        y={position.y}
-        radius={active ? 12 : 10}
-        fill={getCommandColor(block.command)}
-        strokeWidth={active ? 3 : 0}
-        stroke={hover || active ? "#0d64d2" : "#555"}
-        onClick={onClick}
-        onMouseEnter={() => {
-          onMouseEnter();
-          setHover(true);
-        }}
-        onMouseLeave={() => {
-          onMouseLeave();
-          setHover(false);
-        }}
-      />
-      <Text
-        x={position.x + 15}
-        y={position.y - 5}
-        text={Commands[block.command]}
-        fontSize={12}
-      />
-    </>
-  );
-};
+  hover: boolean;
+  onMouseEnter: (e: KonvaEventObject<MouseEvent>) => void;
+  onMouseLeave: (e: KonvaEventObject<MouseEvent>) => void;
+}> = ({
+  active,
+  block,
+  position,
+  hover,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+}) => (
+  <>
+    <Circle
+      x={position.x}
+      y={position.y}
+      radius={active ? 12 : 10}
+      fill={getCommandColor(block.command)}
+      strokeWidth={hover || active ? 3 : 0}
+      stroke={hover || active ? "#0d64d2" : undefined}
+      onClick={onClick}
+      onMouseEnter={e => {
+        onMouseEnter(e);
+      }}
+      onMouseLeave={e => {
+        onMouseLeave(e);
+      }}
+    />
+    <Text
+      x={position.x + 15}
+      y={position.y - 5}
+      text={Commands[block.command]}
+      fontSize={12}
+    />
+  </>
+);
 
 const RenderEdge: React.FC<{
   inPath: boolean;

@@ -25,6 +25,7 @@ const App: React.FC = () => {
 
   const storage = useLocalStorage();
   const [path, setPath] = useState<string[]>([]);
+  const [hoverBlock, setHoverBlock] = useState<string | null>(null);
 
   // Update path on change incoming data
   useEffect(() => {
@@ -72,6 +73,8 @@ const App: React.FC = () => {
         edges={storage.edges}
         selected={storage.active}
         path={path}
+        hoverBlock={hoverBlock}
+        setHoverBlock={setHoverBlock}
         onSelectBlock={handleSelectBlock}
         onDeleteBlock={handleDeleteBlock}
         onCreateEdge={handleCreateEdge}
@@ -84,7 +87,6 @@ const App: React.FC = () => {
           {storage.blocks?.length ?? 0} blocks, {storage.edges?.length ?? 0}{" "}
           edges
         </div>
-        <div>Active block: {storage.active ?? "not set"}</div>
         {path.map(blockID => {
           const block = storage.blocks.find(b => b.id === blockID);
           if (!block) return null;
@@ -92,6 +94,10 @@ const App: React.FC = () => {
             <EditBlock
               key={blockID}
               active={blockID === storage.active}
+              hover={hoverBlock === blockID}
+              setHover={state =>
+                state ? setHoverBlock(blockID) : setHoverBlock(null)
+              }
               block={block}
               onSave={handleUpdateBlock}
             />
