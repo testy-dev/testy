@@ -138,7 +138,7 @@ const BlockContainer = styled(props => (
   margin: 5px 0;
   border: 2px solid white;
   border-radius: 5px;
-  box-shadow: 2px 2px 10px gray;
+  box-shadow: 2px 2px 10px -3px gray;
   background: white;
 `;
 

@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Block, UUID } from "@testy/shared/types";
 import { Diagram } from "@testy/diagram";
@@ -16,7 +15,7 @@ debug.enable("*");
 
 const App: React.FC = () => {
   // Register tab in dev tools
-  React.useEffect(() => {
+  useEffect(() => {
     chrome.devtools.panels.create(
       "Testy",
       "cypresscone16.png",
@@ -26,6 +25,12 @@ const App: React.FC = () => {
 
   const storage = useLocalStorage();
   const [path, setPath] = useState<string[]>([]);
+
+  // Update path on change incoming data
+  useEffect(() => {
+    if (storage.active)
+      setPath(createPath(storage.edges, path, storage.active));
+  }, [path, storage.active, storage.edges]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
     if (blockID) setPath(createPath(storage.edges, path, blockID));
@@ -56,8 +61,6 @@ const App: React.FC = () => {
     });
   };
 
-  const activeBlock =
-    storage.active && storage.blocks.find(b => b.id === storage.active);
   return (
     <Root>
       <Diagram
