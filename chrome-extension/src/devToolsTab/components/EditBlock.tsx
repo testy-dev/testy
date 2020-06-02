@@ -28,7 +28,7 @@ const EditBlock: React.FC<IProps> = ({ active, block, onSave }) => {
   // Scroll to active block
   useEffect(() => {
     if (active && ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      ref.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [active]);
 
