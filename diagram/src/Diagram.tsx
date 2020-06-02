@@ -9,7 +9,6 @@ import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
 
 import ContextMenu from "./ContextMenu";
-import KonvaEventObject = Konva.KonvaEventObject;
 
 interface DiagramProps {
   blocks: Block[];
@@ -159,8 +158,8 @@ const RenderBlock: React.FC<{
   position: dagre.Node;
   onClick: () => void;
   hover: boolean;
-  onMouseEnter: (e: KonvaEventObject<MouseEvent>) => void;
-  onMouseLeave: (e: KonvaEventObject<MouseEvent>) => void;
+  onMouseEnter: (e: Konva.KonvaEventObject<MouseEvent>) => void;
+  onMouseLeave: (e: Konva.KonvaEventObject<MouseEvent>) => void;
 }> = ({
   active,
   block,

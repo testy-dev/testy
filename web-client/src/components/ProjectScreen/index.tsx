@@ -18,6 +18,7 @@ const ProjectScreen: React.FC = () => {
   }>();
   const [graph, setGraph] = useState<Graph | null>(null);
   const [openedHistory, setOpenedHistory] = useState<number | null>(null);
+  const [hoverBlock, setHoverBlock] = useState<string | null>(null);
   return (
     <Box direction="row" fill>
       <Box
@@ -45,8 +46,10 @@ const ProjectScreen: React.FC = () => {
       <Diagram
         blocks={graph?.blocks ?? []}
         edges={graph?.edges ?? []}
-        onSelectBlock={() => null}
+        hoverBlock={hoverBlock}
+        setHoverBlock={setHoverBlock}
         selected={null}
+        onSelectBlock={() => null}
       />
     </Box>
   );
