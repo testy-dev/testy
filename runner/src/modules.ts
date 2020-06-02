@@ -9,6 +9,7 @@ export async function visit(page: Page, parameter: string) {
 export async function click(page: Page, parameter: string, selector: string) {
   console.log("click", selector);
   const item = await page.$(selector);
+
   if (item === null) throw "Element not found";
   await page.click(selector);
   return { state: "success" };

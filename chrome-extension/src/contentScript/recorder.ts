@@ -33,8 +33,16 @@ function parseEvent(event: Event): ParsedEvent | null {
     }
   }
 
+  const parentSelectors: string[] = [];
+  let parentNode = (event.target as Element).parentElement;
+  while (parentNode) {
+    parentSelectors.push(finder(parentNode));
+    parentNode = parentNode.parentElement;
+  }
+
   const parsedEvent: ParsedEvent = {
     selector,
+    parentSelectors,
     action: event.type,
     tag: (event.target as Element).tagName,
     value: (event.target as HTMLInputElement).value,

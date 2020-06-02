@@ -177,7 +177,7 @@ async function handleMessage(message: ActionWithPayload): Promise<void> {
 }
 
 /**
- * Handles control actions comming from keyboard shortcuts.
+ * Handles control actions coming from keyboard shortcuts.
  * @param command
  */
 async function handleQuickKeys(command: string): Promise<void> {

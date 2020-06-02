@@ -82,7 +82,7 @@ createServer((req, resp) => {
           edges: JSON.stringify(mergedArr),
           started_at: new Date(tsBeforeTests),
           finished_at: new Date(tsAfterTests),
-          credits: Math.round((tsAfterTests - tsBeforeTests) / 1000),
+          credits: Math.ceil((tsAfterTests - tsBeforeTests) / 1000),
           blocks_count: statedResults.length,
           blocks_success: statedResults.filter(res => res.state === "success")
             .length,
@@ -92,8 +92,8 @@ createServer((req, resp) => {
         },
       };
 
-      console.time("Send results to hasura");
-      console.log("Endpoint", GRAPHQL_ENDPOINT);
+      console.log(variables);
+
       const gqlResult = await fetch(GRAPHQL_ENDPOINT, {
         method: "POST",
         headers: {
@@ -102,7 +102,6 @@ createServer((req, resp) => {
         },
         body: JSON.stringify({ query, variables }),
       });
-      console.timeEnd("Send results to hasura");
 
       console.log("Hasura done", await gqlResult.json());
 
