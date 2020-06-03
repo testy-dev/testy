@@ -2,7 +2,7 @@ import { createServer } from "http";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
 
-import { EdgeProps } from "@testy/shared";
+import { BlockWriteable, Result } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
 
 const GRAPHQL_ENDPOINT =
@@ -22,7 +22,7 @@ createServer((req, resp) => {
     .on("end", async () => {
       const data = Buffer.concat(body).toString();
       const newData = JSON.parse(data).event.data.new;
-      const edges: EdgeProps[] = JSON.parse(newData.edges);
+      const edges: BlockWriteable[] = JSON.parse(newData.edges);
 
       resp.statusCode = 200;
 
@@ -32,7 +32,7 @@ createServer((req, resp) => {
       const tsBeforeTests = new Date().valueOf();
       console.log("Time before tests: ", tsBeforeTests);
       console.log("Starting puppeteer");
-      const statedResults = [];
+      const statedResults: { state: Result; msg?: string }[] = [];
 
       for (const { command, parameter, selector, parentsSelectors } of edges) {
         try {

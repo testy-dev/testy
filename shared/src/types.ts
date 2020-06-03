@@ -16,10 +16,10 @@ export interface ParsedEvent {
   selectedText?: string;
 }
 
-export interface EdgeProps {
-  command: string;
-  parameter: string;
-  selector: string;
+export interface BlockWriteable {
+  command: CommandKey;
+  parameter?: string;
+  selector?: string;
   parentsSelectors?: string[];
 }
 
@@ -51,12 +51,10 @@ export type CommandKey =
   | "submit"
   | "check-contains-text";
 
-export interface Block {
+export type Result = "failed" | "success";
+
+export interface Block extends BlockWriteable {
   id: string;
-  command: CommandKey;
-  selector?: string;
-  parameter?: string;
-  parentsSelectors?: string[];
 }
 
 export type UUID = string;
