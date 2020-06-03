@@ -51,7 +51,7 @@ export type CommandKey =
   | "submit"
   | "check-contains-text";
 
-export type Result = "failed" | "success";
+export type BlockResult = "failed" | "success";
 export type DiagramBlockState = "unknown" | "success" | "fail" | "warning";
 
 export interface Block extends BlockWriteable {

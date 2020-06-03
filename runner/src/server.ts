@@ -2,7 +2,7 @@ import { createServer } from "http";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
 
-import { BlockWriteable, Result } from "@testy/shared";
+import { BlockWriteable, BlockResult } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
 
 const GRAPHQL_ENDPOINT =
@@ -32,7 +32,7 @@ createServer((req, resp) => {
       const tsBeforeTests = new Date().valueOf();
       console.log("Time before tests: ", tsBeforeTests);
       console.log("Starting puppeteer");
-      const statedResults: { state: Result; msg?: string }[] = [];
+      const statedResults: { state: BlockResult; msg?: string }[] = [];
 
       for (const { command, parameter, selector, parentsSelectors } of edges) {
         try {
