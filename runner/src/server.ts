@@ -42,7 +42,7 @@ createServer((req, resp) => {
               break;
             case "click":
               statedResults.push(
-                await click(page, parameter, selector, parentsSelectors[0])
+                await click(page, parameter, selector, parentsSelectors)
               );
               break;
             case "check-contains-text":

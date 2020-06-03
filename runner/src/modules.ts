@@ -10,32 +10,38 @@ export async function click(
   page: Page,
   parameter: string,
   selector: string,
-  parent: string
+  parents: string[]
 ) {
   console.log("click", selector);
-  await page.waitForSelector(parent);
+  await page.waitForSelector(parents[parents.length - 1]);
 
+  // To avoid situations when clicked element is not visible without hover
   async function hoverParent(): Promise<void> {
-    console.log("parent:", parent);
-    const { x, y, height, width } = await page.evaluate(parent => {
-      document.querySelector(parent).scrollIntoView();
-      const data = document.querySelector(parent).getBoundingClientRect();
-      return { x: data.x, y: data.y, height: data.height, width: data.width };
-    }, parent);
+    const { x, y, height, width } = await page.evaluate(parents => {
+      for (const parent of parents) {
+        const parentElement = document.querySelector(parent);
+
+        if (parentElement) {
+          const data = parentElement.getBoundingClientRect();
+          if (!data.height || !data.width) continue;
+
+          parentElement.scrollIntoView();
+
+          return {
+            x: data.x,
+            y: data.y,
+            height: data.height,
+            width: data.width,
+          };
+        }
+      }
+    }, parents);
     await page.mouse.move(x + width / 2, y + height / 2);
   }
 
-  const item = await page.$(selector);
-  if (item === null) {
-    await hoverParent();
-  } else {
-    try {
-      await page.click(selector);
-    } catch (e) {
-      await hoverParent();
-      await page.click(selector);
-    }
-  }
+  await hoverParent();
+  await page.$(selector);
+  await page.click(selector);
 
   return { state: "success" };
 }
