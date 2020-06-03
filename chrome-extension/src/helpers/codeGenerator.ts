@@ -1,9 +1,3 @@
-/**
- * Generates the Cypress code that will simulate the recorded user session.
- *
- * Each time the user records, this function will generate a cy.visit command that will
- * store the current url, as well each subsequest user interaction with the browser.
- */
 import { Block, EventType, ParsedEvent } from "@testy/shared";
 import { v4 } from "uuid";
 
@@ -13,7 +7,12 @@ import { v4 } from "uuid";
  */
 
 function handleClick(event: ParsedEvent): Block {
-  return { id: v4(), command: "click", selector: event.selector };
+  return {
+    id: v4(),
+    command: "click",
+    selector: event.selector,
+    parentsSelectors: event.parentSelectors,
+  };
 }
 
 const SpecialKeys = new Map([
@@ -34,6 +33,7 @@ function handleKeydown(event: ParsedEvent): Block | null {
     command: "type",
     selector: event.selector,
     parameter: SpecialKeys.has(key) ? "{" + SpecialKeys.get(key) + "}" : key,
+    parentsSelectors: event.parentSelectors,
   };
 }
 
@@ -46,6 +46,7 @@ function handleChange(event: ParsedEvent): Block | null {
     command: "type",
     selector: event.selector,
     parameter: event.value.replace(/'/g, "\\'"),
+    parentsSelectors: event.parentSelectors,
   };
 }
 
@@ -54,6 +55,7 @@ function handleDoubleclick(event: ParsedEvent): Block {
     id: v4(),
     command: "dblclick",
     selector: event.selector,
+    parentsSelectors: event.parentSelectors,
   };
 }
 
@@ -62,6 +64,7 @@ function handleSubmit(event: ParsedEvent): Block {
     id: v4(),
     command: "submit",
     selector: event.selector,
+    parentsSelectors: event.parentSelectors,
   };
 }
 
@@ -72,6 +75,7 @@ function handleSelect(event: ParsedEvent): Block | null {
     command: "check-contains-text",
     selector: event.selector,
     parameter: event.selectedText,
+    parentsSelectors: event.parentSelectors,
   };
 }
 

@@ -5,6 +5,7 @@ export type RecState = "off" | "on" | "paused";
 export interface ParsedEvent {
   selector: string;
   altSelectors?: string[];
+  parentSelectors?: string[];
   action: string;
   tag: string;
   value: string;
@@ -19,6 +20,7 @@ export interface EdgeProps {
   command: string;
   parameter: string;
   selector: string;
+  parentsSelectors?: string[];
 }
 
 export interface Session {
@@ -54,6 +56,7 @@ export interface Block {
   command: CommandKey;
   selector?: string;
   parameter?: string;
+  parentsSelectors?: string[];
 }
 
 export type UUID = string;
