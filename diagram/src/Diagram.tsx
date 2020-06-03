@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as dagre from "dagre";
 import { Arrow, Circle, Layer, Stage, Text } from "react-konva";
-import { Block, Commands, Edge, UUID } from "@testy/shared";
+import { Block, Commands, DiagramBlockState, Edge, UUID } from "@testy/shared";
 import { throttle } from "lodash";
 import Konva from "konva";
 import styled from "styled-components";
@@ -11,7 +11,7 @@ import useComponentSize from "@rehooks/component-size";
 import ContextMenu from "./ContextMenu";
 
 interface DiagramProps {
-  blocks: Block[];
+  blocks: (Block & { state?: DiagramBlockState })[];
   edges: Edge[];
   selected: UUID | null;
   path?: UUID[];
@@ -135,6 +135,19 @@ const Root = styled.div<{ hover: boolean }>`
   cursor: ${p => (p.hover ? "pointer" : "initial")};
 `;
 
+const getStateColor = (state: DiagramBlockState): string => {
+  switch (state) {
+    case "unknown":
+      return "#868686";
+    case "success":
+      return "#48d760";
+    case "fail":
+      return "#e73030";
+    case "warning":
+      return "#f57049";
+  }
+};
+
 const getCommandColor = (command: Block["command"]): string => {
   switch (command) {
     case "click":
@@ -154,7 +167,7 @@ const getCommandColor = (command: Block["command"]): string => {
 
 const RenderBlock: React.FC<{
   active: boolean;
-  block: Block;
+  block: Block & { state?: DiagramBlockState };
   position: dagre.Node;
   onClick: () => void;
   hover: boolean;
@@ -174,7 +187,11 @@ const RenderBlock: React.FC<{
       x={position.x}
       y={position.y}
       radius={active ? 12 : 10}
-      fill={getCommandColor(block.command)}
+      fill={
+        block?.state
+          ? getStateColor(block.state)
+          : getCommandColor(block.command)
+      }
       strokeWidth={hover || active ? 3 : 0}
       stroke={hover || active ? "#0d64d2" : undefined}
       onClick={onClick}

@@ -51,6 +51,8 @@ export type CommandKey =
   | "submit"
   | "check-contains-text";
 
+export type DiagramBlockState = "unknown" | "success" | "fail" | "warning";
+
 export interface Block {
   id: string;
   command: CommandKey;

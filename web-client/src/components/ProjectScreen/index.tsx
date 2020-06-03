@@ -193,7 +193,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
         // success > 0, fail > 0 => warning
         return {
           ...block,
-          status:
+          state:
             success > 0
               ? fail > 0
                 ? "warning"
