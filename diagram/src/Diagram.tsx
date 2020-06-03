@@ -2,17 +2,16 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as dagre from "dagre";
 import { Arrow, Circle, Layer, Stage, Text } from "react-konva";
-import { Block, Commands, Edge, UUID } from "@testy/shared";
+import { Block, Commands, DiagramBlockState, Edge, UUID } from "@testy/shared";
 import { throttle } from "lodash";
 import Konva from "konva";
 import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
 
 import ContextMenu from "./ContextMenu";
-import KonvaEventObject = Konva.KonvaEventObject;
 
 interface DiagramProps {
-  blocks: Block[];
+  blocks: (Block & { state?: DiagramBlockState })[];
   edges: Edge[];
   selected: UUID | null;
   path?: UUID[];
@@ -86,6 +85,17 @@ const Diagram: React.FC<DiagramProps> = ({
     <Root ref={ref} hover={hoverCursor}>
       <Stage width={size?.width} height={size?.height} draggable={true}>
         <Layer>
+          {layout.edges().map(edge => (
+            <RenderEdge
+              key={edge.v + edge.w}
+              inPath={path.includes(edge.v) && path.includes(edge.w)}
+              position={layout.edge(edge)}
+              onContextMenu={e => {
+                setContextMenu({ x: e.evt.x, y: e.evt.y });
+                console.log(e);
+              }}
+            />
+          ))}
           {blocks.map(block => (
             <RenderBlock
               key={block.id}
@@ -96,17 +106,6 @@ const Diagram: React.FC<DiagramProps> = ({
               onClick={() => onSelectBlock(block.id)}
               onMouseEnter={() => onMouseEnter(block.id)}
               onMouseLeave={() => onMouseLeave()}
-            />
-          ))}
-          {layout.edges().map(edge => (
-            <RenderEdge
-              key={edge.v + edge.w}
-              inPath={path.includes(edge.v) && path.includes(edge.w)}
-              position={layout.edge(edge)}
-              onContextMenu={e => {
-                setContextMenu({ x: e.evt.x, y: e.evt.y });
-                console.log(e);
-              }}
             />
           ))}
         </Layer>
@@ -136,6 +135,19 @@ const Root = styled.div<{ hover: boolean }>`
   cursor: ${p => (p.hover ? "pointer" : "initial")};
 `;
 
+const getStateColor = (state: DiagramBlockState): string => {
+  switch (state) {
+    case "unknown":
+      return "#868686";
+    case "success":
+      return "#48d760";
+    case "fail":
+      return "#e73030";
+    case "warning":
+      return "#f57049";
+  }
+};
+
 const getCommandColor = (command: Block["command"]): string => {
   switch (command) {
     case "click":
@@ -155,12 +167,12 @@ const getCommandColor = (command: Block["command"]): string => {
 
 const RenderBlock: React.FC<{
   active: boolean;
-  block: Block;
+  block: Block & { state?: DiagramBlockState };
   position: dagre.Node;
   onClick: () => void;
   hover: boolean;
-  onMouseEnter: (e: KonvaEventObject<MouseEvent>) => void;
-  onMouseLeave: (e: KonvaEventObject<MouseEvent>) => void;
+  onMouseEnter: (e: Konva.KonvaEventObject<MouseEvent>) => void;
+  onMouseLeave: (e: Konva.KonvaEventObject<MouseEvent>) => void;
 }> = ({
   active,
   block,
@@ -175,7 +187,11 @@ const RenderBlock: React.FC<{
       x={position.x}
       y={position.y}
       radius={active ? 12 : 10}
-      fill={getCommandColor(block.command)}
+      fill={
+        block?.state
+          ? getStateColor(block.state)
+          : getCommandColor(block.command)
+      }
       strokeWidth={hover || active ? 3 : 0}
       stroke={hover || active ? "#0d64d2" : undefined}
       onClick={onClick}
@@ -212,6 +228,7 @@ const RenderEdge: React.FC<{
       )}
       stroke={hover ? "#24b1ff" : inPath ? "#494949" : "#a8a8a8"}
       strokeWidth={hover ? 3 : 2}
+      hitStrokeWidth={15}
       pointerLength={5}
       pointerWidth={5}
       onClick={onContextMenu}

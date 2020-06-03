@@ -9,3 +9,7 @@ type SampleOutput {
   accessToken : String!
 }
 
+type RunProjectOutput {
+  status : Boolean!
+}
+

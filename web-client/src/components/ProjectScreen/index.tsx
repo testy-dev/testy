@@ -18,6 +18,7 @@ const ProjectScreen: React.FC = () => {
   }>();
   const [graph, setGraph] = useState<Graph | null>(null);
   const [openedHistory, setOpenedHistory] = useState<number | null>(null);
+  const [hoverBlock, setHoverBlock] = useState<string | null>(null);
   return (
     <Box direction="row" fill>
       <Box
@@ -45,8 +46,10 @@ const ProjectScreen: React.FC = () => {
       <Diagram
         blocks={graph?.blocks ?? []}
         edges={graph?.edges ?? []}
-        onSelectBlock={() => null}
+        hoverBlock={hoverBlock}
+        setHoverBlock={setHoverBlock}
         selected={null}
+        onSelectBlock={() => null}
       />
     </Box>
   );
@@ -130,6 +133,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             graph
             paths(order_by: { id: asc }) {
               id
+              edges
               blocks_count
               blocks_success
               blocks_failed
@@ -155,6 +159,53 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
       variables: { orgSlug, projectSlug },
     }
   );
+  const handleOpen = (run: any) => {
+    const counter = run.paths.reduce(
+      (
+        acc: {
+          success: { [blockID: string]: number };
+          fail: { [blockID: string]: number };
+        },
+        path: any
+      ) => {
+        const edges = JSON.parse(path.edges);
+        edges.forEach((block: any) => {
+          if (block.state === "success") {
+            acc.success[block.id] = acc.success[block.id] + 1 || 1;
+          }
+          if (block.state === "failed") {
+            acc.fail[block.id] = acc.fail[block.id] + 1 || 1;
+          }
+        });
+        return acc;
+      },
+      { success: {}, fail: {} }
+    );
+
+    const graph = {
+      edges: run.graph.edges,
+      blocks: run.graph.blocks.map((block: any) => {
+        const success = counter.success?.[block.id] ?? 0;
+        const fail = counter.fail?.[block.id] ?? 0;
+        // success 0, fail 0 => unknown
+        // success > 0, fail 0 => success
+        // success 0, fail > 0 => fail
+        // success > 0, fail > 0 => warning
+        return {
+          ...block,
+          state:
+            success > 0
+              ? fail > 0
+                ? "warning"
+                : "success"
+              : fail > 0
+              ? "fail"
+              : "unknown",
+        };
+      }),
+    };
+    onOpenHistory(run.id, graph);
+  };
 
   if (loading) return <Text>Loading...</Text>;
 
@@ -174,7 +225,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             key={run.id}
             background="light-1"
             pad="small"
-            onClick={() => onOpenHistory(run.id, run.graph)}
+            onClick={() => handleOpen(run)}
             border={{
               side: "left",
               size: "medium",
@@ -186,40 +237,55 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
             }}
           >
             <Box direction="row" justify="between">
-              <Text>#{run.id}</Text>
               <Text>
-                <TimeAgo date={run.started_at} />
+                {Math.round((sum?.blocks_success / sum?.blocks_count) * 100)}% -{" "}
+                {sum?.blocks_failed} fails
+              </Text>
+              <Text>
+                {sum?.credits ?? 0} credits, <TimeAgo date={run.started_at} />
               </Text>
             </Box>
             <Text>
-              {sum?.blocks_count} blocks ({sum?.blocks_success} success,{" "}
-              {sum?.blocks_failed} failed, {sum?.blocks_blocked} blocked),{" "}
-              {sum?.credits} credits
+              {/*{sum?.blocks_count} blocks ({sum?.blocks_success} success,{" "}*/}
+              {/*, {sum?.blocks_blocked} blocked),{" "}*/}
+              {/*{sum?.credits} credits*/}
             </Text>
-            {opened && (
-              <div>
-                {run.paths.map((path: any) => (
-                  <Text
-                    key={path.id}
-                    style={{ display: "block" }}
-                    color={getStatus(
-                      path.blocks_success,
-                      path.blocks_failed,
-                      path.blocks_count
-                    )}
-                  >
-                    path #{path.id} - {path?.blocks_count} blocks (
-                    {path?.blocks_success} success, {path?.blocks_failed}{" "}
-                    failed, {path?.blocks_blocked} blocked), {path?.credits}{" "}
-                    credits
-                  </Text>
-                ))}
-              </div>
-            )}
+            {opened && <RunDetail run={run} />}
           </Box>
         );
       })}
     </Box>
+  );
+};
+
+const RunDetail: React.FC<{ run: any }> = ({ run }) => {
+  const failingBlocks = run.paths.flatMap((path: any) => {
+    const edges = JSON.parse(path.edges);
+    return edges.find((edge: any) => edge?.state === "failed") || [];
+  });
+  return (
+    <div>
+      {failingBlocks.map((block: any) => (
+        <Text key={block.id} style={{ display: "block" }}>
+          {block.command} {block?.parameter} {block?.selector} {block?.msg}
+        </Text>
+      ))}
+      {run.paths.map((path: any) => (
+        <Text
+          key={path.id + "path"}
+          style={{ display: "block" }}
+          color={getStatus(
+            path.blocks_success,
+            path.blocks_failed,
+            path.blocks_count
+          )}
+        >
+          path #{path.id} - {path?.blocks_count} blocks ({path?.blocks_success}{" "}
+          success, {path?.blocks_failed} failed, {path?.blocks_blocked}{" "}
+          blocked), {path?.credits} credits
+        </Text>
+      ))}
+    </div>
   );
 };
 
