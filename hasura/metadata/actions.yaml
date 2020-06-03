@@ -5,4 +5,5 @@ custom_types:
   - name: SampleInput
   objects:
   - name: SampleOutput
+  - name: RunProjectOutput
   scalars: []
