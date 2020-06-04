@@ -1,8 +1,15 @@
 import { Block, Edge, RecState, UUID } from "@testy/shared";
 
+export interface StorageValues {
+  status?: RecState;
+  active?: UUID | null;
+  blocks?: Block[];
+  edges?: Edge[];
+}
+
 export function read(
   keys: string | string[] | Record<string, any> | null
-): Promise<Record<string, any>> {
+): Promise<StorageValues> {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(keys, result => {
       if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
@@ -17,7 +24,7 @@ export function read(
  * Promise to write to storage.local
  * @param items
  */
-export function write(items: Record<string, any>): Promise<void> {
+export function write(items: StorageValues): Promise<void> {
   return new Promise((resolve, reject) => {
     chrome.storage.local.set(items, () => {
       if (chrome.runtime.lastError) reject(chrome.runtime.lastError);

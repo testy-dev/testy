@@ -8,7 +8,10 @@ import Konva from "konva";
 import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
 
-import ContextMenu from "./ContextMenu";
+import ContextMenu, {
+  ContextMenuItem,
+  ContextMenuPosition,
+} from "./ContextMenu";
 
 interface DiagramProps {
   blocks: (Block & { state?: DiagramBlockState })[];
@@ -18,6 +21,7 @@ interface DiagramProps {
   hoverBlock: UUID | null;
   setHoverBlock: (id: UUID | null) => void;
   onSelectBlock: (blockID: UUID | null) => void;
+  onCreateBlock?: (inConn: UUID | null, outConn: UUID | null) => void;
   onDeleteBlock?: (blockID: UUID) => void;
   onCreateEdge?: (from: UUID, to: UUID) => void;
   onDeleteEdge?: (from: UUID, to: UUID) => void;
@@ -44,13 +48,14 @@ const Diagram: React.FC<DiagramProps> = ({
   path = [],
   hoverBlock,
   setHoverBlock,
+  onCreateBlock,
   onSelectBlock,
-  // onDeleteEdge,
+  onDeleteEdge,
 }) => {
   const [hoverCursor, setHoverCursor] = useState<boolean>(false);
   const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
+    position: ContextMenuPosition;
+    items: ContextMenuItem[];
   } | null>(null);
   const ref = useRef(null);
   const _realtimeSize = useComponentSize(ref);
@@ -85,17 +90,40 @@ const Diagram: React.FC<DiagramProps> = ({
     <Root ref={ref} hover={hoverCursor}>
       <Stage width={size?.width} height={size?.height} draggable={true}>
         <Layer>
-          {layout.edges().map(edge => (
-            <RenderEdge
-              key={edge.v + edge.w}
-              inPath={path.includes(edge.v) && path.includes(edge.w)}
-              position={layout.edge(edge)}
-              onContextMenu={e => {
-                setContextMenu({ x: e.evt.x, y: e.evt.y });
-                console.log(e);
-              }}
-            />
-          ))}
+          {layout.edges().map(edge => {
+            const inPathIndex = path.indexOf(edge.v);
+            const outPathIndex = path.indexOf(edge.w);
+            return (
+              <RenderEdge
+                key={edge.v + edge.w}
+                inPath={
+                  inPathIndex >= 0 &&
+                  outPathIndex >= 0 &&
+                  inPathIndex + 1 === outPathIndex
+                }
+                position={layout.edge(edge)}
+                onContextMenu={e => {
+                  setContextMenu({
+                    position: { x: e.evt.x, y: e.evt.y },
+                    items: [
+                      {
+                        text: "Create block here",
+                        onClick: () => {
+                          if (onCreateBlock) onCreateBlock(edge.v, edge.w);
+                        },
+                      },
+                      {
+                        text: "Remove edge",
+                        onClick: () => {
+                          if (onDeleteEdge) onDeleteEdge(edge.v, edge.w);
+                        },
+                      },
+                    ],
+                  });
+                }}
+              />
+            );
+          })}
           {blocks.map(block => (
             <RenderBlock
               key={block.id}
@@ -112,14 +140,8 @@ const Diagram: React.FC<DiagramProps> = ({
       </Stage>
       {contextMenu && (
         <ContextMenu
-          position={contextMenu}
-          items={[
-            { text: "Create block here", onClick: () => null },
-            {
-              text: "Remove edge",
-              onClick: () => null,
-            },
-          ]}
+          position={contextMenu.position}
+          items={contextMenu.items}
           onClose={() => setContextMenu(null)}
         />
       )}

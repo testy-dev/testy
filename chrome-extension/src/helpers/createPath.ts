@@ -2,7 +2,7 @@ import { Edge } from "@testy/shared";
 
 function createPath(edges: Edge[], path: string[], selected: string): string[] {
   // Performance shortcut
-  if (path.includes(selected)) return path;
+  // if (path.includes(selected)) return path;
 
   const result: string[] = [selected];
   let actualBlock = selected;

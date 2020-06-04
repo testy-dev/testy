@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { Block, UUID } from "@testy/shared/types";
+import { Block, Edge, UUID } from "@testy/shared/types";
 import { Diagram } from "@testy/diagram";
+import { v4 as uuid } from "uuid";
 import debug from "debug";
 import styled from "styled-components";
 
@@ -42,6 +43,31 @@ const App: React.FC = () => {
     await write({ active: blockID });
   };
 
+  const handleCreateBlock = async (
+    inConn: UUID | null,
+    outConn: UUID | null
+  ) => {
+    debugDiagram("create block, %s -> new block -> %s", inConn, outConn);
+
+    const newBlock: Block = {
+      id: uuid(),
+      command: "click",
+      selector: "",
+    };
+    const newEdges: Edge[] = [];
+    if (inConn) newEdges.push([inConn, newBlock.id]);
+    if (outConn) newEdges.push([newBlock.id, outConn]);
+
+    await write({
+      blocks: [...storage.blocks, newBlock],
+      edges: [
+        ...storage.edges.filter(([i, o]) => i !== inConn && o !== outConn),
+        ...newEdges,
+      ],
+      active: newBlock.id,
+    });
+  };
+
   const handleUpdateBlock = async (block: Block) => {
     debugDiagram("update block %O", block);
 
@@ -62,7 +88,7 @@ const App: React.FC = () => {
   const handleDeleteEdge = async (from: UUID, to: UUID) => {
     debugDiagram("remove edge from %s to %s", from, to);
     await write({
-      edges: storage.edges.filter(([f, t]) => f !== from && t !== to),
+      edges: storage.edges.filter(([i, o]) => i !== from && o !== to),
     });
   };
 
@@ -76,6 +102,7 @@ const App: React.FC = () => {
         hoverBlock={hoverBlock}
         setHoverBlock={setHoverBlock}
         onSelectBlock={handleSelectBlock}
+        onCreateBlock={handleCreateBlock}
         onDeleteBlock={handleDeleteBlock}
         onCreateEdge={handleCreateEdge}
         onDeleteEdge={handleDeleteEdge}

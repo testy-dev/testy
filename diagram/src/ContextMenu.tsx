@@ -2,14 +2,19 @@ import React, { useEffect, useRef } from "react";
 
 import styled from "styled-components";
 
-export interface Position {
+export interface ContextMenuPosition {
   x: number;
   y: number;
 }
 
+export interface ContextMenuItem {
+  text: string;
+  onClick: () => void;
+}
+
 interface IProps {
-  position: Position;
-  items: { text: string; onClick: () => void }[];
+  position: ContextMenuPosition;
+  items: ContextMenuItem[];
   onClose: () => void;
 }
 
@@ -34,7 +39,7 @@ const ContextMenu: React.FC<IProps> = ({ items, position, onClose }) => {
   );
 };
 
-const MenuList = styled.div<Position>`
+const MenuList = styled.div<ContextMenuPosition>`
   position: absolute;
   left: ${props => props.x}px;
   top: ${props => props.y}px;
