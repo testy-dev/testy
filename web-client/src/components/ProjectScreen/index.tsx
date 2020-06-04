@@ -19,7 +19,7 @@ const ProjectScreen: React.FC = () => {
     projectSlug: string;
   }>();
   const [graph, setGraph] = useState<Graph | null>(null);
-  const [openedRun, setOpenedRun] = useState<number | null>(null);
+  const [openedRun, setOpenedRun] = useState<number>(0);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
   const [hoverPath, setHoverPath] = useState<string[]>([]);
   return (
@@ -38,7 +38,7 @@ const ProjectScreen: React.FC = () => {
             orgSlug={orgSlug}
             projectSlug={projectSlug}
             openedRun={openedRun}
-            onOpenHistory={(id, graph) => {
+            onOpenRun={(id, graph) => {
               setOpenedRun(id);
               setGraph(graph);
             }}
@@ -107,7 +107,7 @@ mutation ($project_id: Int!, $run_by_user: Int!) {
 
 interface ProjectHistoryProps extends SlugInput {
   openedRun: number | null;
-  onOpenHistory: (id: number, graph: Graph) => void;
+  onOpenRun: (id: number, graph: Graph | null) => void;
   onHoverPath: (path: string[]) => void;
 }
 
@@ -115,7 +115,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   orgSlug,
   projectSlug,
   openedRun,
-  onOpenHistory,
+  onOpenRun,
   onHoverPath,
 }) => {
   const { data, loading } = useSubscription(
@@ -171,6 +171,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   const project = data?.project?.[0];
   const previousProject = previousData?.project?.[0];
 
+  // Update graph history when subscription update received
   useEffect(() => {
     const run = project?.run?.find((r: any) => r.id === openedRun);
     const previousRun = previousProject?.run?.find(
@@ -178,21 +179,32 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
     );
     if (run && previousRun && run !== previousRun) {
       console.log("effect update run", run.id);
-      onOpenHistory(run.id, getDiagramBlocksState(run));
+      onOpenRun(run.id, getDiagramBlocksState(run));
     }
-  }, [onOpenHistory, openedRun, previousProject?.run, project?.run]);
+  }, [onOpenRun, openedRun, previousProject?.run, project?.run]);
 
   const handleOpen = (run: any) => {
-    onOpenHistory(run.id, getDiagramBlocksState(run));
+    onOpenRun(run.id, getDiagramBlocksState(run));
   };
+
+  useEffect(() => {
+    if (openedRun === 0 && previousProject?.graph !== project?.graph) {
+      onOpenRun(0, JSON.parse(project.graph));
+    }
+  }, [onOpenRun, openedRun, previousProject?.graph, project?.graph]);
 
   if (loading) return <Text>Loading...</Text>;
   if (!project) return <Text>Not found</Text>;
 
   return (
     <Box flex={false} gap="xsmall">
-      <Box background="light-1" pad="small">
-        Actual state
+      <Box
+        background="light-1"
+        pad="small"
+        onClick={() => onOpenRun(0, JSON.parse(project.graph))}
+        border={{ side: "left", size: "medium", color: "brand" }}
+      >
+        Actual blocks
       </Box>
       {project.run.map((run: any) => {
         const opened = run.id === openedRun;
