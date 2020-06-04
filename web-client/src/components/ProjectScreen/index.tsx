@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 import { Box, Button, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
@@ -9,7 +9,9 @@ import { useParams } from "react-router-dom";
 import TimeAgo from "react-timeago";
 
 import { fetchQuery, query } from "../../graphql";
+import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
+import getDiagramBlocksState from "./getDiagramBlocksState";
 
 const ProjectScreen: React.FC = () => {
   const { orgSlug, projectSlug } = useParams<{
@@ -17,7 +19,7 @@ const ProjectScreen: React.FC = () => {
     projectSlug: string;
   }>();
   const [graph, setGraph] = useState<Graph | null>(null);
-  const [openedHistory, setOpenedHistory] = useState<number | null>(null);
+  const [openedRun, setOpenedRun] = useState<number | null>(null);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
   const [hoverPath, setHoverPath] = useState<string[]>([]);
   return (
@@ -35,9 +37,9 @@ const ProjectScreen: React.FC = () => {
           <ProjectHistory
             orgSlug={orgSlug}
             projectSlug={projectSlug}
-            openedHistory={openedHistory}
+            openedRun={openedRun}
             onOpenHistory={(id, graph) => {
-              setOpenedHistory(id);
+              setOpenedRun(id);
               setGraph(graph);
             }}
             onHoverPath={setHoverPath}
@@ -104,7 +106,7 @@ mutation ($project_id: Int!, $run_by_user: Int!) {
 });
 
 interface ProjectHistoryProps extends SlugInput {
-  openedHistory: number | null;
+  openedRun: number | null;
   onOpenHistory: (id: number, graph: Graph) => void;
   onHoverPath: (path: string[]) => void;
 }
@@ -112,7 +114,7 @@ interface ProjectHistoryProps extends SlugInput {
 const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   orgSlug,
   projectSlug,
-  openedHistory,
+  openedRun,
   onOpenHistory,
   onHoverPath,
 }) => {
@@ -164,57 +166,27 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
       variables: { orgSlug, projectSlug },
     }
   );
-  const handleOpen = (run: any) => {
-    const counter = run.paths.reduce(
-      (
-        acc: {
-          success: { [blockID: string]: number };
-          fail: { [blockID: string]: number };
-        },
-        path: any
-      ) => {
-        const edges = JSON.parse(path.edges);
-        edges.forEach((block: any) => {
-          if (block.state === "success") {
-            acc.success[block.id] = acc.success[block.id] + 1 || 1;
-          }
-          if (block.state === "failed") {
-            acc.fail[block.id] = acc.fail[block.id] + 1 || 1;
-          }
-        });
-        return acc;
-      },
-      { success: {}, fail: {} }
-    );
+  const previousData = usePrevious(data);
 
-    const graph = {
-      edges: run.graph.edges,
-      blocks: run.graph.blocks.map((block: any) => {
-        const success = counter.success?.[block.id] ?? 0;
-        const fail = counter.fail?.[block.id] ?? 0;
-        // success 0, fail 0 => unknown
-        // success > 0, fail 0 => success
-        // success 0, fail > 0 => fail
-        // success > 0, fail > 0 => warning
-        return {
-          ...block,
-          state:
-            success > 0
-              ? fail > 0
-                ? "warning"
-                : "success"
-              : fail > 0
-              ? "fail"
-              : "unknown",
-        };
-      }),
-    };
-    onOpenHistory(run.id, graph);
+  const project = data?.project?.[0];
+  const previousProject = previousData?.project?.[0];
+
+  useEffect(() => {
+    const run = project?.run?.find((r: any) => r.id === openedRun);
+    const previousRun = previousProject?.run?.find(
+      (r: any) => r.id === openedRun
+    );
+    if (run && previousRun && run !== previousRun) {
+      console.log("effect update run", run.id);
+      onOpenHistory(run.id, getDiagramBlocksState(run));
+    }
+  }, [onOpenHistory, openedRun, previousProject?.run, project?.run]);
+
+  const handleOpen = (run: any) => {
+    onOpenHistory(run.id, getDiagramBlocksState(run));
   };
 
   if (loading) return <Text>Loading...</Text>;
-
-  const project = data?.project?.[0];
   if (!project) return <Text>Not found</Text>;
 
   return (
@@ -223,7 +195,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
         Actual state
       </Box>
       {project.run.map((run: any) => {
-        const opened = run.id === openedHistory;
+        const opened = run.id === openedRun;
         const sum = run?.paths_aggregate?.aggregate?.sum;
         return (
           <Box
@@ -255,7 +227,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
               {/*, {sum?.blocks_blocked} blocked),{" "}*/}
               {/*{sum?.credits} credits*/}
             </Text>
-            {opened && <RunDetail run={run} onHoverPath={onHoverPath} />}
+            {opened && <RunPaths run={run} onHoverPath={onHoverPath} />}
           </Box>
         );
       })}
@@ -263,7 +235,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   );
 };
 
-const RunDetail: React.FC<{
+const RunPaths: React.FC<{
   run: any;
   onHoverPath: (path: string[]) => void;
 }> = ({ run, onHoverPath }) => {
