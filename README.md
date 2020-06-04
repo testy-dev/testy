@@ -16,5 +16,5 @@ Start with docker-compose
 
 ## Runner
 
-Build with `docker-compose build`
+Build with `yarn build`
 then tag with `docker tag <image_id> us.gcr.io/testyx/runner`

@@ -115,10 +115,10 @@ end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   dependencies:
     once "^1.4.0"
 
-esbuild@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.4.3.tgz#228e108f849128a2b2e64d524235fef58236912b"
-  integrity sha512-LKCkYlFZMDsUcUx1r5jmnTrtufBsgCvhtdAk0530RLO83PJo2ke2z/FybFCAzm2LGIpL+Sinhg4nUOA3BSpHjg==
+esbuild@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.4.4.tgz#ae22045c033d6c65daba49cb73ebc580b38ee006"
+  integrity sha512-tuWegMy1/qi33il1NGspHnwxF/5+AuC5lTma7pDcT/i150mFqQlcI7a+vqT3AmmeWcqBqOidHrfmAmDsu73VkA==
 
 esm@^3.2.25:
   version "3.2.25"
