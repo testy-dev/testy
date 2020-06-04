@@ -19,6 +19,7 @@ const ProjectScreen: React.FC = () => {
   const [graph, setGraph] = useState<Graph | null>(null);
   const [openedHistory, setOpenedHistory] = useState<number | null>(null);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
+  const [hoverPath, setHoverPath] = useState<string[]>([]);
   return (
     <Box direction="row" fill>
       <Box
@@ -39,6 +40,7 @@ const ProjectScreen: React.FC = () => {
               setOpenedHistory(id);
               setGraph(graph);
             }}
+            onHoverPath={setHoverPath}
           />
         </Suspense>
       </Box>
@@ -47,6 +49,7 @@ const ProjectScreen: React.FC = () => {
         blocks={graph?.blocks ?? []}
         edges={graph?.edges ?? []}
         hoverBlock={hoverBlock}
+        path={hoverPath}
         setHoverBlock={setHoverBlock}
         selected={null}
         onSelectBlock={() => null}
@@ -103,6 +106,7 @@ mutation ($project_id: Int!, $run_by_user: Int!) {
 interface ProjectHistoryProps extends SlugInput {
   openedHistory: number | null;
   onOpenHistory: (id: number, graph: Graph) => void;
+  onHoverPath: (path: string[]) => void;
 }
 
 const ProjectHistory: React.FC<ProjectHistoryProps> = ({
@@ -110,6 +114,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   projectSlug,
   openedHistory,
   onOpenHistory,
+  onHoverPath,
 }) => {
   const { data, loading } = useSubscription(
     gql`
@@ -250,7 +255,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
               {/*, {sum?.blocks_blocked} blocked),{" "}*/}
               {/*{sum?.credits} credits*/}
             </Text>
-            {opened && <RunDetail run={run} />}
+            {opened && <RunDetail run={run} onHoverPath={onHoverPath} />}
           </Box>
         );
       })}
@@ -258,7 +263,10 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   );
 };
 
-const RunDetail: React.FC<{ run: any }> = ({ run }) => {
+const RunDetail: React.FC<{
+  run: any;
+  onHoverPath: (path: string[]) => void;
+}> = ({ run, onHoverPath }) => {
   const failingBlocks = run.paths.flatMap((path: any) => {
     const edges = JSON.parse(path.edges);
     return edges.find((edge: any) => edge?.state === "failed") || [];
@@ -279,6 +287,9 @@ const RunDetail: React.FC<{ run: any }> = ({ run }) => {
             path.blocks_failed,
             path.blocks_count
           )}
+          onMouseEnter={() =>
+            onHoverPath(JSON.parse(path.edges).map((e: any) => e.id))
+          }
         >
           path #{path.id} - {path?.blocks_count} blocks ({path?.blocks_success}{" "}
           success, {path?.blocks_failed} failed, {path?.blocks_blocked}{" "}
