@@ -4,6 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "target": "ES6",
+    "exclude": ["node_modules"],
     "types": ["node"]
   }
 }

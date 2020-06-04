@@ -2,7 +2,7 @@ import { createServer } from "http";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
 
-import { BlockWriteable, BlockResult } from "@testy/shared";
+import { BlockResult, BlockWriteable } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
 
 const GRAPHQL_ENDPOINT =

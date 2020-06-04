@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/node": "^14.0.5",
     "@types/node-fetch": "^2.5.7",
-    "esbuild": "^0.4.3",
+    "esbuild": "^0.4.4",
     "typescript": "^3.9.3"
   },
   "targets": {
