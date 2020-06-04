@@ -29,14 +29,14 @@ const App: React.FC = () => {
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
 
   // Update path on change incoming data
-  useEffect(() => {
-    if (storage.active) {
-      const newPath = createPath(storage.edges, path, storage.active);
-      if (newPath !== path) {
-        setPath(newPath);
-      }
-    }
-  }, [path, storage.active, storage.edges]);
+  // useEffect(() => {
+  //   if (storage.active) {
+  //     const newPath = createPath(storage.edges, path, storage.active);
+  //     if (newPath !== path) {
+  //       setPath(newPath);
+  //     }
+  //   }
+  // }, [path, storage.active, storage.edges]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
     if (blockID) setPath(createPath(storage.edges, path, blockID));
@@ -88,7 +88,7 @@ const App: React.FC = () => {
   const handleDeleteEdge = async (from: UUID, to: UUID) => {
     debugDiagram("remove edge from %s to %s", from, to);
     await write({
-      edges: storage.edges.filter(([i, o]) => i !== from && o !== to),
+      edges: storage.edges.filter(([i, o]) => !(i === from && o === to)),
     });
   };
 
