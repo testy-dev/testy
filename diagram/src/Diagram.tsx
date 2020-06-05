@@ -89,7 +89,25 @@ const Diagram: React.FC<DiagramProps> = ({
 
   return (
     <Root ref={ref} hover={hoverCursor}>
-      <Stage width={size?.width} height={size?.height} draggable={true}>
+      <Stage
+        width={size?.width}
+        height={size?.height}
+        draggable={true}
+        onContextMenu={e => {
+          e.evt.preventDefault();
+          setContextMenu({
+            position: { x: e.evt.x, y: e.evt.y },
+            items: [
+              {
+                text: "Create new block",
+                onClick: () => {
+                  if (onCreateBlock) onCreateBlock(null, null);
+                },
+              },
+            ],
+          });
+        }}
+      >
         <Layer>
           {layout.edges().map(edge => {
             const inPathIndex = path.indexOf(edge.v);
