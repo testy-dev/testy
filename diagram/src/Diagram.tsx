@@ -94,18 +94,21 @@ const Diagram: React.FC<DiagramProps> = ({
         height={size?.height}
         draggable={true}
         onContextMenu={e => {
-          e.evt.preventDefault();
-          setContextMenu({
-            position: { x: e.evt.x, y: e.evt.y },
-            items: [
-              {
-                text: "Create new block",
-                onClick: () => {
-                  if (onCreateBlock) onCreateBlock(null, null);
+          // Target is stage
+          if (e.target === e.currentTarget) {
+            e.evt.preventDefault();
+            setContextMenu({
+              position: { x: e.evt.x, y: e.evt.y },
+              items: [
+                {
+                  text: "Create new block",
+                  onClick: () => {
+                    if (onCreateBlock) onCreateBlock(null, null);
+                  },
                 },
-              },
-            ],
-          });
+              ],
+            });
+          }
         }}
       >
         <Layer>
