@@ -6,7 +6,7 @@ import { v4 as uuid } from "uuid";
 import debug from "debug";
 import styled from "styled-components";
 
-import { write } from "../../helpers/model";
+import { deleteBlock, write } from "../../helpers/model";
 import EditBlock from "./EditBlock";
 import createPath from "../../helpers/createPath";
 import useLocalStorage from "../../helpers/useLocalStorage";
@@ -78,7 +78,7 @@ const App: React.FC = () => {
 
   const handleDeleteBlock = async (blockID: UUID) => {
     debugDiagram("remove block %s", blockID);
-    // await deleteBlock(blockID); // this will break diagram :(
+    await deleteBlock(blockID); // this will break diagram :(
   };
 
   const handleCreateEdge = async (from: UUID, to: UUID) => {

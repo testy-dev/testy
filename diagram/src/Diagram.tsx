@@ -50,6 +50,7 @@ const Diagram: React.FC<DiagramProps> = ({
   setHoverBlock,
   onCreateBlock,
   onSelectBlock,
+  onDeleteBlock,
   onDeleteEdge,
 }) => {
   const [hoverCursor, setHoverCursor] = useState<boolean>(false);
@@ -134,6 +135,19 @@ const Diagram: React.FC<DiagramProps> = ({
               onClick={() => onSelectBlock(block.id)}
               onMouseEnter={() => onMouseEnter(block.id)}
               onMouseLeave={() => onMouseLeave()}
+              onContextMenu={e => {
+                setContextMenu({
+                  position: { x: e.evt.x, y: e.evt.y },
+                  items: [
+                    {
+                      text: "Delete block",
+                      onClick: () => {
+                        if (onDeleteBlock) onDeleteBlock(block.id);
+                      },
+                    },
+                  ],
+                });
+              }}
             />
           ))}
         </Layer>
@@ -195,6 +209,7 @@ const RenderBlock: React.FC<{
   hover: boolean;
   onMouseEnter: (e: Konva.KonvaEventObject<MouseEvent>) => void;
   onMouseLeave: (e: Konva.KonvaEventObject<MouseEvent>) => void;
+  onContextMenu: (e: Konva.KonvaEventObject<PointerEvent>) => void;
 }> = ({
   active,
   block,
@@ -203,6 +218,7 @@ const RenderBlock: React.FC<{
   onClick,
   onMouseEnter,
   onMouseLeave,
+  onContextMenu,
 }) => (
   <>
     <Circle
@@ -222,6 +238,10 @@ const RenderBlock: React.FC<{
       }}
       onMouseLeave={e => {
         onMouseLeave(e);
+      }}
+      onContextMenu={e => {
+        e.evt.preventDefault();
+        onContextMenu(e);
       }}
     />
     <Text

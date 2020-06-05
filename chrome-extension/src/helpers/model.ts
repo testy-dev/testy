@@ -120,6 +120,6 @@ export async function deleteBlock(blockID: UUID) {
   await write({
     active: active === blockID ? null : active,
     blocks: blocks.filter(({ id }) => id !== blockID),
-    edges,
+    edges: edges.filter(([i, o]) => i !== blockID && o !== blockID),
   });
 }
