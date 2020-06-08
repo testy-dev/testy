@@ -100,7 +100,22 @@ const Diagram: React.FC<DiagramProps> = ({
     }
   }, [edgeFrom, layout]);
 
-  const onMouseEnter = (blockID: string) => {
+  const handleCreateEdge = (to: UUID) => {
+    if (onCreateEdge && edgeFrom) {
+      const graphClone = dagre.graphlib.json.read(
+        // clone graph
+        dagre.graphlib.json.write(layout)
+      );
+      graphClone.setEdge(edgeFrom, to); // add edge
+      // check cycle
+      if (dagre.graphlib.alg.isAcyclic(graphClone)) {
+        onCreateEdge(edgeFrom, to);
+        setEdgeFrom(null);
+      }
+    }
+  };
+
+  const onMouseEnter = (blockID: UUID) => {
     setHoverCursor(true);
     setHoverBlock(blockID);
   };
@@ -192,9 +207,8 @@ const Diagram: React.FC<DiagramProps> = ({
               hover={hoverBlock === block.id}
               onClick={() => {
                 onSelectBlock(block.id);
-                if (onCreateEdge && edgeFrom) {
-                  onCreateEdge(edgeFrom, block.id);
-                  setEdgeFrom(null);
+                if (edgeFrom) {
+                  handleCreateEdge(block.id);
                 }
               }}
               onMouseEnter={() => onMouseEnter(block.id)}
