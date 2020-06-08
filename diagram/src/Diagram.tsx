@@ -71,6 +71,9 @@ const Diagram: React.FC<DiagramProps> = ({
   const size = useThrottleValue(_realtimeSize, 1000);
 
   const [edgeFrom, setEdgeFrom] = useState<string | null>(null);
+  const [mousePosition, setMousePosition] = useState<[number, number] | null>(
+    null
+  );
 
   const layout = useMemo(() => {
     const g = new dagre.graphlib.Graph();
@@ -87,6 +90,15 @@ const Diagram: React.FC<DiagramProps> = ({
     dagre.layout(g);
     return g;
   }, [blocks, edges]);
+
+  const edgeFromPosition = useMemo(() => {
+    if (edgeFrom) {
+      const block = layout.node(edgeFrom);
+      return [block.x, block.y];
+    } else {
+      return null;
+    }
+  }, [edgeFrom, layout]);
 
   const onMouseEnter = (blockID: string) => {
     setHoverCursor(true);
@@ -109,15 +121,30 @@ const Diagram: React.FC<DiagramProps> = ({
             e.evt.preventDefault();
             setContextMenu({
               position: { x: e.evt.x, y: e.evt.y },
-              items: [
-                {
-                  text: "Create new block",
-                  onClick: () => {
-                    if (onCreateBlock) onCreateBlock(null, null);
-                  },
-                },
-              ],
+              items: edgeFrom
+                ? [
+                    {
+                      text: "Cancel link creation",
+                      onClick: () => setEdgeFrom(null),
+                    },
+                  ]
+                : [
+                    {
+                      text: "Create new block",
+                      onClick: () => {
+                        if (onCreateBlock) onCreateBlock(null, null);
+                      },
+                    },
+                  ],
             });
+          }
+        }}
+        onMouseMove={e => {
+          if (edgeFrom) {
+            setMousePosition([
+              e.evt.x - (e.currentTarget.attrs.x || 0),
+              e.evt.y - (e.currentTarget.attrs.y || 0),
+            ]);
           }
         }}
       >
@@ -192,6 +219,30 @@ const Diagram: React.FC<DiagramProps> = ({
               }}
             />
           ))}
+
+          {edgeFromPosition !== null && mousePosition !== null && (
+            <Arrow
+              x={0}
+              y={0}
+              points={[...edgeFromPosition, ...mousePosition]}
+              stroke="#36922d"
+              strokeWidth={3}
+              pointerLength={5}
+              pointerWidth={5}
+              onContextMenu={e => {
+                e.evt.preventDefault();
+                setContextMenu({
+                  position: { x: e.evt.x, y: e.evt.y },
+                  items: [
+                    {
+                      text: "Cancel link creation",
+                      onClick: () => setEdgeFrom(null),
+                    },
+                  ],
+                });
+              }}
+            />
+          )}
         </Layer>
       </Stage>
       {contextMenu && (
