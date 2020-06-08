@@ -58,6 +58,7 @@ const Diagram: React.FC<DiagramProps> = ({
   onCreateBlock,
   onSelectBlock,
   onDeleteBlock,
+  onCreateEdge,
   onDeleteEdge,
 }) => {
   const [hoverCursor, setHoverCursor] = useState<boolean>(false);
@@ -68,6 +69,8 @@ const Diagram: React.FC<DiagramProps> = ({
   const ref = useRef(null);
   const _realtimeSize = useComponentSize(ref);
   const size = useThrottleValue(_realtimeSize, 1000);
+
+  const [edgeFrom, setEdgeFrom] = useState<string | null>(null);
 
   const layout = useMemo(() => {
     const g = new dagre.graphlib.Graph();
@@ -95,7 +98,7 @@ const Diagram: React.FC<DiagramProps> = ({
   };
 
   return (
-    <Root ref={ref} hover={hoverCursor}>
+    <Root ref={ref} hover={hoverCursor} newLink={edgeFrom !== null}>
       <Stage
         width={size?.width}
         height={size?.height}
@@ -160,7 +163,13 @@ const Diagram: React.FC<DiagramProps> = ({
               block={block}
               position={layout.node(block.id)}
               hover={hoverBlock === block.id}
-              onClick={() => onSelectBlock(block.id)}
+              onClick={() => {
+                onSelectBlock(block.id);
+                if (onCreateEdge && edgeFrom) {
+                  onCreateEdge(edgeFrom, block.id);
+                  setEdgeFrom(null);
+                }
+              }}
               onMouseEnter={() => onMouseEnter(block.id)}
               onMouseLeave={() => onMouseLeave()}
               onContextMenu={e => {
@@ -168,6 +177,10 @@ const Diagram: React.FC<DiagramProps> = ({
                 setContextMenu({
                   position: { x: e.evt.x, y: e.evt.y },
                   items: [
+                    {
+                      text: "Create new link",
+                      onClick: () => setEdgeFrom(block.id),
+                    },
                     {
                       text: "Delete block",
                       onClick: () => {
@@ -192,12 +205,12 @@ const Diagram: React.FC<DiagramProps> = ({
   );
 };
 
-const Root = styled.div<{ hover: boolean }>`
+const Root = styled.div<{ hover: boolean; newLink: boolean }>`
   display: flex;
   flex: auto 1 1;
   overflow: hidden;
   position: relative;
-  cursor: ${p => (p.hover ? "pointer" : "initial")};
+  cursor: ${p => (p.newLink ? "cell" : p.hover ? "pointer" : "initial")};
 `;
 
 const getStateColor = (state: DiagramBlockState): string => {
