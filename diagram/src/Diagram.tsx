@@ -229,18 +229,7 @@ const Diagram: React.FC<DiagramProps> = ({
               strokeWidth={3}
               pointerLength={5}
               pointerWidth={5}
-              onContextMenu={e => {
-                e.evt.preventDefault();
-                setContextMenu({
-                  position: { x: e.evt.x, y: e.evt.y },
-                  items: [
-                    {
-                      text: "Cancel link creation",
-                      onClick: () => setEdgeFrom(null),
-                    },
-                  ],
-                });
-              }}
+              listening={false}
             />
           )}
         </Layer>

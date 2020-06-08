@@ -123,3 +123,22 @@ export async function deleteBlock(blockID: UUID) {
     edges: edges.filter(([i, o]) => i !== blockID && o !== blockID),
   });
 }
+
+export async function createEdge(from: UUID, to: UUID) {
+  const { blocks = [], edges = [] } = (await read(["blocks", "edges"])) as {
+    blocks: Block[];
+    edges: Edge[];
+  };
+
+  if (
+    blocks.find(b => b.id === from) &&
+    blocks.find(b => b.id === to) &&
+    !edges.find(([i, o]) => i === from && o === to)
+  ) {
+    edges.push([from, to]);
+    await write({ edges });
+    return true;
+  } else {
+    return false;
+  }
+}

@@ -6,7 +6,7 @@ import { v4 as uuid } from "uuid";
 import debug from "debug";
 import styled from "styled-components";
 
-import { deleteBlock, write } from "../../helpers/model";
+import { createEdge, deleteBlock, write } from "../../helpers/model";
 import EditBlock from "./EditBlock";
 import createPath from "../../helpers/createPath";
 import useLocalStorage from "../../helpers/useLocalStorage";
@@ -83,6 +83,7 @@ const App: React.FC = () => {
 
   const handleCreateEdge = async (from: UUID, to: UUID) => {
     debugDiagram("create edge from %s to %s", from, to);
+    await createEdge(from, to);
   };
 
   const handleDeleteEdge = async (from: UUID, to: UUID) => {
