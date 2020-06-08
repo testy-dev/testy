@@ -1,7 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import * as dagre from "dagre";
-import { Arrow, Circle, Layer, Stage, Text } from "react-konva";
+import {
+  Arrow,
+  Circle,
+  KonvaNodeEvents,
+  Layer,
+  Stage,
+  Text,
+} from "react-konva";
 import { Block, Commands, DiagramBlockState, Edge, UUID } from "@testy/shared";
 import { throttle } from "lodash";
 import Konva from "konva";
@@ -157,6 +164,7 @@ const Diagram: React.FC<DiagramProps> = ({
               onMouseEnter={() => onMouseEnter(block.id)}
               onMouseLeave={() => onMouseLeave()}
               onContextMenu={e => {
+                e.evt.preventDefault();
                 setContextMenu({
                   position: { x: e.evt.x, y: e.evt.y },
                   items: [
@@ -222,24 +230,23 @@ const getCommandColor = (command: Block["command"]): string => {
   }
 };
 
-const RenderBlock: React.FC<{
+interface RenderBlockProps
+  extends Partial<Konva.CircleConfig>,
+    KonvaNodeEvents {
   active: boolean;
   block: Block & { state?: DiagramBlockState };
   position: dagre.Node;
   onClick: () => void;
   hover: boolean;
-  onMouseEnter: (e: Konva.KonvaEventObject<MouseEvent>) => void;
-  onMouseLeave: (e: Konva.KonvaEventObject<MouseEvent>) => void;
-  onContextMenu: (e: Konva.KonvaEventObject<PointerEvent>) => void;
-}> = ({
+}
+
+const RenderBlock: React.FC<RenderBlockProps> = ({
   active,
   block,
   position,
   hover,
   onClick,
-  onMouseEnter,
-  onMouseLeave,
-  onContextMenu,
+  ...props
 }) => (
   <>
     <Circle
@@ -254,16 +261,7 @@ const RenderBlock: React.FC<{
       strokeWidth={hover || active ? 3 : 0}
       stroke={hover || active ? "#0d64d2" : undefined}
       onClick={onClick}
-      onMouseEnter={e => {
-        onMouseEnter(e);
-      }}
-      onMouseLeave={e => {
-        onMouseLeave(e);
-      }}
-      onContextMenu={e => {
-        e.evt.preventDefault();
-        onContextMenu(e);
-      }}
+      {...props}
     />
     <Text
       x={position.x + 15}
