@@ -50,7 +50,9 @@ function control(
 function handleContentScriptMessage(message: ActionWithPayload): void {
   if (message.type === ControlAction.RECORDED_EVENT) {
     const block = codeGenerator.createBlock(message.payload);
-    if (block !== null) {
+
+    // Some inputs triggers "change" event with payload and some not - we don't want to bother with it
+    if (block !== null && message.payload?.action !== "change") {
       pushBlock(block).catch(err => new Error(err));
     }
   } else {
