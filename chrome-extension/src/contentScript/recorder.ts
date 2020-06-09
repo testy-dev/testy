@@ -23,7 +23,9 @@ let listening = false;
 function parseEvent(event: Event): ParsedEvent | null {
   const attributes = ["data-cy", "data-test", "data-testid", "data-qa"];
 
-  let selector = finder(event.target as Element, { attr: () => true });
+  let selector = finder(event.target as Element, {
+    attr: name => !["class", "id"].includes(name),
+  });
   for (const attribute in attributes) {
     if ((event.target as Element).hasAttribute(attribute)) {
       selector = `[${attribute}=${(event.target as Element).getAttribute(
@@ -36,7 +38,9 @@ function parseEvent(event: Event): ParsedEvent | null {
   const parentSelectors: string[] = [];
   let parentNode = (event.target as Element).parentElement;
   while (parentNode) {
-    parentSelectors.push(finder(parentNode, { attr: () => true }));
+    parentSelectors.push(
+      finder(parentNode, { attr: name => !["class", "id"].includes(name) })
+    );
     parentNode = parentNode.parentElement;
   }
 
