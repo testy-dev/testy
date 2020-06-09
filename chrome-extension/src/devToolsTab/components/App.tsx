@@ -120,22 +120,33 @@ const App: React.FC = () => {
           const block = storage.blocks.find(b => b.id === blockID);
           if (!block) return null;
           return (
-            <EditBlock
-              key={blockID}
-              active={blockID === storage.active}
-              hover={hoverBlock === blockID}
-              setHover={state =>
-                state ? setHoverBlock(blockID) : setHoverBlock(null)
-              }
-              block={block}
-              onSave={handleUpdateBlock}
-            />
+            <>
+              {storage.edges.filter(([, w]) => w === blockID).length > 1 ? (
+                <MoreIncoming />
+              ) : null}
+              <EditBlock
+                key={blockID}
+                active={blockID === storage.active}
+                hover={hoverBlock === blockID}
+                setHover={state =>
+                  state ? setHoverBlock(blockID) : setHoverBlock(null)
+                }
+                block={block}
+                onSave={handleUpdateBlock}
+              />
+              {storage.edges.filter(([v]) => v === blockID).length > 1 ? (
+                <MoreOutgoing />
+              ) : null}
+            </>
           );
         })}
       </Column>
     </Root>
   );
 };
+
+const MoreIncoming = () => <div>Incoming connections</div>;
+const MoreOutgoing = () => <div>Outgoing connections</div>;
 
 const Root = styled.div`
   display: flex;
