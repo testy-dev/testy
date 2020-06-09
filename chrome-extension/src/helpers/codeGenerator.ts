@@ -27,12 +27,13 @@ const SpecialKeys = new Map([
 
 function handleKeydown(event: ParsedEvent): Block | null {
   const key = event.key ?? "";
+  console.log("Key is", event.key);
   if (key.length > 1 && !SpecialKeys.has(key)) return null; // Ignore tab, ctrl, shift, ...
   return {
     id: v4(),
     command: "type",
     selector: event.selector,
-    parameter: SpecialKeys.has(key) ? "{" + SpecialKeys.get(key) + "}" : key,
+    parameter: SpecialKeys.has(key) ? `{${SpecialKeys.get(key)}}` : key,
     parentsSelectors: event.parentSelectors,
   };
 }

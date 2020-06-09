@@ -51,6 +51,7 @@ function handleContentScriptMessage(message: ActionWithPayload): void {
   if (message.type === ControlAction.RECORDED_EVENT) {
     const block = codeGenerator.createBlock(message.payload);
     if (block !== null) {
+      console.log(block);
       pushBlock(block).catch(err => new Error(err));
     }
   } else {
