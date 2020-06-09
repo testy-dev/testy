@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Block, Edge, UUID } from "@testy/shared/types";
 import { Diagram } from "@testy/diagram";
+import { isEqual } from "lodash";
 import { v4 as uuid } from "uuid";
 import debug from "debug";
 import styled from "styled-components";
@@ -29,14 +30,14 @@ const App: React.FC = () => {
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
 
   // Update path on change incoming data
-  // useEffect(() => {
-  //   if (storage.active) {
-  //     const newPath = createPath(storage.edges, path, storage.active);
-  //     if (newPath !== path) {
-  //       setPath(newPath);
-  //     }
-  //   }
-  // }, [path, storage.active, storage.edges]);
+  useEffect(() => {
+    if (storage.active) {
+      const newPath = createPath(storage.edges, path, storage.active);
+      if (!isEqual(newPath, path)) {
+        setPath(newPath);
+      }
+    }
+  }, [path, storage.active, storage.edges]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
     if (blockID) setPath(createPath(storage.edges, path, blockID));
@@ -119,22 +120,33 @@ const App: React.FC = () => {
           const block = storage.blocks.find(b => b.id === blockID);
           if (!block) return null;
           return (
-            <EditBlock
-              key={blockID}
-              active={blockID === storage.active}
-              hover={hoverBlock === blockID}
-              setHover={state =>
-                state ? setHoverBlock(blockID) : setHoverBlock(null)
-              }
-              block={block}
-              onSave={handleUpdateBlock}
-            />
+            <>
+              {storage.edges.filter(([, w]) => w === blockID).length > 1 ? (
+                <MoreIncoming />
+              ) : null}
+              <EditBlock
+                key={blockID}
+                active={blockID === storage.active}
+                hover={hoverBlock === blockID}
+                setHover={state =>
+                  state ? setHoverBlock(blockID) : setHoverBlock(null)
+                }
+                block={block}
+                onSave={handleUpdateBlock}
+              />
+              {storage.edges.filter(([v]) => v === blockID).length > 1 ? (
+                <MoreOutgoing />
+              ) : null}
+            </>
           );
         })}
       </Column>
     </Root>
   );
 };
+
+const MoreIncoming = () => <div>Incoming connections</div>;
+const MoreOutgoing = () => <div>Outgoing connections</div>;
 
 const Root = styled.div`
   display: flex;
