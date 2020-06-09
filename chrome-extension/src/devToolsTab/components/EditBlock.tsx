@@ -1,14 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 
-import {
-  ActionWithPayload,
-  Block,
-  Commands,
-  ControlAction,
-} from "@testy/shared";
+import { ActionWithPayload, Block, ControlAction } from "@testy/shared";
 import { Box } from "grommet";
 import { BoxProps } from "grommet/components/Box";
-import { map } from "lodash";
+import { Cursor, Language, Subscript, View } from "grommet-icons";
 import styled from "styled-components";
 
 interface IProps {
@@ -18,6 +13,29 @@ interface IProps {
   block: Block;
   onSave: (block: Block) => void;
 }
+
+const CommandsList = [
+  {
+    key: "click",
+    title: "Click",
+    icon: Cursor,
+  },
+  {
+    key: "type",
+    title: "Type",
+    icon: Subscript,
+  },
+  {
+    key: "visit",
+    title: "Visit",
+    icon: Language,
+  },
+  {
+    key: "check-contains-text",
+    title: "Check",
+    icon: View,
+  },
+];
 
 const EditBlock: React.FC<IProps> = ({
   active,
@@ -99,14 +117,16 @@ const EditBlock: React.FC<IProps> = ({
       </Line>
       <Line>
         <CommandsBar>
-          {map(Commands, (value, key) => (
+          {CommandsList.map(({ key, title, icon: Icon }) => (
             <Command
               key={key}
               onClick={() => setCommand(key as Block["command"])}
-              title={value}
-              active={command === key}
+              title={title}
             >
-              {value}
+              <Icon
+                size="16px"
+                color={command === key ? "#0d64d2" : undefined}
+              />
             </Command>
           ))}
         </CommandsBar>
@@ -178,19 +198,17 @@ const Label = styled.span``;
 const CommandsBar = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: stretch;
+  line-height: 0;
 `;
 
-const Command = styled.div<{ active: boolean }>`
+const Command = styled.div`
   cursor: pointer;
-  border: 1px solid #808080;
+  border: 1px solid #c4c4c4;
   border-right-width: 0;
-  padding: 3px 5px;
-  background: ${p => (p.active ? "#808080" : "transparent")};
-  color: ${p => (p.active ? "#ffffff" : "initial")};
+  padding: 5px;
 
   &:hover {
-    background: ${p => (p.active ? "#808080" : "#c6c6c6")};
+    background: #c4c4c4;
   }
 
   &:last-child {
