@@ -98,17 +98,18 @@ const EditBlock: React.FC<IProps> = ({
         {runNowStatus === false && "fail"}
       </Line>
       <Line>
-        <Label>Command</Label>
-        <select
-          value={command}
-          onChange={e => setCommand(e.target.value as Block["command"])}
-        >
+        <CommandsBar>
           {map(Commands, (value, key) => (
-            <option key={key} value={key}>
+            <Command
+              key={key}
+              onClick={() => setCommand(key as Block["command"])}
+              title={value}
+              active={command === key}
+            >
               {value}
-            </option>
+            </Command>
           ))}
-        </select>
+        </CommandsBar>
       </Line>
       <Line>
         <Label>Parameter</Label>
@@ -173,6 +174,29 @@ const BlockContainer = styled(
 `;
 
 const Label = styled.span``;
+
+const CommandsBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+`;
+
+const Command = styled.div<{ active: boolean }>`
+  cursor: pointer;
+  border: 1px solid #808080;
+  border-right-width: 0;
+  padding: 3px 5px;
+  background: ${p => (p.active ? "#808080" : "transparent")};
+  color: ${p => (p.active ? "#ffffff" : "initial")};
+
+  &:hover {
+    background: ${p => (p.active ? "#808080" : "#c6c6c6")};
+  }
+
+  &:last-child {
+    border-right-width: 1px;
+  }
+`;
 
 const Line = (props: any) => (
   <Box direction="row" gap="xsmall" align="baseline" {...props} />
