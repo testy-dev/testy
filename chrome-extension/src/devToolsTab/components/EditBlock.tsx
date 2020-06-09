@@ -1,14 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 
-import {
-  ActionWithPayload,
-  Block,
-  Commands,
-  ControlAction,
-} from "@testy/shared";
+import { ActionWithPayload, Block, ControlAction } from "@testy/shared";
 import { Box } from "grommet";
 import { BoxProps } from "grommet/components/Box";
-import { map } from "lodash";
+import { Cursor, Language, Subscript, View } from "grommet-icons";
 import styled from "styled-components";
 
 interface IProps {
@@ -18,6 +13,29 @@ interface IProps {
   block: Block;
   onSave: (block: Block) => void;
 }
+
+const CommandsList = [
+  {
+    key: "click",
+    title: "Click",
+    icon: Cursor,
+  },
+  {
+    key: "type",
+    title: "Type",
+    icon: Subscript,
+  },
+  {
+    key: "visit",
+    title: "Visit",
+    icon: Language,
+  },
+  {
+    key: "check-contains-text",
+    title: "Check",
+    icon: View,
+  },
+];
 
 const EditBlock: React.FC<IProps> = ({
   active,
@@ -98,17 +116,20 @@ const EditBlock: React.FC<IProps> = ({
         {runNowStatus === false && "fail"}
       </Line>
       <Line>
-        <Label>Command</Label>
-        <select
-          value={command}
-          onChange={e => setCommand(e.target.value as Block["command"])}
-        >
-          {map(Commands, (value, key) => (
-            <option key={key} value={key}>
-              {value}
-            </option>
+        <CommandsBar>
+          {CommandsList.map(({ key, title, icon: Icon }) => (
+            <Command
+              key={key}
+              onClick={() => setCommand(key as Block["command"])}
+              title={title}
+            >
+              <Icon
+                size="16px"
+                color={command === key ? "#0d64d2" : undefined}
+              />
+            </Command>
           ))}
-        </select>
+        </CommandsBar>
       </Line>
       <Line>
         <Label>Parameter</Label>
@@ -173,6 +194,27 @@ const BlockContainer = styled(
 `;
 
 const Label = styled.span``;
+
+const CommandsBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  line-height: 0;
+`;
+
+const Command = styled.div`
+  cursor: pointer;
+  border: 1px solid #c4c4c4;
+  border-right-width: 0;
+  padding: 5px;
+
+  &:hover {
+    background: #c4c4c4;
+  }
+
+  &:last-child {
+    border-right-width: 1px;
+  }
+`;
 
 const Line = (props: any) => (
   <Box direction="row" gap="xsmall" align="baseline" {...props} />
