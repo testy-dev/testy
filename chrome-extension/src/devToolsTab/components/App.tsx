@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Block, Edge, UUID } from "@testy/shared/types";
 import { Diagram } from "@testy/diagram";
+import { isEqual } from "lodash";
 import { v4 as uuid } from "uuid";
 import debug from "debug";
 import styled from "styled-components";
@@ -29,14 +30,14 @@ const App: React.FC = () => {
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
 
   // Update path on change incoming data
-  // useEffect(() => {
-  //   if (storage.active) {
-  //     const newPath = createPath(storage.edges, path, storage.active);
-  //     if (newPath !== path) {
-  //       setPath(newPath);
-  //     }
-  //   }
-  // }, [path, storage.active, storage.edges]);
+  useEffect(() => {
+    if (storage.active) {
+      const newPath = createPath(storage.edges, path, storage.active);
+      if (!isEqual(newPath, path)) {
+        setPath(newPath);
+      }
+    }
+  }, [path, storage.active, storage.edges]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
     if (blockID) setPath(createPath(storage.edges, path, blockID));
