@@ -3,7 +3,7 @@ import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { ActionWithPayload, Block, ControlAction } from "@testy/shared";
 import { Box } from "grommet";
 import { BoxProps } from "grommet/components/Box";
-import { Cursor, Language, Subscript, View } from "grommet-icons";
+import { Cursor, Language, PlayFill, Subscript, View } from "grommet-icons";
 import styled from "styled-components";
 
 interface IProps {
@@ -96,9 +96,7 @@ const EditBlock: React.FC<IProps> = ({
     >
       <Line>
         <Input type="text" />
-        <input
-          type="button"
-          value="Run now"
+        <PlayIcon
           onClick={() => {
             const message: ActionWithPayload = {
               type: ControlAction.EXEC_LOCALLY,
@@ -229,6 +227,14 @@ const Input = styled.input`
 const Buttons = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const PlayIcon = styled(PlayFill)`
+  width: 16px;
+  height: 16px;
+  stroke: #06782c;
+  cursor: pointer;
+  align-self: center;
 `;
 
 export default EditBlock;
