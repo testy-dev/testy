@@ -5,10 +5,18 @@ import puppeteer from "puppeteer";
 import { BlockResult, BlockWriteable } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
 
-const GRAPHQL_ENDPOINT =
-  process.env.GRAPHQL_ENDPOINT || "https://testy-dev.herokuapp.com/v1/graphql";
-const HASURA_ADMIN_SECRET =
-  process.env.HASURA_ADMIN_SECRET || "lhjkjahfda3w534kjbtkjfdsg";
+const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
+const HASURA_ADMIN_SECRET = process.env.HASURA_ADMIN_SECRET;
+
+if (!GRAPHQL_ENDPOINT || !HASURA_ADMIN_SECRET) {
+  console.error("Missing environment variables!");
+  process.exit(1);
+}
+
+if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
+  console.error("Environment variables contains '\"' character inside");
+  process.exit(1);
+}
 
 (async function () {
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });

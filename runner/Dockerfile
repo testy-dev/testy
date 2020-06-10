@@ -20,11 +20,9 @@ RUN  apt-get update \
 
 WORKDIR "/app"
 
-COPY dist /app/dist/
-COPY package.json /app/
-COPY yarn.lock /app/
-COPY .env /
-
+COPY package.json yarn.lock /app/
 RUN yarn install --prod
+
+COPY dist /app/dist/
 
 ENTRYPOINT ["yarn", "run", "prod-start"]
