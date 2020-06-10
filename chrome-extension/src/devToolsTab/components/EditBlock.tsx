@@ -1,6 +1,11 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 
-import { ActionWithPayload, Block, ControlAction } from "@testy/shared";
+import {
+  ActionWithPayload,
+  Block,
+  Commands,
+  ControlAction,
+} from "@testy/shared";
 import { Box } from "grommet";
 import { BoxProps } from "grommet/components/Box";
 import { Cursor, Language, PlayFill, Subscript, View } from "grommet-icons";
@@ -100,6 +105,7 @@ const EditBlock: React.FC<IProps> = ({
       <Line>
         <Input
           type="text"
+          placeholder={Commands[block.command]}
           value={title ?? ""}
           onChange={e => setTitle(e.target.value)}
         />
