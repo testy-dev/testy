@@ -56,7 +56,7 @@ createServer((req, resp) => {
           }
         } catch (e) {
           await page.screenshot({
-            path: "./screenshot.jpg",
+            path: `${new Date().valueOf()}.jpg`,
             type: "jpeg",
             fullPage: true,
           });

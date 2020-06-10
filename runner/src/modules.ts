@@ -67,6 +67,7 @@ export async function checkContainsText(
 }
 
 export async function type(page: Page, parameter: string, selector: string) {
+  await page.waitForSelector(selector);
   console.log("Typing", selector);
   const typeArr = parameter.split("{enter}");
   for (const typedStr of typeArr) {
