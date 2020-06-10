@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Block, Edge, UUID } from "@testy/shared/types";
+import { Box } from "grommet";
 import { Diagram } from "@testy/diagram";
 import { isEqual } from "lodash";
 import { v4 as uuid } from "uuid";
@@ -9,6 +10,7 @@ import styled from "styled-components";
 
 import { createEdge, deleteBlock, write } from "../../helpers/model";
 import EditBlock from "./EditBlock";
+import ToggleButton from "../../popup/components/ToggleButton";
 import createPath from "../../helpers/createPath";
 import useLocalStorage from "../../helpers/useLocalStorage";
 
@@ -110,12 +112,20 @@ const App: React.FC = () => {
         onDeleteEdge={handleDeleteEdge}
       />
       <Column>
-        <Header>Testy</Header>
-        <div>Recording status: {storage.status ?? "off"}</div>
-        <div>
-          {storage.blocks?.length ?? 0} blocks, {storage.edges?.length ?? 0}{" "}
-          edges
-        </div>
+        <Box direction="row" gap="small" align="center">
+          <Header>Testy</Header>
+          <ToggleButton
+            recStatus={storage.status}
+            handleToggle={action =>
+              chrome.runtime.sendMessage({ type: action })
+            }
+            isValidTab={true}
+          />
+          <div>
+            {storage.blocks?.length ?? 0} blocks, {storage.edges?.length ?? 0}{" "}
+            edges
+          </div>
+        </Box>
         {path.map(blockID => {
           const block = storage.blocks.find(b => b.id === blockID);
           if (!block) return null;
@@ -164,7 +174,7 @@ const Column = styled.div`
   overflow-y: auto;
 `;
 const Header = styled.h1`
-  margin: 0 0 5px;
+  margin: 0;
 `;
 
 export default App;

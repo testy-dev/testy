@@ -1,12 +1,12 @@
 import * as React from "react";
-import { ControlAction } from "@testy/shared";
+import { ControlAction, RecState } from "@testy/shared";
 import styled from "styled-components";
 
 import { LargeButton } from "./styled-components";
 
 export interface ToggleButtonProps {
   isValidTab: boolean;
-  recStatus: string;
+  recStatus: RecState;
   handleToggle: (action: ControlAction) => void;
 }
 
