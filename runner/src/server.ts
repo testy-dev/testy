@@ -34,24 +34,32 @@ createServer((req, resp) => {
       console.log("Starting puppeteer");
       const statedResults: { state: BlockResult; msg?: string }[] = [];
 
-      for (const { command, parameter, selector, parentsSelectors } of edges) {
+      for (const [
+        i,
+        { command, parameter, selector, parentsSelectors },
+      ] of edges.entries()) {
         try {
           switch (command) {
             case "visit":
-              statedResults.push(await visit(page, parameter));
+              statedResults[i] = await visit(page, parameter);
               break;
             case "click":
-              statedResults.push(
-                await click(page, parameter, selector, parentsSelectors)
+              statedResults[i] = await click(
+                page,
+                parameter,
+                selector,
+                parentsSelectors
               );
               break;
             case "check-contains-text":
-              statedResults.push(
-                await checkContainsText(page, parameter, selector)
+              statedResults[i] = await checkContainsText(
+                page,
+                parameter,
+                selector
               );
               break;
             case "type":
-              statedResults.push(await type(page, parameter, selector));
+              statedResults[i] = await type(page, parameter, selector);
               break;
           }
         } catch (e) {
@@ -60,7 +68,7 @@ createServer((req, resp) => {
             type: "jpeg",
             fullPage: true,
           });
-          statedResults.push({ state: "failed", msg: e.message });
+          statedResults[i] = { state: "failed", msg: e.message };
         }
       }
 

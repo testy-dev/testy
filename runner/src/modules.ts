@@ -14,9 +14,6 @@ export async function click(
   selector: string,
   parents: string[]
 ) {
-  console.log("click", selector);
-  await page.waitForSelector(parents[parents.length - 1]);
-
   // To avoid situations when clicked element is not visible without hover
   async function hoverParent(): Promise<void> {
     const { x, y, height, width } = await page.evaluate(parents => {
@@ -41,10 +38,17 @@ export async function click(
     await page.mouse.move(x + width / 2, y + height / 2);
   }
 
-  await hoverParent();
-  await page.$(selector);
-  await page.click(selector);
-
+  try {
+    console.log("click", selector);
+    await page.waitForSelector(selector, { timeout: 10000, visible: true });
+    console.log("Selector found");
+  } catch (e) {
+    await hoverParent();
+    await page.waitForSelector(selector, { timeout: 10000, visible: true });
+  } finally {
+    await page.click(selector);
+    console.log("Clicked");
+  }
   return { state: "success" as BlockResult };
 }
 
@@ -53,8 +57,9 @@ export async function checkContainsText(
   parameter: string,
   selector: string
 ) {
-  console.log("check test");
+  console.log(`Text of selector ${selector} should be ${parameter}`);
   await page.waitForSelector(selector);
+  console.log("About here");
   const selectorHasText = await page.evaluate(
     ({ selector, parameter }) =>
       [...document.querySelectorAll(selector)].some(el =>
