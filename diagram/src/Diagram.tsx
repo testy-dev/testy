@@ -333,7 +333,7 @@ const RenderBlock: React.FC<RenderBlockProps> = ({
     <Text
       x={position.x + 15}
       y={position.y - 5}
-      text={Commands[block.command]}
+      text={block.title ?? Commands[block.command]}
       fontSize={12}
     />
   </>

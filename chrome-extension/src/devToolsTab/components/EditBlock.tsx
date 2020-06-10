@@ -45,6 +45,7 @@ const EditBlock: React.FC<IProps> = ({
   onSave,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const [title, setTitle] = useState<string | undefined>();
   const [command, setCommand] = useState<Block["command"]>("click");
   const [selector, setSelector] = useState<string>();
   const [parameter, setParameter] = useState<string>();
@@ -76,13 +77,15 @@ const EditBlock: React.FC<IProps> = ({
 
   // Update form if change input
   useEffect(() => {
+    setTitle(block.title);
     setCommand(block.command);
     setSelector(block.selector ?? "");
     setParameter(block.parameter ?? "");
     setRunNowStatus(null);
-  }, [block.command, block.parameter, block.selector]);
+  }, [block.command, block.parameter, block.selector, block.title]);
 
   const isChanged =
+    block.title !== title ||
     block.command !== command ||
     block.selector !== selector ||
     block.parameter !== parameter;
@@ -95,7 +98,11 @@ const EditBlock: React.FC<IProps> = ({
       onMouseLeave={() => setHover(false)}
     >
       <Line>
-        <Input type="text" />
+        <Input
+          type="text"
+          value={title ?? ""}
+          onChange={e => setTitle(e.target.value)}
+        />
         <PlayIcon
           onClick={() => {
             const message: ActionWithPayload = {
@@ -154,6 +161,7 @@ const EditBlock: React.FC<IProps> = ({
           onClick={() => {
             onSave({
               ...block,
+              title,
               command,
               selector,
               parameter,
@@ -165,6 +173,7 @@ const EditBlock: React.FC<IProps> = ({
           value="Revert"
           disabled={!isChanged}
           onClick={() => {
+            setTitle(block.title);
             setCommand(block.command);
             setSelector(block.selector);
             setParameter(block.parameter);

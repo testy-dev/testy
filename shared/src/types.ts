@@ -18,6 +18,7 @@ export interface ParsedEvent {
 
 export interface BlockWriteable {
   command: CommandKey;
+  title?: string;
   parameter?: string;
   selector?: string;
   parentsSelectors?: string[];
