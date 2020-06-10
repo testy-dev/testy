@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import * as firebase from "firebase/app";
 import { Block, Edge, UUID } from "@testy/shared/types";
 import { Box } from "grommet";
 import { Diagram } from "@testy/diagram";
@@ -9,13 +10,17 @@ import debug from "debug";
 import styled from "styled-components";
 
 import { createEdge, deleteBlock, write } from "../../helpers/model";
+import { firebaseConfig } from "../../config";
+import { useFirebaseAuthState } from "../../components/hooks";
 import EditBlock from "./EditBlock";
-import ToggleButton from "../../popup/components/ToggleButton";
+import ToggleButton from "../../components/ToggleButton";
 import createPath from "../../helpers/createPath";
 import useLocalStorage from "../../helpers/useLocalStorage";
 
 const debugDiagram = debug("devtools:diagram");
 debug.enable("*");
+
+firebase.initializeApp(firebaseConfig);
 
 const App: React.FC = () => {
   // Register tab in dev tools
@@ -30,6 +35,7 @@ const App: React.FC = () => {
   const storage = useLocalStorage();
   const [path, setPath] = useState<string[]>([]);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
+  const authState = useFirebaseAuthState();
 
   // Update path on change incoming data
   useEffect(() => {
@@ -123,7 +129,7 @@ const App: React.FC = () => {
           />
           <div>
             {storage.blocks?.length ?? 0} blocks, {storage.edges?.length ?? 0}{" "}
-            edges
+            edges {authState}
           </div>
         </Box>
         {path.map(blockID => {
