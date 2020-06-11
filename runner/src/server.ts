@@ -4,6 +4,7 @@ import puppeteer from "puppeteer";
 
 import { Block, BlockResult } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
+import { mkdirSync } from "fs";
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 const HASURA_ADMIN_SECRET = process.env.HASURA_ADMIN_SECRET;
@@ -19,6 +20,7 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
 }
 
 (async function () {
+  await mkdirSync("screenshots");
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
 
   console.log("Actual time", new Date());
@@ -67,12 +69,13 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
             }
             statedResults[i] = { id, ts, status: "success" };
           } catch (e) {
+            statedResults[i] = { id, ts, status: "failed", msg: e.message };
+          } finally {
             await page.screenshot({
-              path: `${new Date().valueOf()}.jpg`,
+              path: `screenshots/${id}.jpg`,
               type: "jpeg",
               fullPage: true,
             });
-            statedResults[i] = { id, ts, status: "failed", msg: e.message };
           }
         }
 
