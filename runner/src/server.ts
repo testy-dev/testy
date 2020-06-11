@@ -68,7 +68,7 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
             statedResults[i] = { id, ts, status: "success" };
           } catch (e) {
             await page.screenshot({
-              path: `${new Date().valueOf()}.jpg`,
+              path: `${command}-${id}.jpg`,
               type: "jpeg",
               fullPage: true,
             });
@@ -89,7 +89,7 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
             }
           }
         }
-      `;
+        `;
         const variables = {
           id: newData.id,
           input: {
