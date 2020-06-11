@@ -16,14 +16,6 @@ export interface ParsedEvent {
   selectedText?: string;
 }
 
-export interface BlockWriteable {
-  command: CommandKey;
-  title?: string;
-  parameter?: string;
-  selector?: string;
-  parentsSelectors?: string[];
-}
-
 export interface Session {
   isPending: boolean;
   lastURL: string;
@@ -52,11 +44,20 @@ export type CommandKey =
   | "submit"
   | "check-contains-text";
 
-export type BlockResult = "failed" | "success";
+export type BlockResult = {
+  id: string;
+  status: "failed" | "success";
+  msg?: string;
+};
 export type DiagramBlockState = "unknown" | "success" | "fail" | "warning";
 
-export interface Block extends BlockWriteable {
+export interface Block {
   id: string;
+  command: CommandKey;
+  title?: string;
+  parameter?: string;
+  selector?: string;
+  parentsSelectors?: string[];
 }
 
 export type UUID = string;
