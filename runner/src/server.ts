@@ -49,6 +49,7 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
           i,
           { id, command, parameter, selector, parentsSelectors },
         ] of edges.entries()) {
+          const ts = new Date().valueOf();
           try {
             switch (command) {
               case "visit":
@@ -64,14 +65,14 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
                 await type(page, parameter, selector);
                 break;
             }
-            statedResults[i] = { id, status: "success" };
+            statedResults[i] = { id, ts, status: "success" };
           } catch (e) {
             await page.screenshot({
               path: `${new Date().valueOf()}.jpg`,
               type: "jpeg",
               fullPage: true,
             });
-            statedResults[i] = { id, status: "failed", msg: e.message };
+            statedResults[i] = { id, ts, status: "failed", msg: e.message };
           }
         }
 

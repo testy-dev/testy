@@ -47,6 +47,7 @@ export type CommandKey =
 export type BlockResult = {
   id: string;
   status: "failed" | "success";
+  ts: number;
   msg?: string;
 };
 export type DiagramBlockState = "unknown" | "success" | "fail" | "warning";
