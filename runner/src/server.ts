@@ -2,7 +2,7 @@ import { createServer } from "http";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
 
-import { BlockResult, BlockWriteable } from "@testy/shared";
+import { Block, BlockResult } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
@@ -32,7 +32,9 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
       .on("end", async () => {
         const data = Buffer.concat(body).toString();
         const newData = JSON.parse(data).event.data.new;
-        const edges: BlockWriteable[] = JSON.parse(newData.edges);
+        console.log("Edges");
+        console.log(newData.edges);
+        const edges: Block[] = JSON.parse(newData.edges);
 
         resp.statusCode = 200;
 
@@ -41,43 +43,36 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
         const tsBeforeTests = new Date().valueOf();
         console.log("Time before tests: ", tsBeforeTests);
         console.log("Starting puppeteer");
-        const statedResults: { state: BlockResult; msg?: string }[] = [];
+        const statedResults: BlockResult[] = [];
 
         for (const [
           i,
-          { command, parameter, selector, parentsSelectors },
+          { id, command, parameter, selector, parentsSelectors },
         ] of edges.entries()) {
+          const ts = new Date().valueOf();
           try {
             switch (command) {
               case "visit":
-                statedResults[i] = await visit(page, parameter);
+                await visit(page, parameter);
                 break;
               case "click":
-                statedResults[i] = await click(
-                  page,
-                  parameter,
-                  selector,
-                  parentsSelectors
-                );
+                await click(page, parameter, selector, parentsSelectors);
                 break;
               case "check-contains-text":
-                statedResults[i] = await checkContainsText(
-                  page,
-                  parameter,
-                  selector
-                );
+                await checkContainsText(page, parameter, selector);
                 break;
               case "type":
-                statedResults[i] = await type(page, parameter, selector);
+                await type(page, parameter, selector);
                 break;
             }
+            statedResults[i] = { id, ts, status: "success" };
           } catch (e) {
             await page.screenshot({
               path: `${new Date().valueOf()}.jpg`,
               type: "jpeg",
               fullPage: true,
             });
-            statedResults[i] = { state: "failed", msg: e.message };
+            statedResults[i] = { id, ts, status: "failed", msg: e.message };
           }
         }
 
@@ -95,22 +90,17 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
           }
         }
       `;
-
-        const mergedArr = edges.map((item, i) =>
-          Object.assign({}, item, statedResults[i])
-        );
-        console.log(mergedArr);
         const variables = {
           id: newData.id,
           input: {
-            edges: JSON.stringify(mergedArr),
+            edges: JSON.stringify(statedResults),
             started_at: new Date(tsBeforeTests),
             finished_at: new Date(tsAfterTests),
             credits: Math.ceil((tsAfterTests - tsBeforeTests) / 1000),
             blocks_count: statedResults.length,
-            blocks_success: statedResults.filter(res => res.state === "success")
+            blocks_success: statedResults.filter(r => r.status === "success")
               .length,
-            blocks_failed: statedResults.filter(res => res.state === "failed")
+            blocks_failed: statedResults.filter(r => r.status === "failed")
               .length,
             blocks_blocked: 0,
           },

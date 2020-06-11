@@ -1,11 +1,8 @@
 import { Page } from "puppeteer";
 
-import { BlockResult } from "@testy/shared";
-
 export async function visit(page: Page, parameter: string) {
   console.log("visit", parameter);
   await page.goto(parameter);
-  return { state: "success" as BlockResult };
 }
 
 export async function click(
@@ -49,7 +46,6 @@ export async function click(
     await page.click(selector);
     console.log("Clicked");
   }
-  return { state: "success" as BlockResult };
 }
 
 export async function checkContainsText(
@@ -61,14 +57,12 @@ export async function checkContainsText(
   await page.waitForSelector(selector);
   console.log("About here");
   const selectorHasText = await page.evaluate(
-    ({ selector, parameter }) =>
-      [...document.querySelectorAll(selector)].some(el =>
-        el.textContent.includes(parameter)
-      ),
-    { selector, parameter }
+    ({ selector }) => document.querySelector(selector).textContent,
+    { selector }
   );
-  if (!selectorHasText) throw "Selector not found";
-  return { state: "success" as BlockResult };
+  console.log("Almost...", selectorHasText);
+  if (!selectorHasText.includes(parameter))
+    throw new Error("Selector not found");
 }
 
 export async function type(page: Page, parameter: string, selector: string) {
@@ -80,5 +74,4 @@ export async function type(page: Page, parameter: string, selector: string) {
     await page.keyboard.press("Enter");
   }
   console.log("return type");
-  return { state: "success" as BlockResult };
 }
