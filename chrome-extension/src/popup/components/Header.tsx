@@ -1,9 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-// import { useEffect, useState } from "react";
-// import callGraphql from "../../helpers/callGraphql";
 
-import { useFirebaseAuthState } from "../hooks";
+import { useFirebaseAuthState } from "../../components/hooks";
 
 interface IProps {
   onLogout: () => void;
@@ -21,22 +19,6 @@ const Header: React.FC<IProps> = ({
   const authState = useFirebaseAuthState();
 
   return (
-    //   const [projectName, setProjectName] = useState<any>();
-    //
-    //   useEffect(() => {
-    //     // language=graphql
-    //     callGraphql(
-    //       `
-    // query($id: Int!){
-    //     project(where: {id: {_eq: $id}}) {
-    //         id
-    //         name
-    //     }
-    // }`,
-    //       { id: activeProject }
-    //     ).then(response => setProjectName(response?.data?.project?.name));
-    //   }, [activeProject]);
-
     <StyledHeader>
       <Title>Testy</Title>
       <Project onClick={onSelectProject}>

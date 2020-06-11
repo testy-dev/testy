@@ -23,7 +23,7 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
 
   console.log("Actual time", new Date());
   createServer((req, resp) => {
-    const body = [];
+    let body = [];
     req
       .on("data", chunk => {
         console.time("Request to response time");
@@ -121,6 +121,7 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
         console.log("Hasura done", await gqlResult.json());
 
         resp.end(() => {
+          body = [];
           page.close();
           console.timeEnd("Request to response time");
         });

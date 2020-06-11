@@ -5,14 +5,14 @@ import * as firebase from "firebase/app";
 import { ActionWithPayload, ControlAction, RecState } from "@testy/shared";
 import styled from "styled-components";
 
-import { Button } from "./styled-components";
-import { firebaseConfig } from "../config";
+import { Button } from "../../components/styled-components";
+import { firebaseConfig } from "../../config";
 import { read, write } from "../../helpers/model";
-import { useFirebaseAuthState } from "../hooks";
+import { useFirebaseAuthState } from "../../components/hooks";
 import Header from "./Header";
 import Login from "./Login";
 import SelectProject from "./SelectProject";
-import ToggleButton from "./ToggleButton";
+import ToggleButton from "../../components/ToggleButton";
 import callGraphql from "../../helpers/callGraphql";
 import useLocalStorage from "../../helpers/useLocalStorage";
 
