@@ -111,7 +111,7 @@ const Routes: React.FC = () => {
     <Switch>
       <Route path="/" exact component={HomeScreen} />
       {/*<Route path="/:orgSlug" component={OrganizationScreen} />*/}
-      <Route path="/:orgSlug/:projectSlug" exact component={ProjectScreen} />
+      <Route path="/:orgSlug/:projectSlug" component={ProjectScreen} />
       <Route component={NotFoundScreen} />
     </Switch>
   );

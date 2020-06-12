@@ -3,25 +3,32 @@ import React, { Suspense, useEffect, useState } from "react";
 import { Block, BlockResult, Graph } from "@testy/shared";
 import { Box, Button, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
+import {
+  Link,
+  Route,
+  Switch,
+  useParams,
+  useRouteMatch,
+} from "react-router-dom";
 import { gql, useSubscription } from "@apollo/client";
 import { graphql } from "@gqless/react";
-import { useParams } from "react-router-dom";
 import TimeAgo from "react-timeago";
+import styled from "styled-components";
 
 import { fetchQuery, query } from "../../graphql";
 import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
+import RunResult from "./RunResult";
 import getDiagramBlocksState from "./getDiagramBlocksState";
-import styled from "styled-components";
 
 const ProjectScreen: React.FC = () => {
   const { orgSlug, projectSlug } = useParams<{
     orgSlug: string;
     projectSlug: string;
   }>();
+  const match = useRouteMatch();
   const [graph, setGraph] = useState<Graph | null>(null);
   const [openedRun, setOpenedRun] = useState<number>(0);
-  const [openedPath, setOpenedPath] = useState<number>(0);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
   const [hoverPath, setHoverPath] = useState<string[]>([]);
   return (
@@ -45,21 +52,26 @@ const ProjectScreen: React.FC = () => {
               setGraph(graph);
             }}
             onHoverPath={setHoverPath}
-            onOpenPath={setOpenedPath}
           />
         </Suspense>
       </Box>
 
-      {openedPath}
-      <Diagram
-        blocks={graph?.blocks ?? []}
-        edges={graph?.edges ?? []}
-        hoverBlock={hoverBlock}
-        path={hoverPath}
-        setHoverBlock={setHoverBlock}
-        selected={null}
-        onSelectBlock={() => null}
-      />
+      <Switch>
+        <Route path={`${match.path}/:pathId`}>
+          <RunResult />
+        </Route>
+        <Route path={match.path}>
+          <Diagram
+            blocks={graph?.blocks ?? []}
+            edges={graph?.edges ?? []}
+            hoverBlock={hoverBlock}
+            path={hoverPath}
+            setHoverBlock={setHoverBlock}
+            selected={null}
+            onSelectBlock={() => null}
+          />
+        </Route>
+      </Switch>
     </Box>
   );
 };
@@ -113,7 +125,6 @@ interface ProjectHistoryProps extends SlugInput {
   openedRun: number | null;
   onOpenRun: (id: number, graph: Graph | null) => void;
   onHoverPath: (path: string[]) => void;
-  onOpenPath: (pathID: number) => void;
 }
 
 const ProjectHistory: React.FC<ProjectHistoryProps> = ({
@@ -122,7 +133,6 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   openedRun,
   onOpenRun,
   onHoverPath,
-  onOpenPath,
 }) => {
   const { data, loading } = useSubscription(
     gql`
@@ -245,13 +255,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
               {/*, {sum?.blocks_blocked} blocked),{" "}*/}
               {/*{sum?.credits} credits*/}
             </Text>
-            {opened && (
-              <RunPaths
-                run={run}
-                onHoverPath={onHoverPath}
-                onOpenPath={onOpenPath}
-              />
-            )}
+            {opened && <RunPaths run={run} onHoverPath={onHoverPath} />}
           </Box>
         );
       })}
@@ -262,8 +266,12 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
 const RunPaths: React.FC<{
   run: any;
   onHoverPath: (path: string[]) => void;
-  onOpenPath: (pathID: number) => void;
-}> = ({ run, onHoverPath, onOpenPath }) => {
+}> = ({ run, onHoverPath }) => {
+  const { orgSlug, projectSlug } = useParams<{
+    orgSlug: string;
+    projectSlug: string;
+  }>();
+
   const blocks: Block[] = run.graph.blocks;
   const failingBlocks: (Block & BlockResult)[] = run.paths
     .flatMap((path: any) => {
@@ -284,24 +292,27 @@ const RunPaths: React.FC<{
         </Text>
       ))}
       {run.paths.map((path: any) => (
-        <PathLine
+        <Link
           key={path.id + "path"}
-          color={getStatus(
-            path.blocks_success,
-            path.blocks_failed,
-            path.blocks_count
-          )}
-          onMouseEnter={() =>
-            onHoverPath(
-              JSON.parse(path.edges).map((result: BlockResult) => result.id)
-            )
-          }
-          onClick={() => onOpenPath(path.id)}
+          to={`/${orgSlug}/${projectSlug}/${path.id}`}
         >
-          path #{path.id} - {path?.blocks_count} blocks ({path?.blocks_success}{" "}
-          success, {path?.blocks_failed} failed, {path?.blocks_blocked}{" "}
-          blocked), {path?.credits} credits
-        </PathLine>
+          <PathLine
+            color={getStatus(
+              path.blocks_success,
+              path.blocks_failed,
+              path.blocks_count
+            )}
+            onMouseEnter={() =>
+              onHoverPath(
+                JSON.parse(path.edges).map((result: BlockResult) => result.id)
+              )
+            }
+          >
+            path #{path.id} - {path?.blocks_count} blocks (
+            {path?.blocks_success} success, {path?.blocks_failed} failed,{" "}
+            {path?.blocks_blocked} blocked), {path?.credits} credits
+          </PathLine>
+        </Link>
       ))}
     </div>
   );
