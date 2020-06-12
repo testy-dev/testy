@@ -89,6 +89,7 @@ const uploadDebug = runnerDebug.extend("upload");
             try {
               await bucket.upload(`screenshots/${id}.jpg`, {
                 destination: `paths/${path.id}/${id}.jpg`,
+                public: true,
               });
               uploadDebug(
                 "Screenshot uploaded to %s",
