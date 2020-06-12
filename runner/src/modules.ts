@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 
 export async function visit(page: Page, parameter: string) {
-  console.log("visit", parameter);
+  console.log("Visit - parameter", parameter);
   await page.goto(parameter);
 }
 
@@ -36,15 +36,17 @@ export async function click(
   }
 
   try {
-    console.log("click", selector);
+    console.log("Click - selector", selector);
     await page.waitForSelector(selector, { timeout: 10000, visible: true });
-    console.log("Selector found");
+    console.log("Click - selector found");
   } catch (e) {
+    console.log("Click - hovering parent");
     await hoverParent();
     await page.waitForSelector(selector, { timeout: 10000, visible: true });
+    console.log("Click - selector found");
   } finally {
     await page.click(selector);
-    console.log("Clicked");
+    console.log("Click - clicked");
   }
 }
 
@@ -53,25 +55,32 @@ export async function checkContainsText(
   parameter: string,
   selector: string
 ) {
-  console.log(`Text of selector ${selector} should be ${parameter}`);
+  console.log(`Check - selector ${selector} should be ${parameter}`);
   await page.waitForSelector(selector);
-  console.log("About here");
-  const selectorHasText = await page.evaluate(
-    ({ selector }) => document.querySelector(selector).textContent,
-    { selector }
-  );
-  console.log("Almost...", selectorHasText);
-  if (!selectorHasText.includes(parameter))
-    throw new Error("Selector not found");
+  console.log("Check - selector found");
+
+  let selectorText = undefined;
+  let iterator = 0;
+
+  while (!selectorText && iterator < 10) {
+    selectorText = await page.evaluate(
+      ({ selector }) => document.querySelector(selector).textContent,
+      { selector }
+    );
+    await page.waitFor(500);
+    iterator++;
+  }
+  console.log("Check - selector text is", selectorText);
+  if (!selectorText.includes(parameter)) throw new Error("Selector not found");
 }
 
 export async function type(page: Page, parameter: string, selector: string) {
   await page.waitForSelector(selector);
-  console.log("Typing", selector);
+  console.log(`Type - writing ${parameter} to selector ${selector}`);
   const typeArr = parameter.split("{enter}");
   for (const typedStr of typeArr) {
     await page.type(selector, typedStr);
     await page.keyboard.press("Enter");
   }
-  console.log("return type");
+  console.log("Type - done");
 }
