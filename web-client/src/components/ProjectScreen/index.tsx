@@ -12,6 +12,7 @@ import { fetchQuery, query } from "../../graphql";
 import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
 import getDiagramBlocksState from "./getDiagramBlocksState";
+import styled from "styled-components";
 
 const ProjectScreen: React.FC = () => {
   const { orgSlug, projectSlug } = useParams<{
@@ -20,6 +21,7 @@ const ProjectScreen: React.FC = () => {
   }>();
   const [graph, setGraph] = useState<Graph | null>(null);
   const [openedRun, setOpenedRun] = useState<number>(0);
+  const [openedPath, setOpenedPath] = useState<number>(0);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
   const [hoverPath, setHoverPath] = useState<string[]>([]);
   return (
@@ -43,10 +45,12 @@ const ProjectScreen: React.FC = () => {
               setGraph(graph);
             }}
             onHoverPath={setHoverPath}
+            onOpenPath={setOpenedPath}
           />
         </Suspense>
       </Box>
 
+      {openedPath}
       <Diagram
         blocks={graph?.blocks ?? []}
         edges={graph?.edges ?? []}
@@ -109,6 +113,7 @@ interface ProjectHistoryProps extends SlugInput {
   openedRun: number | null;
   onOpenRun: (id: number, graph: Graph | null) => void;
   onHoverPath: (path: string[]) => void;
+  onOpenPath: (pathID: number) => void;
 }
 
 const ProjectHistory: React.FC<ProjectHistoryProps> = ({
@@ -117,6 +122,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   openedRun,
   onOpenRun,
   onHoverPath,
+  onOpenPath,
 }) => {
   const { data, loading } = useSubscription(
     gql`
@@ -239,7 +245,13 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
               {/*, {sum?.blocks_blocked} blocked),{" "}*/}
               {/*{sum?.credits} credits*/}
             </Text>
-            {opened && <RunPaths run={run} onHoverPath={onHoverPath} />}
+            {opened && (
+              <RunPaths
+                run={run}
+                onHoverPath={onHoverPath}
+                onOpenPath={onOpenPath}
+              />
+            )}
           </Box>
         );
       })}
@@ -250,7 +262,8 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
 const RunPaths: React.FC<{
   run: any;
   onHoverPath: (path: string[]) => void;
-}> = ({ run, onHoverPath }) => {
+  onOpenPath: (pathID: number) => void;
+}> = ({ run, onHoverPath, onOpenPath }) => {
   const blocks: Block[] = run.graph.blocks;
   const failingBlocks: (Block & BlockResult)[] = run.paths
     .flatMap((path: any) => {
@@ -271,9 +284,8 @@ const RunPaths: React.FC<{
         </Text>
       ))}
       {run.paths.map((path: any) => (
-        <Text
+        <PathLine
           key={path.id + "path"}
-          style={{ display: "block" }}
           color={getStatus(
             path.blocks_success,
             path.blocks_failed,
@@ -284,15 +296,23 @@ const RunPaths: React.FC<{
               JSON.parse(path.edges).map((result: BlockResult) => result.id)
             )
           }
+          onClick={() => onOpenPath(path.id)}
         >
           path #{path.id} - {path?.blocks_count} blocks ({path?.blocks_success}{" "}
           success, {path?.blocks_failed} failed, {path?.blocks_blocked}{" "}
           blocked), {path?.credits} credits
-        </Text>
+        </PathLine>
       ))}
     </div>
   );
 };
+
+const PathLine = styled(Text)`
+  display: block;
+  &:hover {
+    font-weight: bold;
+  }
+`;
 
 const getStatus = (pass: number, fail: number, total: number) =>
   fail > 0 ? "status-error" : pass === total ? "status-ok" : "status-unknown";
