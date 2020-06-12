@@ -5,13 +5,16 @@
   "private": true,
   "scripts": {
     "build": "esbuild --outdir=dist src/* --platform=node",
-    "prod-start": "node -r esm dist/server.js",
+    "start": "node -r esm dist/server.js",
     "build:run": "yarn build && yarn prod-start",
     "image:build": "yarn build && docker build -f Dockerfile . -t us.gcr.io/testyx/runner:latest",
     "image:deploy": "docker push us.gcr.io/testyx/runner:latest"
   },
   "dependencies": {
+    "@google-cloud/storage": "^5.0.1",
+    "debug": "^4.1.1",
     "esm": "^3.2.25",
+    "fs-extra": "^9.0.1",
     "node-fetch": "^2.6.0",
     "puppeteer": "^3.2.0"
   },

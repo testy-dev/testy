@@ -1,10 +1,12 @@
+import { Storage } from "@google-cloud/storage";
 import { createServer } from "http";
+import { emptyDir } from "fs-extra";
+import debug from "debug";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
 
 import { Block, BlockResult } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
-import { mkdirSync } from "fs";
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 const HASURA_ADMIN_SECRET = process.env.HASURA_ADMIN_SECRET;
@@ -19,8 +21,13 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
   process.exit(1);
 }
 
+const runnerDebug = debug("runner");
+const uploadDebug = runnerDebug.extend("upload");
+
 (async function () {
-  await mkdirSync("screenshots");
+  const storage = new Storage();
+  const bucket = storage.bucket("testyx.appspot.com");
+
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
 
   console.log("Actual time", new Date());
@@ -32,11 +39,13 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
         body.push(chunk);
       })
       .on("end", async () => {
+        // Delete content in folder / create folder if dont exists
+        await emptyDir("screenshots");
+
         const data = Buffer.concat(body).toString();
-        const newData = JSON.parse(data).event.data.new;
-        console.log("Edges");
-        console.log(newData.edges);
-        const edges: Block[] = JSON.parse(newData.edges);
+        const path = JSON.parse(data).event.data.new;
+        console.log("Edges", path.edges);
+        const edges: Block[] = JSON.parse(path.edges);
 
         resp.statusCode = 200;
 
@@ -76,6 +85,18 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
               type: "jpeg",
               fullPage: true,
             });
+
+            try {
+              await bucket.upload(`screenshots/${id}.jpg`, {
+                destination: `paths/${path.id}/${id}.jpg`,
+              });
+              uploadDebug(
+                "Screenshot uploaded to %s",
+                `paths/${path.id}/${id}.jpg`
+              );
+            } catch (e) {
+              uploadDebug("Upload fail %o", e);
+            }
           }
         }
 
@@ -94,7 +115,7 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
         }
       `;
         const variables = {
-          id: newData.id,
+          id: path.id,
           input: {
             edges: JSON.stringify(statedResults),
             started_at: new Date(tsBeforeTests),

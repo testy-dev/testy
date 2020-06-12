@@ -25,4 +25,4 @@ RUN yarn install --prod
 
 COPY dist /app/dist/
 
-ENTRYPOINT ["yarn", "run", "prod-start"]
+ENTRYPOINT ["yarn", "run", "start"]
