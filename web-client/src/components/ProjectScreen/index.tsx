@@ -1,8 +1,8 @@
 import React, { Suspense, useEffect, useState } from "react";
 
+import { Block, BlockResult, Graph } from "@testy/shared";
 import { Box, Button, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
-import { Graph } from "@testy/shared";
 import { gql, useSubscription } from "@apollo/client";
 import { graphql } from "@gqless/react";
 import { useParams } from "react-router-dom";
@@ -251,15 +251,23 @@ const RunPaths: React.FC<{
   run: any;
   onHoverPath: (path: string[]) => void;
 }> = ({ run, onHoverPath }) => {
-  const failingBlocks = run.paths.flatMap((path: any) => {
-    const edges = JSON.parse(path.edges);
-    return edges.find((edge: any) => edge?.state === "failed") || [];
-  });
+  const blocks: Block[] = run.graph.blocks;
+  const failingBlocks: (Block & BlockResult)[] = run.paths
+    .flatMap((path: any) => {
+      const edges = JSON.parse(path.edges);
+      return (
+        edges.find((result: BlockResult) => result?.status === "failed") || []
+      );
+    })
+    .map((result: BlockResult) => ({
+      ...result,
+      ...blocks.find(b => b.id === result.id),
+    }));
   return (
     <div>
-      {failingBlocks.map((block: any) => (
-        <Text key={block.id} style={{ display: "block" }}>
-          {block.command} {block?.parameter} {block?.selector} {block?.msg}
+      {failingBlocks.map(result => (
+        <Text key={result.id} style={{ display: "block" }}>
+          {result.command} {result?.parameter} {result?.selector} {result?.msg}
         </Text>
       ))}
       {run.paths.map((path: any) => (
@@ -272,7 +280,9 @@ const RunPaths: React.FC<{
             path.blocks_count
           )}
           onMouseEnter={() =>
-            onHoverPath(JSON.parse(path.edges).map((e: any) => e.id))
+            onHoverPath(
+              JSON.parse(path.edges).map((result: BlockResult) => result.id)
+            )
           }
         >
           path #{path.id} - {path?.blocks_count} blocks ({path?.blocks_success}{" "}

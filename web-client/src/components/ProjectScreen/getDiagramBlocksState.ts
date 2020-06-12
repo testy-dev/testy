@@ -1,3 +1,5 @@
+import { Block, BlockResult } from "@testy/shared";
+
 export default function handleOpen(run: any) {
   const counter = run.paths.reduce(
     (
@@ -8,11 +10,11 @@ export default function handleOpen(run: any) {
       path: any
     ) => {
       const edges = JSON.parse(path.edges);
-      edges.forEach((block: any) => {
-        if (block.state === "success") {
+      edges.forEach((block: BlockResult) => {
+        if (block.status === "success") {
           acc.success[block.id] = acc.success[block.id] + 1 || 1;
         }
-        if (block.state === "failed") {
+        if (block.status === "failed") {
           acc.fail[block.id] = acc.fail[block.id] + 1 || 1;
         }
       });
@@ -23,7 +25,7 @@ export default function handleOpen(run: any) {
 
   return {
     edges: run.graph.edges,
-    blocks: run.graph.blocks.map((block: any) => {
+    blocks: run.graph.blocks.map((block: Block) => {
       const success = counter.success?.[block.id] ?? 0;
       const fail = counter.fail?.[block.id] ?? 0;
       // success 0, fail 0 => unknown
