@@ -6,7 +6,7 @@
   "scripts": {
     "build": "esbuild --outdir=dist src/* --platform=node",
     "start": "node -r esm dist/server.js",
-    "build:run": "yarn build && yarn prod-start",
+    "build:run": "yarn build && yarn start",
     "image:build": "yarn build && docker build -f Dockerfile . -t us.gcr.io/testyx/runner:latest",
     "image:deploy": "docker push us.gcr.io/testyx/runner:latest"
   },

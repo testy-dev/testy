@@ -80,13 +80,12 @@ const uploadDebug = runnerDebug.extend("upload");
           } catch (e) {
             statedResults[i] = { id, ts, status: "failed", msg: e.message };
           } finally {
-            await page.screenshot({
-              path: `screenshots/${id}.jpg`,
-              type: "jpeg",
-              fullPage: true,
-            });
-
             try {
+              await page.screenshot({
+                path: `screenshots/${id}.jpg`,
+                type: "jpeg",
+                fullPage: true,
+              });
               await bucket.upload(`screenshots/${id}.jpg`, {
                 destination: `paths/${path.id}/${id}.jpg`,
                 public: true,
