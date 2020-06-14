@@ -92,7 +92,7 @@ const Routes: React.FC = () => {
     return (
       <Box justify="center" align="center" fill>
         <Heading level={1} size="large">
-          Loading ...
+          Loading…
         </Heading>
       </Box>
     );

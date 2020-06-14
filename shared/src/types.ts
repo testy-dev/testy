@@ -124,6 +124,11 @@ export interface SelectorDetail {
   screenshot?: ImageBase64; // empty if screenshot is large
 }
 
+export interface UserSettings {
+  availWidth: number;
+  availHeight: number;
+}
+
 export type UUID = string;
 export type Color = string;
 export type Edge = [UUID, UUID] | [UUID, UUID, Color];

@@ -105,7 +105,7 @@ function removeDOMListeners(): void {
   });
 }
 
-function executeBlockLocally(block: Block) {
+function executeBlockLocally(block: Block): void {
   let doc;
   switch (block.command) {
     case "visit":
