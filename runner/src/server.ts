@@ -11,6 +11,26 @@ import { checkContainsText, click, type, visit } from "./modules";
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 const HASURA_ADMIN_SECRET = process.env.HASURA_ADMIN_SECRET;
 
+async function newPageWithNewContext(browser) {
+  const { browserContextId } = await browser._connection.send(
+    "Target.createBrowserContext"
+  );
+  const { targetId } = await browser._connection.send("Target.createTarget", {
+    url: "about:blank",
+    browserContextId,
+  });
+  const targetInfo = { targetId: targetId };
+  const client = await browser._connection.createSession(targetInfo);
+  const page = await browser.newPage(
+    { context: "another-context" },
+    client,
+    browser._ignoreHTTPSErrors,
+    browser._screenshotTaskQueue
+  );
+  page.browserContextId = browserContextId;
+  return page;
+}
+
 if (!GRAPHQL_ENDPOINT || !HASURA_ADMIN_SECRET) {
   console.error("Missing environment variables!");
   process.exit(1);
@@ -49,7 +69,7 @@ const uploadDebug = runnerDebug.extend("upload");
 
         resp.statusCode = 200;
 
-        const page = await browser.newPage();
+        const page = await newPageWithNewContext(browser);
 
         const tsBeforeTests = new Date().valueOf();
         console.log("Time before tests: ", tsBeforeTests);
