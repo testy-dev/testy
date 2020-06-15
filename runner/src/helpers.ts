@@ -1,4 +1,6 @@
-export async function newPageWithNewContext(browser) {
+import { Page } from "puppeteer";
+
+export async function newPageWithNewContext(browser): Promise<Page> {
   const { browserContextId } = await browser._connection.send(
     "Target.createBrowserContext"
   );

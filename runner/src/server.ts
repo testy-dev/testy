@@ -31,8 +31,6 @@ const resultsDebug = runnerDebug.extend("results");
   const storage = new Storage();
   const bucket = storage.bucket("testyx.appspot.com");
 
-  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
-
   createServer((req, resp) => {
     let body = [];
     req
@@ -41,7 +39,7 @@ const resultsDebug = runnerDebug.extend("results");
         body.push(chunk);
       })
       .on("end", async () => {
-        // Delete content in folder / create folder if dont exists
+        // Delete content in folder / create folder if doesn't exists
         await emptyDir("screenshots");
 
         const data = Buffer.concat(body).toString();
@@ -51,6 +49,7 @@ const resultsDebug = runnerDebug.extend("results");
 
         resp.statusCode = 200;
 
+        const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
         const page = await newPageWithNewContext(browser);
 
         const tsBeforeTests = now();
@@ -153,9 +152,10 @@ const resultsDebug = runnerDebug.extend("results");
 
         resultsDebug("done, response %O", await gqlResult.json());
 
+        await page.close();
+
         resp.end(() => {
           body = [];
-          page.close();
           requestDebug("connection closed");
         });
       });
