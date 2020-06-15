@@ -7,29 +7,10 @@ import puppeteer from "puppeteer";
 
 import { Block, BlockResult } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
+import { newPageWithNewContext, now } from "./helpers";
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 const HASURA_ADMIN_SECRET = process.env.HASURA_ADMIN_SECRET;
-
-async function newPageWithNewContext(browser) {
-  const { browserContextId } = await browser._connection.send(
-    "Target.createBrowserContext"
-  );
-  const { targetId } = await browser._connection.send("Target.createTarget", {
-    url: "about:blank",
-    browserContextId,
-  });
-  const targetInfo = { targetId: targetId };
-  const client = await browser._connection.createSession(targetInfo);
-  const page = await browser.newPage(
-    { context: "another-context" },
-    client,
-    browser._ignoreHTTPSErrors,
-    browser._screenshotTaskQueue
-  );
-  page.browserContextId = browserContextId;
-  return page;
-}
 
 if (!GRAPHQL_ENDPOINT || !HASURA_ADMIN_SECRET) {
   console.error("Missing environment variables!");
@@ -43,6 +24,8 @@ if (GRAPHQL_ENDPOINT.includes('"') || HASURA_ADMIN_SECRET.includes('"')) {
 
 const runnerDebug = debug("runner");
 const uploadDebug = runnerDebug.extend("upload");
+const requestDebug = runnerDebug.extend("http-server");
+const resultsDebug = runnerDebug.extend("results");
 
 (async function () {
   const storage = new Storage();
@@ -50,12 +33,11 @@ const uploadDebug = runnerDebug.extend("upload");
 
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
 
-  console.log("Actual time", new Date());
   createServer((req, resp) => {
     let body = [];
     req
       .on("data", chunk => {
-        console.time("Request to response time");
+        requestDebug("Connection opened");
         body.push(chunk);
       })
       .on("end", async () => {
@@ -64,23 +46,21 @@ const uploadDebug = runnerDebug.extend("upload");
 
         const data = Buffer.concat(body).toString();
         const path = JSON.parse(data).event.data.new;
-        console.log("Edges", path.edges);
         const edges: Block[] = JSON.parse(path.edges);
+        requestDebug("Edges %O", edges);
 
         resp.statusCode = 200;
 
         const page = await newPageWithNewContext(browser);
 
-        const tsBeforeTests = new Date().valueOf();
-        console.log("Time before tests: ", tsBeforeTests);
-        console.log("Starting puppeteer");
+        const tsBeforeTests = now();
         const statedResults: BlockResult[] = [];
 
         for (const [
           i,
           { id, command, parameter, selector, parentsSelectors },
         ] of edges.entries()) {
-          const ts = new Date().valueOf();
+          const started_at = now();
           try {
             switch (command) {
               case "visit":
@@ -96,9 +76,20 @@ const uploadDebug = runnerDebug.extend("upload");
                 await type(page, parameter, selector);
                 break;
             }
-            statedResults[i] = { id, ts, status: "success" };
+            statedResults[i] = {
+              id,
+              started_at,
+              finished_at: now(),
+              status: "success",
+            };
           } catch (e) {
-            statedResults[i] = { id, ts, status: "failed", msg: e.message };
+            statedResults[i] = {
+              id,
+              started_at,
+              finished_at: now(),
+              status: "failed",
+              msg: e.message,
+            };
           } finally {
             try {
               await page.screenshot({
@@ -120,11 +111,6 @@ const uploadDebug = runnerDebug.extend("upload");
           }
         }
 
-        const tsAfterTests = new Date().valueOf();
-
-        console.log("Time after: ", tsAfterTests);
-        console.log("Sending to hasura");
-
         const query = `
         mutation ($input: run_path_set_input!, $id: bigint) {
           update_run_path(where: {id: {_eq: $id}}, _set: $input) {
@@ -134,6 +120,7 @@ const uploadDebug = runnerDebug.extend("upload");
           }
         }
       `;
+        const tsAfterTests = now();
         const variables = {
           id: path.id,
           input: {
@@ -150,9 +137,11 @@ const uploadDebug = runnerDebug.extend("upload");
           },
         };
 
-        console.log(variables);
-
-        console.log(GRAPHQL_ENDPOINT);
+        resultsDebug(
+          "Send results to hasura endpoint %s %O",
+          GRAPHQL_ENDPOINT,
+          variables
+        );
         const gqlResult = await fetch(GRAPHQL_ENDPOINT, {
           method: "POST",
           headers: {
@@ -162,14 +151,14 @@ const uploadDebug = runnerDebug.extend("upload");
           body: JSON.stringify({ query, variables }),
         });
 
-        console.log("Hasura done", await gqlResult.json());
+        resultsDebug("done, response %O", await gqlResult.json());
 
         resp.end(() => {
           body = [];
           page.close();
-          console.timeEnd("Request to response time");
+          requestDebug("connection closed");
         });
       });
   }).listen(8080);
-  console.log("Server ready, waiting on http request on 8080...");
+  requestDebug("Ready to request on port 8080");
 })();
