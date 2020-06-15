@@ -59,7 +59,12 @@ const RunResult: React.FC = () => {
       </Box>
       <Box direction="row">
         {edges.map(e => (
-          <Box key={e.id} onClick={() => setActive(e.id)} pad="medium">
+          <Box
+            key={e.id}
+            onClick={() => setActive(e.id)}
+            pad="medium"
+            style={{ color: e.status === "success" ? "green" : "red" }}
+          >
             {e.command}
           </Box>
         ))}
