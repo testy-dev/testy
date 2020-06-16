@@ -12,6 +12,7 @@ import styled from "styled-components";
 import { fetchQuery, query } from "../../graphql";
 import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
+import ProjectSettings from "./ProjectSettings";
 import getDiagramBlocksState from "./getDiagramBlocksState";
 
 const ProjectScreen: React.FC = () => {
@@ -84,6 +85,7 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
   return (
     <Box direction="row" align="center" justify="between" flex={false}>
       <Heading level={1}>Project {name}</Heading>
+      <ProjectSettings projectId={id} />
       <Button
         label="Run now"
         primary
@@ -135,7 +137,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
               count
             }
           }
-          run(order_by: { started_at: desc }) {
+          run(order_by: { started_at: desc }, limit: 5) {
             id
             started_at
             graph
