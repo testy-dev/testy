@@ -10,6 +10,7 @@ import NotFoundScreen from "./components/NotFoundScreen";
 import ProjectScreen from "./components/ProjectScreen";
 
 import { fetchQuery } from "./graphql";
+import PathResultsScreen from "./components/PathResultsScreen";
 import UserID from "./components/UserID";
 
 const waitForNewToken = async (user: firebase.User) => {
@@ -111,6 +112,10 @@ const Routes: React.FC = () => {
     <Switch>
       <Route path="/" exact component={HomeScreen} />
       {/*<Route path="/:orgSlug" component={OrganizationScreen} />*/}
+      <Route
+        path="/:orgSlug/:projectSlug/:runPathId"
+        component={PathResultsScreen}
+      />
       <Route path="/:orgSlug/:projectSlug" component={ProjectScreen} />
       <Route component={NotFoundScreen} />
     </Switch>
