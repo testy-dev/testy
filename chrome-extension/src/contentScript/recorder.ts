@@ -15,11 +15,7 @@ import { finder } from "@medv/finder";
 let port: chrome.runtime.Port;
 let listening = false;
 
-/**
- * Parses DOM events into an object with the necessary data.
- * @param event
- * @returns {ParsedEvent}
- */
+/** Parses DOM events into an object with the necessary data. */
 function parseEvent(event: Event): ParsedEvent | null {
   const attributes = ["data-cy", "data-test", "data-testid", "data-qa"];
 
@@ -176,6 +172,7 @@ export default {
   onMessage(message: ActionWithPayload) {
     if (message.type === ControlAction.START && !listening) {
       addDOMListeners();
+      port.postMessage({type: ControlAction.USER_SETTINGS, payload:});
       listening = true;
     }
     if (message.type === ControlAction.STOP && listening) {

@@ -1,5 +1,4 @@
-import React from "react";
-
+import * as React from "react";
 import {
   Box,
   Button,
@@ -11,42 +10,31 @@ import {
 } from "grommet";
 import { Github, Google } from "grommet-icons";
 import { useHistory } from "react-router-dom";
+
 import firebase from "firebase/app";
 
-const GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
-
-const LoginScreen: React.FC = () => {
+const RegistrationScreen: React.FC = () => {
   const history = useHistory();
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
   const [error, setError] = React.useState("");
 
-  const handleLogin = React.useCallback(async () => {
+  const handleRegistration = async () => {
     try {
-      firebase.auth().signInWithEmailAndPassword(email, password);
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
     } catch (e) {
       setError(e.message);
-      console.warn(e);
     }
-  }, [email, password]);
-
-  const handleGoogle = React.useCallback(async () => {
-    try {
-      await firebase.auth().signInWithPopup(new GoogleAuthProvider());
-    } catch (e) {
-      setError(e.message);
-      console.warn(e);
-    }
-  }, [setError]);
+  };
 
   return (
     <Box direction="column" align="center" gap="medium">
       <Box justify="center">
-        <Heading level={1}>Login</Heading>
+        <Heading level={1}>Registration</Heading>
       </Box>
       <Box width="medium">
-        <Form onSubmit={handleLogin} aria-label="Login">
+        <Form onSubmit={handleRegistration} aria-label="Registration">
           <FormField label="E-mail">
             <TextInput
               type="email"
@@ -68,7 +56,7 @@ const LoginScreen: React.FC = () => {
           )}
           <Button
             type="submit"
-            label="Login"
+            label="Register"
             size="large"
             primary={true}
             fill="horizontal"
@@ -77,23 +65,17 @@ const LoginScreen: React.FC = () => {
       </Box>
       <Box direction="column" gap="medium">
         <Box direction="row" gap="medium">
-          <Google
-            onClick={handleGoogle}
-            role="button"
-            aria-label="Login with Google account"
-            color="plain"
-            size="large"
-          />
+          <Google color="plain" size="large" />
           <Github color="plain" size="large" />
         </Box>
         <Button
-          label="Register"
+          label="Login"
           fill="horizontal"
-          onClick={() => history.push("register")}
+          onClick={() => history.push("login")}
         />
       </Box>
     </Box>
   );
 };
 
-export default LoginScreen;
+export default RegistrationScreen;

@@ -8,6 +8,7 @@ import HomeScreen from "./components/HomeScreen";
 import LoginScreen from "./components/LoginScreen";
 import NotFoundScreen from "./components/NotFoundScreen";
 import ProjectScreen from "./components/ProjectScreen";
+import RegistrationScreen from "./components/RegistrationScreen";
 
 import { fetchQuery } from "./graphql";
 import PathResultsScreen from "./components/PathResultsScreen";
@@ -83,7 +84,9 @@ const Routes: React.FC = () => {
         setAuthState("in");
         if (history.location.pathname === "/login") history.push("/");
       } else {
-        if (history.location.pathname !== "/login") history.push("/login");
+        if (!["/login", "/register"].includes(history.location.pathname)) {
+          history.push("/login");
+        }
         setAuthState("out");
       }
     })
@@ -103,6 +106,7 @@ const Routes: React.FC = () => {
     return (
       <Switch>
         <Route path="/login" component={LoginScreen} />
+        <Route path="/register" component={RegistrationScreen} />
         <Route component={NotFoundScreen} />
       </Switch>
     );
