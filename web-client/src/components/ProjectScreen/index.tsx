@@ -3,13 +3,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { Block, BlockResult, Graph } from "@testy/shared";
 import { Box, Button, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
-import {
-  Link,
-  Route,
-  Switch,
-  useParams,
-  useRouteMatch,
-} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { gql, useSubscription } from "@apollo/client";
 import { graphql } from "@gqless/react";
 import TimeAgo from "react-timeago";
@@ -18,7 +12,6 @@ import styled from "styled-components";
 import { fetchQuery, query } from "../../graphql";
 import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
-import RunResult from "./RunResult";
 import getDiagramBlocksState from "./getDiagramBlocksState";
 
 const ProjectScreen: React.FC = () => {
@@ -26,7 +19,6 @@ const ProjectScreen: React.FC = () => {
     orgSlug: string;
     projectSlug: string;
   }>();
-  const match = useRouteMatch();
   const [graph, setGraph] = useState<Graph | null>(null);
   const [openedRun, setOpenedRun] = useState<number>(0);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
@@ -56,22 +48,15 @@ const ProjectScreen: React.FC = () => {
         </Suspense>
       </Box>
 
-      <Switch>
-        <Route path={`${match.path}/:pathId`}>
-          <RunResult />
-        </Route>
-        <Route path={match.path}>
-          <Diagram
-            blocks={graph?.blocks ?? []}
-            edges={graph?.edges ?? []}
-            hoverBlock={hoverBlock}
-            path={hoverPath}
-            setHoverBlock={setHoverBlock}
-            selected={null}
-            onSelectBlock={() => null}
-          />
-        </Route>
-      </Switch>
+      <Diagram
+        blocks={graph?.blocks ?? []}
+        edges={graph?.edges ?? []}
+        hoverBlock={hoverBlock}
+        path={hoverPath}
+        setHoverBlock={setHoverBlock}
+        selected={null}
+        onSelectBlock={() => null}
+      />
     </Box>
   );
 };
