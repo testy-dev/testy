@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 
 import { Block, BlockResult, Graph } from "@testy/shared";
-import { Box, Button, Heading, Text } from "grommet";
+import { Box, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
 import { Link, useParams } from "react-router-dom";
 import { gql, useSubscription } from "@apollo/client";
@@ -9,10 +9,11 @@ import { graphql } from "@gqless/react";
 import TimeAgo from "react-timeago";
 import styled from "styled-components";
 
-import { fetchQuery, query } from "../../graphql";
+import { query } from "../../graphql";
 import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
 import ProjectSettings from "./ProjectSettings";
+import TriggerRunButton from "./TriggerRunButton";
 import getDiagramBlocksState from "./getDiagramBlocksState";
 
 const ProjectScreen: React.FC = () => {
@@ -86,24 +87,7 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
     <Box direction="row" align="center" justify="between" flex={false}>
       <Heading level={1}>Project {name}</Heading>
       <ProjectSettings projectId={id} />
-      <Button
-        label="Run now"
-        primary
-        onClick={() => {
-          if (!id) return;
-          fetchQuery(
-            // language=graphql
-            `
-mutation ($project_id: Int!, $run_by_user: Int!) {
-  insert_run_one(object: {project_id: $project_id, run_by_user: $run_by_user}) {
-    id
-  }
-}
-            `,
-            { project_id: id, run_by_user: 1 }
-          );
-        }}
-      />
+      <TriggerRunButton projectId={id} />
     </Box>
   );
 });
