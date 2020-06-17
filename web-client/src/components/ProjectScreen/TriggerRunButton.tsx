@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Box, Button, Heading, Layer, Text, TextInput } from "grommet";
 import { PlayFill, Trash } from "grommet-icons";
-import { Resolution } from "@testy/shared";
+import { Resolution, RunSettings } from "@testy/shared";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 
@@ -35,14 +35,12 @@ const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
 
   useEffect(() => {
     if (data?.project_by_pk?.settings)
-      settings.resolutions = JSON.parse(
-        data.project_by_pk.settings
-      ).resolutions;
+      settings.resolutions = data.project_by_pk.settings?.resolutions ?? [];
   }, [data?.project_by_pk?.settings, settings]);
 
   const [runProject] = useMutation<
     any,
-    { id: number; run_by_user: number; settings: string }
+    { id: number; run_by_user: number; settings: RunSettings }
   >(
     gql`
       mutation($id: Int!, $run_by_user: Int!, $settings: jsonb) {
@@ -65,7 +63,7 @@ const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
         variables: {
           id: projectId,
           run_by_user: 1,
-          settings: JSON.stringify(settings),
+          settings: settings,
         },
       });
       setShow(false);

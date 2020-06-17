@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import { Box, Button, Heading, Layer, Text, TextInput } from "grommet";
 import { Configure, Trash } from "grommet-icons";
-import { Resolution } from "@testy/shared";
+import {
+  ProjectSettings as ProjectSettingsType,
+  Resolution,
+} from "@testy/shared";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 
@@ -35,10 +38,13 @@ const ProjectSettings: React.FC<Props> = ({ projectId }) => {
 
   useEffect(() => {
     if (data?.project_by_pk?.settings)
-      settings.resolutions = JSON.parse(data.project_by_pk.settings).resolutions;
+      settings.resolutions = data.project_by_pk.settings?.resolutions ?? [];
   }, [data?.project_by_pk?.settings, settings]);
 
-  const [updateSettings] = useMutation<any, { id: number; settings: string }>(
+  const [updateSettings] = useMutation<
+    any,
+    { id: number; settings: ProjectSettingsType }
+  >(
     gql`
       mutation($id: Int!, $settings: jsonb!) {
         update_project_by_pk(
@@ -52,10 +58,12 @@ const ProjectSettings: React.FC<Props> = ({ projectId }) => {
   );
 
   const handleSave = async () => {
-    await updateSettings({
-      variables: { id: projectId, settings: JSON.stringify(settings) },
-    });
-    setShow(false);
+    if (projectId) {
+      await updateSettings({
+        variables: { id: projectId, settings: settings },
+      });
+      setShow(false);
+    }
   };
 
   return useObserver(() => (

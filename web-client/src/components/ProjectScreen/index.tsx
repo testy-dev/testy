@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 
-import { Block, BlockResult, Graph } from "@testy/shared";
+import { Block, BlockResult, Graph, JSONparse } from "@testy/shared";
 import { Box, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
 import { Link, useParams } from "react-router-dom";
@@ -176,7 +176,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
 
   useEffect(() => {
     if (openedRun === 0 && previousProject?.graph !== project?.graph) {
-      onOpenRun(0, JSON.parse(project.graph));
+      onOpenRun(0, JSONparse(project.graph));
     }
   }, [onOpenRun, openedRun, previousProject?.graph, project?.graph]);
 
@@ -188,7 +188,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
       <Box
         background="light-1"
         pad="small"
-        onClick={() => onOpenRun(0, JSON.parse(project.graph))}
+        onClick={() => onOpenRun(0, JSONparse(project.graph))}
         border={{ side: "left", size: "medium", color: "brand" }}
       >
         Actual blocks
@@ -243,10 +243,10 @@ const RunPaths: React.FC<{
     projectSlug: string;
   }>();
 
-  const blocks: Block[] = run.graph.blocks;
+  const blocks: Block[] = run.graph?.blocks ?? [];
   const failingBlocks: (Block & BlockResult)[] = run.paths
     .flatMap((path: any) => {
-      const edges = JSON.parse(path.edges);
+      const edges = JSONparse(path.edges);
       return (
         edges.find((result: BlockResult) => result?.status === "failed") || []
       );
@@ -275,7 +275,7 @@ const RunPaths: React.FC<{
             )}
             onMouseEnter={() =>
               onHoverPath(
-                JSON.parse(path.edges).map((result: BlockResult) => result.id)
+                JSONparse(path.edges).map((result: BlockResult) => result.id)
               )
             }
           >

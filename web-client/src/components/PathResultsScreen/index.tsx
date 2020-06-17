@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { Anchor, Box } from "grommet";
-import { Block, BlockResult } from "@testy/shared";
+import { Block, BlockResult, JSONparse } from "@testy/shared";
 import { Link, useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import styled from "styled-components";
@@ -43,7 +43,7 @@ const PathResultsScreen: React.FC = () => {
   const [active, setActive] = useState<string>("");
 
   const edges: BlockWithAllData[] = useMemo(() => {
-    const results = JSON.parse(data?.run_path_by_pk?.edges ?? "[]");
+    const results = JSONparse(data?.run_path_by_pk?.edges ?? []);
     const blocks = data?.run_path_by_pk?.run?.graph?.blocks;
 
     return results.map((result: BlockResult) => ({
