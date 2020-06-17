@@ -52,7 +52,7 @@ const resultsDebug = runnerDebug.extend("results");
         const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
         const page = await newPageWithNewContext(browser);
 
-        if (path?.settings) {
+        if (path.settings) {
           const { resolution } = JSON.parse(path.settings) as PathSettings;
           await page.setViewport({
             height: resolution.height,
