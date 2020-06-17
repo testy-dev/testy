@@ -54,17 +54,17 @@ Content-Type: application/json
       "old": null,
       "new": {
         "graph": null,
-        "settings": "{\"resolutions\":[{\"width\":1920,\"height\":1080}]}",
+        "settings": {"resolutions":[{"width":1920,"height":1080}]},
         "finished_at": null,
         "run_by_user": 1,
         "project_id": 3,
-        "id": 82,
-        "started_at": "2020-06-16T14:50:34.517698+00:00"
+        "id": 87,
+        "started_at": "2020-06-17T14:32:19.133787+00:00"
       }
     }
   },
-  "created_at": "2020-06-16T14:50:34.517698Z",
-  "id": "69a30264-b5a0-4c8b-b0a9-d8e4470ba54a",
+  "created_at": "2020-06-17T14:32:19.133787Z",
+  "id": "c863a5f8-0aae-4df6-ac23-cdfe08c5a0b4",
   "delivery_info": {
     "max_retries": 0,
     "current_retry": 0
