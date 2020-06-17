@@ -84,7 +84,7 @@ const App: React.FC = () => {
   };
 
   const handleSave = async () => {
-    const data = await read(["blocks", "edges"]);
+    const { blocks = [], edges = [] } = await read(["blocks", "edges"]);
     // language=graphql
     const result = await callGraphql(
       `
@@ -96,10 +96,7 @@ const App: React.FC = () => {
       `,
       {
         project: activeProject,
-        graph: JSON.stringify({
-          blocks: data?.blocks ?? [],
-          edges: data?.edges ?? [],
-        }),
+        graph: JSON.stringify({ blocks, edges }),
       }
     );
     if (result?.data?.update_project?.affected_rows === 1) {
@@ -119,6 +116,7 @@ const App: React.FC = () => {
         `query($project: Int!) {
                 project(where: {id: {_eq: $project}}) {
                   graph
+                  name
                 }
             }`,
         {
@@ -127,9 +125,10 @@ const App: React.FC = () => {
       );
 
       const graph = result?.data?.project?.[0]?.graph;
+      const projectName = result?.data?.project?.[0]?.name;
       const { blocks, edges } = JSON.parse(graph);
-      await write({ blocks, edges });
-      console.debug("Data loaded", blocks, edges);
+      await write({ blocks, edges, projectName });
+      console.debug("Data loaded", blocks, edges, projectName);
     } catch (e) {
       console.error(e);
     }
