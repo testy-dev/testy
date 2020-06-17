@@ -39,17 +39,19 @@ const App: React.FC = () => {
 
   // Update path on change incoming data
   useEffect(() => {
-    if (storage.active) {
-      const newPath = createPath(storage.edges, path, storage.active);
+    if (storage.activeBlock) {
+      const newPath = createPath(storage.edges, path, storage.activeBlock);
       if (!isEqual(newPath, path)) {
         setPath(newPath);
       }
     }
-  }, [path, storage.active, storage.edges]);
+    console.log("Storage is:");
+    console.log(storage);
+  }, [path, storage]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
     if (blockID) setPath(createPath(storage.edges, path, blockID));
-    await write({ active: blockID });
+    await write({ activeBlock: blockID });
   };
 
   const handleCreateBlock = async (
@@ -73,7 +75,7 @@ const App: React.FC = () => {
         ...storage.edges.filter(([i, o]) => i !== inConn && o !== outConn),
         ...newEdges,
       ],
-      active: newBlock.id,
+      activeBlock: newBlock.id,
     });
   };
 
@@ -107,7 +109,7 @@ const App: React.FC = () => {
       <Diagram
         blocks={storage.blocks}
         edges={storage.edges}
-        selected={storage.active}
+        selected={storage.activeBlock}
         path={path}
         hoverBlock={hoverBlock}
         setHoverBlock={setHoverBlock}
@@ -132,6 +134,9 @@ const App: React.FC = () => {
             edges {authState}
           </div>
         </Box>
+        <Box direction="row" gap="small" align="center">
+          <div>Current project: {}</div>
+        </Box>
         {path.map(blockID => {
           const block = storage.blocks.find(b => b.id === blockID);
           if (!block) return null;
@@ -142,7 +147,7 @@ const App: React.FC = () => {
               ) : null}
               <EditBlock
                 key={blockID}
-                active={blockID === storage.active}
+                active={blockID === storage.activeBlock}
                 hover={hoverBlock === blockID}
                 setHover={state =>
                   state ? setHoverBlock(blockID) : setHoverBlock(null)
