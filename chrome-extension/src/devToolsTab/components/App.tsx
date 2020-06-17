@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import * as firebase from "firebase/app";
 import { Block, Edge, UUID } from "@testy/shared/types";
-import { Box } from "grommet";
+import { Box, Button } from "grommet";
 import { Diagram } from "@testy/diagram";
 import { isEqual } from "lodash";
 import { v4 as uuid } from "uuid";
@@ -32,6 +32,7 @@ const App: React.FC = () => {
     );
   }, []);
 
+  const [viewType, setViewType] = useState<"draft" | "runs">("draft");
   const storage = useLocalStorage();
   const [path, setPath] = useState<string[]>([]);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
@@ -135,7 +136,9 @@ const App: React.FC = () => {
           </div>
         </Box>
         <Box direction="row" gap="small" align="center">
-          <div>Current project: {}</div>
+          <Button
+            label={`Switch to ${viewType === "draft" ? "runs" : "draft"}`}
+          />
         </Box>
         {path.map(blockID => {
           const block = storage.blocks.find(b => b.id === blockID);

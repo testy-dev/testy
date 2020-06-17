@@ -1,6 +1,7 @@
 import { Block, Edge, RecState, UUID } from "@testy/shared";
 
 export interface StorageValues {
+  projectName?: string;
   status?: RecState;
   activeBlock?: UUID | null;
   blocks?: Block[];
@@ -37,13 +38,9 @@ export async function getStatus() {
   return (await read("status"))?.status as RecState;
 }
 
-export async function setStatus(status: RecState) {
-  await write({ status });
-}
+export const setStatus = async (status: RecState) => write({ status });
 
-/**
- * Resets application to original state.
- */
+/** Resets application to original state. */
 export async function reset() {
   await write({ status: "off", blocks: [], edges: [], activeBlock: null });
 }
