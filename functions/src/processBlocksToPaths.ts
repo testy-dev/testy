@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import { Block, Graph, PathSettings, RunSettings } from "@testy/shared";
+import { JSONparse } from "../../shared/src/functions";
 import getPaths from "../../shared/src/paths";
 
 import fetchQuery from "./graphqlClient";
@@ -17,8 +18,8 @@ export default functions.https.onRequest(async (req, resp) => {
 
   const run = req.body?.event?.data?.new;
   console.log("input", run);
-  let graph = JSON.parse(run?.graph) as Graph | null;
-  let settings = JSON.parse(run?.settings) as RunSettings | null;
+  let graph = JSONparse(run?.graph) as Graph | null;
+  let settings = JSONparse(run?.settings) as RunSettings | null;
 
   if (!graph || !settings) {
     // Graph is not included in run, get graph from project and save it to run
@@ -35,7 +36,7 @@ export default functions.https.onRequest(async (req, resp) => {
       console.error("Missing graph or settings");
       return;
     }
-    await updateRunGraph(run.id, { graph, settings });
+    await updateRun(run.id, { graph, settings });
   }
 
   if (!graph) {
@@ -79,12 +80,12 @@ query($project_id: Int!) {
     { project_id }
   );
   return {
-    graph: JSON.parse(response?.data?.project_by_pk?.graph),
-    settings: JSON.parse(response?.data?.project_by_pk?.settings ?? "null"),
+    graph: JSONparse(response?.data?.project_by_pk?.graph),
+    settings: JSONparse(response?.data?.project_by_pk?.settings),
   };
 }
 
-async function updateRunGraph(
+async function updateRun(
   run_id: number,
   data: { graph: Graph; settings: RunSettings }
 ) {
@@ -100,8 +101,8 @@ async function updateRunGraph(
     {
       run_id,
       data: {
-        graph: JSON.stringify(data.graph),
-        setting: JSON.stringify(data.settings),
+        graph: data.graph,
+        settings: data.settings,
       },
     }
   );
@@ -122,8 +123,8 @@ mutation ($objects: [run_path_insert_input!]!) {
     {
       objects: paths.map(path => ({
         run_id,
-        edges: JSON.stringify(path.edges),
-        settings: JSON.stringify(path.settings),
+        edges: path.edges,
+        settings: path.settings,
         blocks_count: path.edges.length,
       })),
     }
