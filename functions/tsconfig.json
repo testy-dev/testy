@@ -2,16 +2,16 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "outDir": "lib",
-    "sourceMap": true,
+    "target": "es2018",
+    "lib": ["es2018"],
+    "sourceMap": false,
     "strict": true,
     "noImplicitAny": false,
-    "target": "es2017"
+    "skipLibCheck": true,
+    "outDir": "dist"
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src/index.ts"
   ]
 }
