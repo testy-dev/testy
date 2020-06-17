@@ -6,9 +6,15 @@
  * back to the popup for display to the user.
  */
 
-import { ActionWithPayload, ControlAction, Session } from "@testy/shared";
+import {
+  ActionWithPayload,
+  ControlAction,
+  Session,
+  UserSettings,
+} from "@testy/shared";
 
 import { getStatus, pushBlock, reset, setStatus } from "../helpers/model";
+import callGraphql from "../helpers/callGraphql";
 import codeGenerator from "../helpers/codeGenerator";
 
 const ports = new Map<number, chrome.runtime.Port>();
@@ -149,6 +155,23 @@ async function cleanUp(): Promise<void> {
   await stopRecording();
 }
 
+async function sendResolution(resolution: UserSettings): Promise<void> {
+  chrome.storage.local.get("activeProject", async ({ activeProject }) => {
+    await callGraphql(
+      `
+      mutation ($id: Int!, $settings: jsonb!) {
+        update_project(where: {id: {_eq: $id}}, _set: {settings: $settings}) {
+          returning {
+            id
+          }
+        }
+      }
+    `,
+      { id: activeProject, settings: JSON.stringify(resolution) }
+    );
+  });
+}
+
 /**
  * Handles all actions coming from the view(popup).
  * @param message
@@ -163,6 +186,9 @@ async function handleMessage(message: ActionWithPayload): Promise<void> {
       break;
     case ControlAction.RESET:
       await resetRecording();
+      break;
+    case ControlAction.USER_SETTINGS:
+      await sendResolution(message.payload);
       break;
     default:
       const activePort = await getActivePort();
