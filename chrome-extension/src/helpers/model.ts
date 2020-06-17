@@ -2,7 +2,7 @@ import { Block, Edge, RecState, UUID } from "@testy/shared";
 
 export interface StorageValues {
   status?: RecState;
-  active?: UUID | null;
+  activeBlock?: UUID | null;
   blocks?: Block[];
   edges?: Edge[];
 }
@@ -45,7 +45,7 @@ export async function setStatus(status: RecState) {
  * Resets application to original state.
  */
 export async function reset() {
-  await write({ status: "off", blocks: [], edges: [], active: null });
+  await write({ status: "off", blocks: [], edges: [], activeBlock: null });
 }
 
 /**
@@ -97,8 +97,12 @@ export async function pushBlock(newBlock: Block): Promise<Block> {
   // Else add block
   blocks.push(newBlock);
   if (last) edges.push([last.id, newBlock.id]);
-  await write({ blocks, edges, active: newBlock.id });
-  console.debug("Write to storage: ", { blocks, edges, active: newBlock.id });
+  await write({ blocks, edges, activeBlock: newBlock.id } as StorageValues);
+  console.debug("Write to storage: ", {
+    blocks,
+    edges,
+    activeBlock: newBlock.id,
+  });
 
   return newBlock;
 }
@@ -118,10 +122,10 @@ export async function deleteBlock(blockID: UUID) {
   }
 
   await write({
-    active: active === blockID ? null : active,
+    activeBlock: active === blockID ? null : active,
     blocks: blocks.filter(({ id }) => id !== blockID),
     edges: edges.filter(([i, o]) => i !== blockID && o !== blockID),
-  });
+  } as StorageValues);
 }
 
 export async function createEdge(from: UUID, to: UUID) {

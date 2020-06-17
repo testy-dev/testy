@@ -5,14 +5,14 @@ import { Block, Edge, RecState, UUID } from "@testy/shared";
 type Data = {
   blocks: Block[];
   edges: Edge[];
-  active: UUID | null;
+  activeBlock: UUID | null;
   status: RecState;
 };
 type NewOldValue<T> = { newValue: T; oldValue: T };
 type DataUpdate = {
   blocks?: NewOldValue<Block[]>;
   edges?: NewOldValue<Edge[]>;
-  active?: NewOldValue<UUID | null>;
+  activeBlock?: NewOldValue<UUID | null>;
   status?: NewOldValue<RecState>;
 };
 
@@ -20,7 +20,7 @@ function useLocalStorage() {
   const [data, setData] = useState<Data>({
     blocks: [],
     edges: [],
-    active: null,
+    activeBlock: null,
     status: "off",
   });
 
@@ -29,7 +29,7 @@ function useLocalStorage() {
       setData({
         blocks: result?.blocks ?? [],
         edges: result?.edges ?? [],
-        active: result?.active ?? null,
+        activeBlock: result?.active ?? null,
         status: result?.status ?? "off",
       })
     );
@@ -41,7 +41,7 @@ function useLocalStorage() {
         setData({
           blocks: state?.blocks?.newValue ?? data.blocks,
           edges: state?.edges?.newValue ?? data.edges,
-          active: state?.active?.newValue ?? data.active,
+          activeBlock: state?.activeBlock?.newValue ?? data.activeBlock,
           status: state?.status?.newValue ?? data.status,
         });
       }
