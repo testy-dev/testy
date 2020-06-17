@@ -44,7 +44,7 @@ const resultsDebug = runnerDebug.extend("results");
 
         const data = Buffer.concat(body).toString();
         const path = JSON.parse(data).event.data.new;
-        const edges: Block[] = JSON.parse(path.edges);
+        const edges: Block[] = path.edges;
         requestDebug("Edges %O", edges);
 
         resp.statusCode = 200;
@@ -53,7 +53,7 @@ const resultsDebug = runnerDebug.extend("results");
         const page = await newPageWithNewContext(browser);
 
         if (path.settings) {
-          const { resolution } = JSON.parse(path.settings) as PathSettings;
+          const { resolution } = path.settings as PathSettings;
           await page.setViewport({
             height: resolution.height,
             width: resolution.width,
@@ -131,7 +131,7 @@ const resultsDebug = runnerDebug.extend("results");
         const variables = {
           id: path.id,
           input: {
-            edges: JSON.stringify(statedResults),
+            edges: statedResults,
             started_at: new Date(tsBeforeTests),
             finished_at: new Date(tsAfterTests),
             credits: Math.ceil((tsAfterTests - tsBeforeTests) / 1000),
@@ -155,7 +155,7 @@ const resultsDebug = runnerDebug.extend("results");
             "Content-Type": "application/json",
             "x-hasura-admin-secret": HASURA_ADMIN_SECRET,
           },
-          body: JSON.stringify({ query, variables }),
+          body: { query, variables },
         });
 
         resultsDebug("done, response %O", await gqlResult.json());
