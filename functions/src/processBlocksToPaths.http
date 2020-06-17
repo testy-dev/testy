@@ -1,3 +1,5 @@
+# Start run without graph and settings
+
 POST http://localhost:5001/testyx/us-central1/processBlocksToPaths
 Content-Type: application/json
 
@@ -36,4 +38,42 @@ Content-Type: application/json
   }
 }
 
-###
+### Start run with custom settings
+
+POST http://localhost:5001/testyx/us-central1/processBlocksToPaths
+Content-Type: application/json
+
+{
+  "event": {
+    "session_variables": {
+      "x-hasura-role": "user",
+      "x-hasura-user-id": "SC3HZhk4mmSRrCCfhcJAwSNwZmL2"
+    },
+    "op": "INSERT",
+    "data": {
+      "old": null,
+      "new": {
+        "graph": null,
+        "settings": "{\"resolutions\":[{\"width\":1920,\"height\":1080}]}",
+        "finished_at": null,
+        "run_by_user": 1,
+        "project_id": 3,
+        "id": 82,
+        "started_at": "2020-06-16T14:50:34.517698+00:00"
+      }
+    }
+  },
+  "created_at": "2020-06-16T14:50:34.517698Z",
+  "id": "69a30264-b5a0-4c8b-b0a9-d8e4470ba54a",
+  "delivery_info": {
+    "max_retries": 0,
+    "current_retry": 0
+  },
+  "trigger": {
+    "name": "run_project"
+  },
+  "table": {
+    "schema": "public",
+    "name": "run"
+  }
+}

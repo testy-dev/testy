@@ -13,12 +13,12 @@ interface Props {
 const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
   const [show, setShow] = useState<boolean>(false);
   const settings = useLocalStore<{
-    resolution: Resolution[];
+    resolutions: Resolution[];
     addResolution: () => void;
   }>(() => ({
-    resolution: [],
+    resolutions: [],
     addResolution() {
-      settings.resolution.push({ width: 800, height: 600 });
+      settings.resolutions.push({ width: 800, height: 600 });
     },
   }));
 
@@ -35,13 +35,24 @@ const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
 
   useEffect(() => {
     if (data?.project_by_pk?.settings)
-      settings.resolution = JSON.parse(data.project_by_pk.settings).resolution;
+      settings.resolutions = JSON.parse(
+        data.project_by_pk.settings
+      ).resolutions;
   }, [data?.project_by_pk?.settings, settings]);
 
-  const [runProject] = useMutation<any, { id: number; run_by_user: number }>(
+  const [runProject] = useMutation<
+    any,
+    { id: number; run_by_user: number; settings: string }
+  >(
     gql`
-      mutation($id: Int!, $run_by_user: Int!) {
-        insert_run_one(object: { project_id: $id, run_by_user: $run_by_user }) {
+      mutation($id: Int!, $run_by_user: Int!, $settings: jsonb) {
+        insert_run_one(
+          object: {
+            project_id: $id
+            run_by_user: $run_by_user
+            settings: $settings
+          }
+        ) {
           id
         }
       }
@@ -51,7 +62,11 @@ const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
   const handleRun = async () => {
     if (projectId) {
       await runProject({
-        variables: { id: projectId, run_by_user: 1 },
+        variables: {
+          id: projectId,
+          run_by_user: 1,
+          settings: JSON.stringify(settings),
+        },
       });
       setShow(false);
     }
@@ -83,7 +98,7 @@ const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
               />
             </Box>
             <Box gap="small">
-              {settings.resolution.map((r, index) => (
+              {settings.resolutions.map((r, index) => (
                 <Box key={index} direction="row" gap="medium" align="center">
                   {index + 1 + "."}
                   <Box direction="row" align="center" gap="xsmall">
@@ -109,7 +124,7 @@ const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
                   <Button
                     icon={<Trash color="red" size="18px" />}
                     onClick={() => {
-                      settings.resolution.splice(index, 1);
+                      settings.resolutions.splice(index, 1);
                     }}
                   />
                 </Box>

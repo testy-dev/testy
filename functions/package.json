@@ -4,11 +4,10 @@
   "description": "Cloud Functions for Firebase",
   "main": "dist/functions/src/index.js",
   "scripts": {
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
-    "start": "npm run shell",
+    "emulator": "firebase emulators:start --only functions",
+    "start": "yarn run tsc -w",
     "build": "yarn run tsc",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "yarn build && firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {

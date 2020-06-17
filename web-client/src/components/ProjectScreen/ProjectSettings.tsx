@@ -13,12 +13,12 @@ interface Props {
 const ProjectSettings: React.FC<Props> = ({ projectId }) => {
   const [show, setShow] = useState<boolean>(false);
   const settings = useLocalStore<{
-    resolution: Resolution[];
+    resolutions: Resolution[];
     addResolution: () => void;
   }>(() => ({
-    resolution: [],
+    resolutions: [],
     addResolution() {
-      settings.resolution.push({ width: 800, height: 600 });
+      settings.resolutions.push({ width: 800, height: 600 });
     },
   }));
 
@@ -35,7 +35,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId }) => {
 
   useEffect(() => {
     if (data?.project_by_pk?.settings)
-      settings.resolution = JSON.parse(data.project_by_pk.settings).resolution;
+      settings.resolutions = JSON.parse(data.project_by_pk.settings).resolutions;
   }, [data?.project_by_pk?.settings, settings]);
 
   const [updateSettings] = useMutation<any, { id: number; settings: string }>(
@@ -81,7 +81,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId }) => {
               />
             </Box>
             <Box gap="small">
-              {settings.resolution.map((r, index) => (
+              {settings.resolutions.map((r, index) => (
                 <Box key={index} direction="row" gap="medium" align="center">
                   {index + 1 + "."}
                   <Box direction="row" align="center" gap="xsmall">
@@ -107,7 +107,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId }) => {
                   <Button
                     icon={<Trash color="red" size="18px" />}
                     onClick={() => {
-                      settings.resolution.splice(index, 1);
+                      settings.resolutions.splice(index, 1);
                     }}
                   />
                 </Box>

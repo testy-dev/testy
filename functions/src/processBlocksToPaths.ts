@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import { Block, PathSettings, RunSettings } from "@testy/shared";
+import { Block, Graph, PathSettings, RunSettings } from "@testy/shared";
 import getPaths from "../../shared/src/paths";
 
 import fetchQuery from "./graphqlClient";
@@ -15,24 +15,27 @@ export default functions.https.onRequest(async (req, resp) => {
     return;
   }
 
-  const input = req.body?.event?.data?.new;
-  console.log("input", input);
-  let graph = input?.graph;
-  let settings: RunSettings | null = input?.settings;
+  const run = req.body?.event?.data?.new;
+  console.log("input", run);
+  let graph = JSON.parse(run?.graph) as Graph | null;
+  let settings = JSON.parse(run?.settings) as RunSettings | null;
 
   if (!graph || !settings) {
     // Graph is not included in run, get graph from project and save it to run
-    const project = await getProject(input.project_id);
+    const project = await getProject(run.project_id);
 
     if (!graph) {
-      graph = project.graph;
-      if (graph) {
-        await updateRunGraph(input.id, graph);
-      }
+      graph = project.graph as Graph;
     }
     if (!settings) {
-      settings = project.settings;
+      if (project.settings) settings = project.settings;
+      else settings = { resolutions: [{ width: 800, height: 600 }] };
     }
+    if (!graph || !settings) {
+      console.error("Missing graph or settings");
+      return;
+    }
+    await updateRunGraph(run.id, { graph, settings });
   }
 
   if (!graph) {
@@ -41,14 +44,16 @@ export default functions.https.onRequest(async (req, resp) => {
   }
 
   const paths: Block[][] = getPaths(graph.edges).map(pathOfIds =>
-    pathOfIds.map(stepId => graph.blocks.find(block => block.id === stepId))
+    pathOfIds.map(
+      stepId =>
+        (graph as Graph).blocks.find(block => block.id === stepId) as Block
+    )
   );
 
-  const resolutions = settings?.resolutions ?? [{ width: 800, height: 600 }];
   const pathsWithResolutions = paths.reduce<InsertPath[]>(
     (acc, path) =>
       acc.concat(
-        resolutions.map(resolution => ({
+        (settings as RunSettings).resolutions.map(resolution => ({
           settings: { resolution },
           edges: path,
         }))
@@ -56,7 +61,7 @@ export default functions.https.onRequest(async (req, resp) => {
     []
   );
 
-  await insertPaths(input.id, pathsWithResolutions);
+  await insertPaths(run.id, pathsWithResolutions);
 
   resp.send({ status: "OK", message: `Created ${paths.length} paths` });
 });
@@ -79,19 +84,25 @@ query($project_id: Int!) {
   };
 }
 
-async function updateRunGraph(run_id: number, graph: string) {
+async function updateRunGraph(
+  run_id: number,
+  data: { graph: Graph; settings: RunSettings }
+) {
   const response = await fetchQuery(
     // language=graphql
     `
-    mutation ($run_id: bigint!, $graph: jsonb!) {
-        update_run_by_pk(pk_columns: {id: $run_id}, _set: {graph: $graph}) {
+    mutation ($run_id: bigint!, $data: run_set_input!) {
+        update_run_by_pk(pk_columns: {id: $run_id}, _set: $data) {
             id
         }
     }
     `,
     {
       run_id,
-      graph,
+      data: {
+        graph: JSON.stringify(data.graph),
+        setting: JSON.stringify(data.settings),
+      },
     }
   );
   return response?.data?.update_run_by_pk?.id;
