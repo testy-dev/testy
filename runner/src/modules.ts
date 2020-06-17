@@ -85,7 +85,7 @@ export async function type(page: Page, parameter: string, selector: string) {
   await page.waitForSelector(selector);
   debugType(`writing ${parameter} to selector ${selector}`);
 
-  const typeArr = (parameter ?? "").split(/({\w+})/g).filter(i => i.length > 0);
+  const typeArr = (parameter || "").split(/({\w+})/g).filter(i => i.length > 0);
   for (const typedStr of typeArr) {
     if (typedStr === "{enter}") await page.keyboard.press("Enter");
     else await page.type(selector, typedStr);

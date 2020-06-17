@@ -5,7 +5,7 @@ import debug from "debug";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
 
-import { Block, BlockResult } from "@testy/shared";
+import { Block, BlockResult, PathSettings } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
 import { newPageWithNewContext, now } from "./helpers";
 
@@ -51,6 +51,14 @@ const resultsDebug = runnerDebug.extend("results");
 
         const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
         const page = await newPageWithNewContext(browser);
+
+        if (path.settings) {
+          const { resolution } = JSON.parse(path.settings) as PathSettings;
+          await page.setViewport({
+            height: resolution.height,
+            width: resolution.width,
+          });
+        }
 
         const tsBeforeTests = now();
         const statedResults: BlockResult[] = [];

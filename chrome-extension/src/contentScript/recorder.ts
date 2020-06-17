@@ -9,6 +9,7 @@ import {
   ControlAction,
   EventType,
   ParsedEvent,
+  UserSettings,
 } from "@testy/shared";
 import { finder } from "@medv/finder";
 
@@ -172,7 +173,12 @@ export default {
   onMessage(message: ActionWithPayload) {
     if (message.type === ControlAction.START && !listening) {
       addDOMListeners();
-      port.postMessage({type: ControlAction.USER_SETTINGS, payload:});
+      console.log("It should work");
+      const { availHeight, availWidth } = window.screen as UserSettings;
+      port.postMessage({
+        type: ControlAction.USER_SETTINGS,
+        payload: { availHeight, availWidth },
+      });
       listening = true;
     }
     if (message.type === ControlAction.STOP && listening) {
