@@ -1,8 +1,15 @@
 import * as functions from "firebase-functions";
+import { Block, PathSettings, RunSettings } from "@testy/shared";
+import getPaths from "../../shared/src/paths";
+
 import fetchQuery from "./graphqlClient";
 
+const EMULATOR =
+  (process.env.FUNCTIONS_EMULATOR as boolean | undefined) === true ||
+  (process.env.FUNCTIONS_EMULATOR as string) === "true";
+
 export default functions.https.onRequest(async (req, resp) => {
-  if (req.headers?.token !== functions.config().request.token) {
+  if (!EMULATOR && req.headers?.token !== functions.config().request.token) {
     console.warn("Wrong token", req.headers?.token);
     resp.status(403).send({ status: "ERROR", message: "Wrong token" });
     return;
@@ -11,12 +18,20 @@ export default functions.https.onRequest(async (req, resp) => {
   const input = req.body?.event?.data?.new;
   console.log("input", input);
   let graph = input?.graph;
+  let settings: RunSettings | null = input?.settings;
 
-  if (!graph) {
+  if (!graph || !settings) {
     // Graph is not included in run, get graph from project and save it to run
-    graph = await getGraph(input.project_id);
-    if (graph) {
-      await updateRunGraph(input.id, graph);
+    const project = await getProject(input.project_id);
+
+    if (!graph) {
+      graph = project.graph;
+      if (graph) {
+        await updateRunGraph(input.id, graph);
+      }
+    }
+    if (!settings) {
+      settings = project.settings;
     }
   }
 
@@ -25,54 +40,43 @@ export default functions.https.onRequest(async (req, resp) => {
     return;
   }
 
-  const pathsByIDs = getPaths(graph.edges);
-  const paths = pathsByIDs.map(path =>
-    path.map(step => graph.blocks.find(b => b.id === step))
+  const paths: Block[][] = getPaths(graph.edges).map(pathOfIds =>
+    pathOfIds.map(stepId => graph.blocks.find(block => block.id === stepId))
   );
 
-  await insertPaths(input.id, paths);
+  const resolutions = settings?.resolutions ?? [{ width: 800, height: 600 }];
+  const pathsWithResolutions = paths.reduce<InsertPath[]>(
+    (acc, path) =>
+      acc.concat(
+        resolutions.map(resolution => ({
+          settings: { resolution },
+          edges: path,
+        }))
+      ),
+    []
+  );
+
+  await insertPaths(input.id, pathsWithResolutions);
 
   resp.send({ status: "OK", message: `Created ${paths.length} paths` });
 });
 
-function getPaths(edges: any): string[][] {
-  const paths = [];
-
-  const startingEdges = edges.filter(
-    ([f]) => !edges.find(([, fs]) => fs === f)
-  );
-
-  function generatePath(currentPath: [string, string][]): void {
-    const lastEdge = currentPath[currentPath.length - 1];
-    const next = edges.filter(([f]) => f === lastEdge);
-    if (!next.length) {
-      // @ts-ignore
-      paths.push(currentPath);
-    } else {
-      next.forEach(path => {
-        generatePath(currentPath.concat(path[1]));
-      });
-    }
-  }
-
-  startingEdges.forEach(node => generatePath(node));
-
-  return paths;
-}
-
-async function getGraph(project_id: number) {
+async function getProject(project_id: number) {
   const response = await fetchQuery(
     // language=graphql
     `
 query($project_id: Int!) {
   project_by_pk(id: $project_id) {
     graph
+    settings
   }
 }`,
     { project_id }
   );
-  console.log("Get graph response", response);
-  return JSON.parse(response?.data?.project_by_pk?.graph);
+  return {
+    graph: JSON.parse(response?.data?.project_by_pk?.graph),
+    settings: JSON.parse(response?.data?.project_by_pk?.settings ?? "null"),
+  };
 }
 
 async function updateRunGraph(run_id: number, graph: string) {
@@ -93,7 +97,8 @@ async function updateRunGraph(run_id: number, graph: string) {
   return response?.data?.update_run_by_pk?.id;
 }
 
-async function insertPaths(run_id: number, paths: object[][]) {
+type InsertPath = { settings: PathSettings; edges: Block[] };
+async function insertPaths(run_id: number, paths: InsertPath[]) {
   const mutation = await fetchQuery(
     // language=graphql
     `
@@ -104,10 +109,11 @@ mutation ($objects: [run_path_insert_input!]!) {
 }
     `,
     {
-      objects: paths.map(p => ({
+      objects: paths.map(path => ({
         run_id,
-        edges: JSON.stringify(p),
-        blocks_count: p.length,
+        edges: JSON.stringify(path.edges),
+        settings: JSON.stringify(path.settings),
+        blocks_count: path.edges.length,
       })),
     }
   );
