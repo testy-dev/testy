@@ -9,6 +9,8 @@ import {
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 
+const defaultResolution = { width: 800, height: 600 };
+
 interface Props {
   projectId: number | null;
 }
@@ -19,9 +21,9 @@ const ProjectSettings: React.FC<Props> = ({ projectId }) => {
     resolutions: Resolution[];
     addResolution: () => void;
   }>(() => ({
-    resolutions: [],
+    resolutions: [defaultResolution],
     addResolution() {
-      settings.resolutions.push({ width: 800, height: 600 });
+      settings.resolutions.push(defaultResolution);
     },
   }));
 
