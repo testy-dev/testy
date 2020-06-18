@@ -1,4 +1,4 @@
-import { Edge, UUID } from "./types";
+import { Block, Edge, UUID } from "./types";
 
 function getPaths(edges: Edge[]): UUID[][] {
   const paths: UUID[][] = [];

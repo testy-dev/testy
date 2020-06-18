@@ -9,13 +9,24 @@ import { v4 as uuid } from "uuid";
 import debug from "debug";
 import styled from "styled-components";
 
+import { JSONparse } from "@testy/shared";
 import { createEdge, deleteBlock, write } from "../../helpers/model";
 import { firebaseConfig } from "../../config";
 import { useFirebaseAuthState } from "../../components/hooks";
 import EditBlock from "./EditBlock";
 import ToggleButton from "../../components/ToggleButton";
+import callGraphql from "../../helpers/callGraphql";
 import createPath from "../../helpers/createPath";
 import useLocalStorage from "../../helpers/useLocalStorage";
+
+function getStraightPath(edges: Block[]): UUID[][] {
+  const path: UUID[][] = [];
+  for (let i = 1; i < edges.length; i++) {
+    path.push([edges[i - 1].id, edges[i].id]);
+  }
+
+  return path;
+}
 
 const debugDiagram = debug("devtools:diagram");
 debug.enable("*");
@@ -33,6 +44,9 @@ const App: React.FC = () => {
   }, []);
 
   const [viewType, setViewType] = useState<"draft" | "runs">("draft");
+  const [pastRuns, setPastRuns] = useState<any>();
+  const [pastRunBlocks, setPastBlocks] = useState<any>();
+  const [pastRunEdges, setPastEdges] = useState<any>();
   const storage = useLocalStorage();
   const [path, setPath] = useState<string[]>([]);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
@@ -105,11 +119,54 @@ const App: React.FC = () => {
     });
   };
 
+  const handleSwitch = async () => {
+    if (viewType === "draft") {
+      setViewType("runs");
+      if (!pastRuns) {
+        chrome.storage.local.get("activeProject", async ({ activeProject }) => {
+          const runs = await callGraphql(
+            `
+              query($projectId: Int!) {
+                project_by_pk(id: $projectId) {
+                  name
+                  run {
+                    id
+                    paths {
+                      edges
+                    }
+                  }
+                }
+              }
+            `,
+            { projectId: activeProject }
+          );
+
+          setPastRuns(runs.data);
+          console.log(runs.data);
+        });
+      }
+    } else {
+      setViewType("draft");
+      setPastEdges(undefined);
+      setPastBlocks(undefined);
+    }
+  };
+
+  const handleSelectRun = (runId: number) => {
+    console.log(runId);
+    const run = (pastRuns?.project_by_pk?.run ?? []).find(
+      (run: any) => run.id === runId
+    );
+    const pastBlocks = JSONparse(run.paths?.[0]?.edges);
+    setPastBlocks(pastBlocks);
+    setPastEdges(getStraightPath(pastBlocks));
+  };
+
   return (
     <Root>
       <Diagram
-        blocks={storage.blocks}
-        edges={storage.edges}
+        blocks={pastRunBlocks ?? storage.blocks}
+        edges={pastRunEdges ?? storage.edges}
         selected={storage.activeBlock}
         path={path}
         hoverBlock={hoverBlock}
@@ -138,32 +195,40 @@ const App: React.FC = () => {
         <Box direction="row" gap="small" align="center">
           <Button
             label={`Switch to ${viewType === "draft" ? "runs" : "draft"}`}
+            onClick={handleSwitch}
           />
         </Box>
-        {path.map(blockID => {
-          const block = storage.blocks.find(b => b.id === blockID);
-          if (!block) return null;
-          return (
-            <>
-              {storage.edges.filter(([, w]) => w === blockID).length > 1 ? (
-                <MoreIncoming />
-              ) : null}
-              <EditBlock
-                key={blockID}
-                active={blockID === storage.activeBlock}
-                hover={hoverBlock === blockID}
-                setHover={state =>
-                  state ? setHoverBlock(blockID) : setHoverBlock(null)
-                }
-                block={block}
-                onSave={handleUpdateBlock}
-              />
-              {storage.edges.filter(([v]) => v === blockID).length > 1 ? (
-                <MoreOutgoing />
-              ) : null}
-            </>
-          );
-        })}
+        {viewType === "draft"
+          ? path.map(blockID => {
+              const block = storage.blocks.find(b => b.id === blockID);
+              if (!block) return null;
+              return (
+                <>
+                  {storage.edges.filter(([, w]) => w === blockID).length > 1 ? (
+                    <MoreIncoming />
+                  ) : null}
+                  <EditBlock
+                    key={blockID}
+                    active={blockID === storage.activeBlock}
+                    hover={hoverBlock === blockID}
+                    setHover={state =>
+                      state ? setHoverBlock(blockID) : setHoverBlock(null)
+                    }
+                    block={block}
+                    onSave={handleUpdateBlock}
+                  />
+                  {storage.edges.filter(([v]) => v === blockID).length > 1 ? (
+                    <MoreOutgoing />
+                  ) : null}
+                </>
+              );
+            })
+          : !!pastRuns &&
+            (pastRuns?.project_by_pk?.run ?? []).map((run: any) => (
+              <div key={run.id} onClick={() => handleSelectRun(run.id)}>
+                id #{run.id} - no. of paths: {run.paths.length}
+              </div>
+            ))}
       </Column>
     </Root>
   );
