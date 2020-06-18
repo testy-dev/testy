@@ -128,6 +128,7 @@ const resultsDebug = runnerDebug.extend("results");
         }
       `;
         const tsAfterTests = now();
+        resultsDebug("%O", statedResults);
         const variables = {
           id: path.id,
           input: {
@@ -155,10 +156,12 @@ const resultsDebug = runnerDebug.extend("results");
             "Content-Type": "application/json",
             "x-hasura-admin-secret": HASURA_ADMIN_SECRET,
           },
-          body: { query, variables },
+          body: JSON.stringify({ query, variables }),
         });
 
-        resultsDebug("done, response %O", await gqlResult.json());
+        const resultJson = await gqlResult.json();
+
+        resultsDebug("done, response %O", resultJson);
 
         await page.close();
 
