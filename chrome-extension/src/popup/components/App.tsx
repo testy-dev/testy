@@ -2,7 +2,12 @@ import * as React from "react";
 
 import "firebase/auth";
 import * as firebase from "firebase/app";
-import { ActionWithPayload, ControlAction, RecState } from "@testy/shared";
+import {
+  ActionWithPayload,
+  ControlAction,
+  JSONparse,
+  RecState,
+} from "@testy/shared";
 import styled from "styled-components";
 
 import { Button } from "../../components/styled-components";
@@ -96,7 +101,7 @@ const App: React.FC = () => {
       `,
       {
         project: activeProject,
-        graph: JSON.stringify({ blocks, edges }),
+        graph: { blocks, edges },
       }
     );
     if (result?.data?.update_project?.affected_rows === 1) {
@@ -126,7 +131,7 @@ const App: React.FC = () => {
 
       const graph = result?.data?.project?.[0]?.graph;
       const projectName = result?.data?.project?.[0]?.name;
-      const { blocks, edges } = JSON.parse(graph);
+      const { blocks, edges } = JSONparse(graph);
       await write({ blocks, edges, projectName });
       console.debug("Data loaded", blocks, edges, projectName);
     } catch (e) {

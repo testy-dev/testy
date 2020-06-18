@@ -167,7 +167,7 @@ async function sendResolution(resolution: UserSettings): Promise<void> {
         }
       }
     `,
-      { id: activeProject, settings: JSON.stringify(resolution) }
+      { id: activeProject, settings: resolution }
     );
   });
 }
