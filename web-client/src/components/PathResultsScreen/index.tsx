@@ -65,7 +65,7 @@ const PathResultsScreen: React.FC = () => {
 
   return (
     <Root>
-      <Box flex="grow">
+      <Box flex="shrink">
         <Box
           flex="grow"
           justify="center"
@@ -73,7 +73,10 @@ const PathResultsScreen: React.FC = () => {
           background="dark-4"
           pad="small"
         >
-          <img src={edges?.find(e => e.id === active)?.screenshot} />
+          <img
+            src={edges?.find(e => e.id === active)?.screenshot}
+            style={{ maxWidth: "100%", maxHeight: "100%" }}
+          />
         </Box>
         <Box direction="row">
           {edges.map(e => (
