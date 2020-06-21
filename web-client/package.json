@@ -13,6 +13,7 @@
     "@types/react": "^16.9.38",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
+    "@urql/exchange-graphcache": "^3.0.1",
     "firebase": "^7.15.3",
     "graphql": "^15.1.0",
     "grommet": "^2.14.0",
