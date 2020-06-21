@@ -1,0 +1,17 @@
+{
+  "name": "User schema",
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Dev Heroku": {
+        "url": "https://testy-dev.herokuapp.com/v1/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL",
+          "x-hasura-admin-secret": "lhjkjahfda3w534kjbtkjfdsg",
+          "x-hasura-role": "user"
+        },
+        "introspect": true
+      }
+    }
+  }
+}
