@@ -1,0 +1,67 @@
+subscription projectRuns($projectSlug: String!, $orgSlug: String!) {
+  project(
+    where: {
+      slug: { _eq: $projectSlug }
+      organization: { slug: { _eq: $orgSlug } }
+    }
+  ) {
+    id
+    graph
+    run_aggregate {
+      aggregate {
+        count
+      }
+    }
+    run(order_by: { started_at: desc }, limit: 5) {
+      id
+      started_at
+      graph
+      paths(order_by: { id: asc }) {
+        id
+        edges
+        blocks_count
+        blocks_success
+        blocks_failed
+      }
+    }
+  }
+}
+
+query projectByID($id: Int!) {
+  project_by_pk(id: $id) {
+    id
+    name
+    settings
+  }
+}
+
+query projectBySlug($projectSlug: String!, $orgSlug: String!) {
+  project(
+    where: {
+      slug: { _eq: $projectSlug }
+      organization: { slug: { _eq: $orgSlug } }
+    }
+  ) {
+    id
+    name
+    settings
+  }
+}
+
+mutation createRun($projectId: Int!, $run_by_user: Int!, $settings: jsonb) {
+  insert_run_one(
+    object: {
+      project_id: $projectId
+      run_by_user: $run_by_user
+      settings: $settings
+    }
+  ) {
+    id
+  }
+}
+
+mutation updateProject($projectId: Int!, $data: project_set_input!) {
+  update_project_by_pk(pk_columns: { id: $projectId }, _set: $data) {
+    id
+  }
+}

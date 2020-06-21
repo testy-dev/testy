@@ -4,13 +4,14 @@ import { Block, BlockResult, Graph, JSONparse } from "@testy/shared";
 import { Box, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
 import { Link, useParams } from "react-router-dom";
-import { gql, useSubscription } from "@apollo/client";
-import { graphql } from "@gqless/react";
 import TimeAgo from "react-timeago";
 import styled from "styled-components";
 
-import { query } from "../../graphql";
 import { usePrevious } from "../../hooks";
+import {
+  useProjectBySlugQuery,
+  useProjectRunsSubscription,
+} from "../../generated/graphql";
 import Logo from "../Logo";
 import ProjectSettings from "./ProjectSettings";
 import TriggerRunButton from "./TriggerRunButton";
@@ -68,21 +69,16 @@ interface SlugInput {
   projectSlug: string;
 }
 
-const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
-  const project = query.project({
-    where: {
-      // @ts-ignore
-      slug: { _eq: projectSlug },
-      organization: {
-        // @ts-ignore
-        slug: {
-          _eq: orgSlug,
-        },
-      },
-    },
-  })?.[0];
-  const name = project.name;
-  const id = project.id;
+const ProjectHeader = ({ projectSlug, orgSlug }: SlugInput) => {
+  const [{ data }] = useProjectBySlugQuery({
+    variables: { orgSlug, projectSlug },
+  });
+  const project = data?.project?.[0];
+  const name = project?.name;
+  const id = project?.id;
+  if (!id) {
+    return <>Project not found</>;
+  }
   return (
     <Box direction="row" align="center" justify="between" flex={false}>
       <Heading level={1}>Project {name}</Heading>
@@ -90,7 +86,7 @@ const ProjectHeader = graphql(({ projectSlug, orgSlug }: SlugInput) => {
       <TriggerRunButton projectId={id} />
     </Box>
   );
-});
+};
 
 interface ProjectHistoryProps extends SlugInput {
   openedRun: number | null;
@@ -105,54 +101,9 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   onOpenRun,
   onHoverPath,
 }) => {
-  const { data, loading } = useSubscription(
-    gql`
-      subscription($projectSlug: String!, $orgSlug: String!) {
-        project(
-          where: {
-            slug: { _eq: $projectSlug }
-            organization: { slug: { _eq: $orgSlug } }
-          }
-        ) {
-          id
-          graph
-          run_aggregate {
-            aggregate {
-              count
-            }
-          }
-          run(order_by: { started_at: desc }, limit: 5) {
-            id
-            started_at
-            graph
-            paths(order_by: { id: asc }) {
-              id
-              edges
-              blocks_count
-              blocks_success
-              blocks_failed
-              blocks_blocked
-              credits
-            }
-            paths_aggregate {
-              aggregate {
-                sum {
-                  credits
-                  blocks_blocked
-                  blocks_count
-                  blocks_failed
-                  blocks_success
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: { orgSlug, projectSlug },
-    }
-  );
+  const [{ data, fetching }] = useProjectRunsSubscription({
+    variables: { orgSlug, projectSlug },
+  });
   const previousData = usePrevious(data);
 
   const project = data?.project?.[0];
@@ -176,11 +127,11 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
 
   useEffect(() => {
     if (openedRun === 0 && previousProject?.graph !== project?.graph) {
-      onOpenRun(0, JSONparse(project.graph));
+      onOpenRun(0, JSONparse(project?.graph));
     }
   }, [onOpenRun, openedRun, previousProject?.graph, project?.graph]);
 
-  if (loading) return <Text>Loading...</Text>;
+  if (fetching) return <Text>Loading...</Text>;
   if (!project) return <Text>Not found</Text>;
 
   return (

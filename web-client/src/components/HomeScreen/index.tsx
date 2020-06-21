@@ -2,10 +2,8 @@ import React, { Suspense } from "react";
 
 import { Box, Heading, Text } from "grommet";
 import { Link, useHistory } from "react-router-dom";
-import { graphql } from "@gqless/react";
 
-import { Me } from "../../graphql/extensions";
-import { query } from "../../graphql";
+import { useGetOrganizationsQuery } from "../../generated/graphql";
 import CreateOrganization from "./CreateOrganization";
 import CreateProject from "./CreateProject";
 import Logo from "../Logo";
@@ -39,11 +37,12 @@ const HomeScreen: React.FC = () => {
   );
 };
 
-const Organizations = graphql(() => {
+const Organizations = () => {
   const history = useHistory();
+  const [{ data }] = useGetOrganizationsQuery();
   return (
     <Box direction="row-responsive">
-      {query.organization.map(org => {
+      {data?.organization.map(org => {
         const orgSlug = org.slug;
         return (
           <Box
@@ -77,9 +76,9 @@ const Organizations = graphql(() => {
       })}
     </Box>
   );
-});
+};
 
-const MyProfile = graphql(() => {
+const MyProfile = () => {
   const me = Me();
   return (
     <Box>
@@ -87,6 +86,6 @@ const MyProfile = graphql(() => {
       {me.name}
     </Box>
   );
-});
+};
 
 export default HomeScreen;
