@@ -36,6 +36,13 @@ const subscriptionClient = new SubscriptionClient(
   process.env.REACT_APP_GRAPHQL_ENDPOINT?.replace("http", "ws") ?? "",
   {
     reconnect: true,
+    lazy: true,
+    connectionParams: async () => {
+      const token = await firebase.auth().currentUser?.getIdToken();
+      return {
+        headers: { authorization: token ? `Bearer ${token}` : "" },
+      };
+    },
   }
 );
 
