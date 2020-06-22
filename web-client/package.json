@@ -13,6 +13,7 @@
     "@types/react": "^16.9.38",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
+    "@urql/devtools": "^2.0.2",
     "@urql/exchange-graphcache": "^3.0.1",
     "firebase": "^7.15.3",
     "graphql": "^15.1.0",
@@ -34,7 +35,7 @@
   },
   "scripts": {
     "start": "parcel public/index.html",
-    "build": "esbuild --bundle src/index.tsx --outdir=dist --minify --sourcemap --error-limit=100",
+    "build": "node build.js",
     "build:parcel": "parcel build public/index.html",
     "deploy": "yarn build && yarn firebase deploy --only hosting",
     "test": "react-scripts test",

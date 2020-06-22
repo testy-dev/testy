@@ -10,9 +10,17 @@ import NotFoundScreen from "./components/NotFoundScreen";
 import ProjectScreen from "./components/ProjectScreen";
 import RegistrationScreen from "./components/RegistrationScreen";
 
-import { fetchQuery } from "./graphql";
+import {
+  CreateUserDocument,
+  CreateUserMutation,
+  CreateUserMutationVariables,
+  GetMeByFirebaseDocument,
+  GetMeByFirebaseQuery,
+  GetMeByFirebaseQueryVariables,
+} from "./generated/graphql";
 import PathResultsScreen from "./components/PathResultsScreen";
 import UserID from "./components/UserID";
+import client from "./urqlClient";
 
 const waitForNewToken = async (user: firebase.User) => {
   // Check if refresh is required.
@@ -32,32 +40,20 @@ const waitForNewToken = async (user: firebase.User) => {
 };
 
 const createGqlUser = async (uid: string, name: string) => {
-  // language=graphql
-  const query = `
-    query getMe($firebase_id: String!) {
-      user(where: {firebase_id: {_eq: $firebase_id}}) {
-        id
-      }
-    }
-  `;
-  const me: any = await fetchQuery(query, {
-    firebase_id: uid,
-  });
+  const me = await client
+    .query<GetMeByFirebaseQuery, GetMeByFirebaseQueryVariables>(
+      GetMeByFirebaseDocument,
+      { firebase_id: uid }
+    )
+    .toPromise();
+
   if (!me?.data?.user?.[0]?.id) {
-    // language=graphql
-    const query = `
-      mutation MyMutation($name: String!) {
-        insert_user(objects: {name: $name}) {
-          returning {
-            id
-            name
-          }
-        }
-      }
-    `;
-    const response = await fetchQuery(query, {
-      name,
-    });
+    const response = await client
+      .query<CreateUserMutation, CreateUserMutationVariables>(
+        CreateUserDocument,
+        { name }
+      )
+      .toPromise();
     console.log("create user response", response);
   } else {
     UserID.setUser(me?.data?.user?.[0]?.id);

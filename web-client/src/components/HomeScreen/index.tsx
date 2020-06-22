@@ -2,8 +2,12 @@ import React, { Suspense } from "react";
 
 import { Box, Heading, Text } from "grommet";
 import { Link, useHistory } from "react-router-dom";
+import firebase from "firebase/app";
 
-import { useGetOrganizationsQuery } from "../../generated/graphql";
+import {
+  useGetMeByFirebaseQuery,
+  useGetOrganizationsQuery,
+} from "../../generated/graphql";
 import CreateOrganization from "./CreateOrganization";
 import CreateProject from "./CreateProject";
 import Logo from "../Logo";
@@ -79,7 +83,12 @@ const Organizations = () => {
 };
 
 const MyProfile = () => {
-  const me = Me();
+  const [{ data }] = useGetMeByFirebaseQuery({
+    variables: { firebase_id: firebase.auth().currentUser?.uid as string },
+    pause: !firebase.auth().currentUser,
+  });
+  const me = data?.user?.[0];
+  if (!me) return null;
   return (
     <Box>
       {me.id}

@@ -8,6 +8,7 @@ import {
 } from "urql";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { cacheExchange } from "@urql/exchange-graphcache";
+import { devtoolsExchange } from "@urql/devtools";
 import { fromPromise, fromValue, map, mergeMap, pipe } from "wonka";
 import firebase from "firebase/app";
 
@@ -41,6 +42,7 @@ const subscriptionClient = new SubscriptionClient(
 const client = createClient({
   url: process.env.REACT_APP_GRAPHQL_ENDPOINT as string,
   exchanges: [
+    devtoolsExchange,
     dedupExchange,
     cacheExchange({}),
     fetchOptionsExchange(async () => {
