@@ -9,7 +9,6 @@ import {
   ControlAction,
   EventType,
   ParsedEvent,
-  UserSettings,
 } from "@testy/shared";
 import { finder } from "@medv/finder";
 
@@ -41,12 +40,20 @@ function parseEvent(event: Event): ParsedEvent | null {
     parentNode = parentNode.parentElement;
   }
 
+  const {
+    x,
+    y,
+    height,
+    width,
+  } = (event.target as Element).getBoundingClientRect();
+
   const parsedEvent: ParsedEvent = {
     selector,
     parentSelectors,
     action: event.type,
     tag: (event.target as Element).tagName,
     value: (event.target as HTMLInputElement).value,
+    dimensions: { x, y, height, width },
   };
   if ((event.target as HTMLAnchorElement).hasAttribute("href"))
     parsedEvent.href = (event.target as HTMLAnchorElement).href;
@@ -173,12 +180,6 @@ export default {
   onMessage(message: ActionWithPayload) {
     if (message.type === ControlAction.START && !listening) {
       addDOMListeners();
-      console.log("It should work");
-      const { availHeight, availWidth } = window.screen as UserSettings;
-      port.postMessage({
-        type: ControlAction.USER_SETTINGS,
-        payload: { availHeight, availWidth },
-      });
       listening = true;
     }
     if (message.type === ControlAction.STOP && listening) {

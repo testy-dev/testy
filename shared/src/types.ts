@@ -14,6 +14,8 @@ export interface ParsedEvent {
   href?: string;
   inputType?: string;
   selectedText?: string;
+  dimensions?: { width: number; height: number; x: number; y: number };
+  scrollOffset?: { x: number; y: number };
 }
 
 export interface Session {
