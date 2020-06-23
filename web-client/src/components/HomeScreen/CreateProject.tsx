@@ -4,7 +4,7 @@ import { Add } from "grommet-icons";
 import { Box, Button, Form, FormField, Heading, Layer, Text } from "grommet";
 import slugify from "slugify";
 
-import { fetchQuery } from "../../graphql";
+import { useCreateProjectMutation } from "../../generated/graphql";
 
 interface IProps {
   orgId: number;
@@ -14,31 +14,24 @@ interface IProps {
 const CreateProject: React.FC<IProps> = ({ onCreate, orgId }) => {
   const [opened, setOpened] = React.useState<boolean>(false);
   const [error, setError] = React.useState("");
+  const [, createProject] = useCreateProjectMutation();
   const handleCreate = React.useCallback(
     async e => {
       const slug = slugify(e.value.name);
-      // language=graphql
-      const query = `
-        mutation createProject($input: project_insert_input!) {
-            insert_project_one(object: $input) {
-                id
-            }
-        }
-      `;
-      const response = await fetchQuery(query, {
+      const response = await createProject({
         input: {
           name: e.value.name,
           organization_id: orgId,
           slug,
         },
       });
-      if (response?.errors?.length) {
-        setError(response.errors.map((e: any) => e.message).join());
+      if (response?.error) {
+        setError(response?.error?.message);
       } else if (response?.data?.insert_project_one?.id) {
         await onCreate(slug);
       }
     },
-    [onCreate, setError]
+    [createProject, onCreate, orgId]
   );
   return (
     <>

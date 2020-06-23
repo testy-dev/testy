@@ -4,7 +4,7 @@ import { Add } from "grommet-icons";
 import { Box, Button, Form, FormField, Heading, Layer, Text } from "grommet";
 import slugify from "slugify";
 
-import { fetchQuery } from "../../graphql";
+import { useCreateOrganizationMutation } from "../../generated/graphql";
 import UserID from "../UserID";
 
 interface IProps {
@@ -14,29 +14,24 @@ interface IProps {
 const CreateOrganization: React.FC<IProps> = ({ onCreate }) => {
   const [opened, setOpened] = React.useState<boolean>(false);
   const [error, setError] = React.useState("");
+  const [, createOrg] = useCreateOrganizationMutation();
   const handleCreate = React.useCallback(
     async e => {
       const slug = slugify(e.value.name);
-      // language=graphql
-      const query = `
-        mutation createOrganization($name: String!, $owner_id: Int!, $slug: String!) {
-            insert_organization_one(object: {name: $name, owner_id: $owner_id, slug: $slug}) {
-                id
-            }
-        }
-      `;
-      const response = await fetchQuery(query, {
-        name: e.value.name,
-        owner_id: UserID.getUser(),
-        slug,
+      const response = await createOrg({
+        input: {
+          name: e.value.name,
+          owner_id: UserID.getUser(),
+          slug,
+        },
       });
-      if (response?.errors?.length) {
-        setError(response.errors.map((e: any) => e.message).join());
+      if (response?.error?.name) {
+        setError(response?.error?.name);
       } else if (response?.data?.insert_organization_one?.id) {
         await onCreate(slug);
       }
     },
-    [onCreate, setError]
+    [createOrg, onCreate]
   );
   return (
     <>

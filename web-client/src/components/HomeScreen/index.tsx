@@ -2,10 +2,12 @@ import React, { Suspense } from "react";
 
 import { Box, Heading, Text } from "grommet";
 import { Link, useHistory } from "react-router-dom";
-import { graphql } from "@gqless/react";
+import firebase from "firebase/app";
 
-import { Me } from "../../graphql/extensions";
-import { query } from "../../graphql";
+import {
+  useGetMeByFirebaseQuery,
+  useGetOrganizationsQuery,
+} from "../../generated/graphql";
 import CreateOrganization from "./CreateOrganization";
 import CreateProject from "./CreateProject";
 import Logo from "../Logo";
@@ -39,11 +41,12 @@ const HomeScreen: React.FC = () => {
   );
 };
 
-const Organizations = graphql(() => {
+const Organizations = () => {
   const history = useHistory();
+  const [{ data }] = useGetOrganizationsQuery();
   return (
     <Box direction="row-responsive">
-      {query.organization.map(org => {
+      {data?.organization.map(org => {
         const orgSlug = org.slug;
         return (
           <Box
@@ -77,16 +80,21 @@ const Organizations = graphql(() => {
       })}
     </Box>
   );
-});
+};
 
-const MyProfile = graphql(() => {
-  const me = Me();
+const MyProfile = () => {
+  const [{ data }] = useGetMeByFirebaseQuery({
+    variables: { firebase_id: firebase.auth().currentUser?.uid as string },
+    pause: !firebase.auth().currentUser,
+  });
+  const me = data?.user?.[0];
+  if (!me) return null;
   return (
     <Box>
       {me.id}
       {me.name}
     </Box>
   );
-});
+};
 
 export default HomeScreen;

@@ -3,9 +3,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Anchor, Box } from "grommet";
 import { Block, BlockResult, JSONparse } from "@testy/shared";
 import { Link, useParams } from "react-router-dom";
-import { gql, useQuery } from "@apollo/client";
 import styled from "styled-components";
 
+import { useGetPathByIdQuery } from "../../generated/graphql";
 import BlockDetail from "./BlockDetail";
 
 export interface BlockWithAllData extends Block, BlockResult {
@@ -19,27 +19,7 @@ const PathResultsScreen: React.FC = () => {
     runPathId: string;
   }>();
   const pathId = +params.runPathId;
-  const { data } = useQuery(
-    gql`
-      query($id: bigint!) {
-        run_path_by_pk(id: $id) {
-          id
-          blocks_count
-          blocks_success
-          blocks_failed
-          blocks_blocked
-          edges
-          credits
-          started_at
-          finished_at
-          run {
-            graph
-          }
-        }
-      }
-    `,
-    { variables: { id: pathId } }
-  );
+  const [{ data }] = useGetPathByIdQuery({ variables: { id: pathId } });
   const [active, setActive] = useState<string>("");
 
   const edges: BlockWithAllData[] = useMemo(() => {

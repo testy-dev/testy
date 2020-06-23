@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import { Box, Button, Heading, Layer, Text, TextInput } from "grommet";
 import { Configure, Trash } from "grommet-icons";
-import {
-  ProjectSettings as ProjectSettingsType,
-  Resolution,
-} from "@testy/shared";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { Resolution } from "@testy/shared";
 import { useLocalStore, useObserver } from "mobx-react-lite";
+import {
+  useProjectByIdQuery,
+  useUpdateProjectMutation,
+} from "../../generated/graphql";
 
 const defaultResolution = { width: 800, height: 600 };
 
@@ -27,42 +27,22 @@ const ProjectSettings: React.FC<Props> = ({ projectId }) => {
     },
   }));
 
-  const { data } = useQuery(
-    gql`
-      query($id: Int!) {
-        project_by_pk(id: $id) {
-          settings
-        }
-      }
-    `,
-    { variables: { id: projectId }, skip: projectId === null || !show }
-  );
+  const [{ data }] = useProjectByIdQuery({
+    variables: { id: projectId as number },
+    pause: projectId === null || !show,
+  });
 
   useEffect(() => {
     if (data?.project_by_pk?.settings)
       settings.resolutions = data.project_by_pk.settings?.resolutions ?? [];
   }, [data?.project_by_pk?.settings, settings]);
 
-  const [updateSettings] = useMutation<
-    any,
-    { id: number; settings: ProjectSettingsType }
-  >(
-    gql`
-      mutation($id: Int!, $settings: jsonb!) {
-        update_project_by_pk(
-          pk_columns: { id: $id }
-          _set: { settings: $settings }
-        ) {
-          id
-        }
-      }
-    `
-  );
-
+  const [, updateProject] = useUpdateProjectMutation();
   const handleSave = async () => {
     if (projectId) {
-      await updateSettings({
-        variables: { id: projectId, settings: settings },
+      await updateProject({
+        projectId,
+        data: { settings },
       });
       setShow(false);
     }

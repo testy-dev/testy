@@ -1,0 +1,14 @@
+query getPathByID($id: bigint!) {
+  run_path_by_pk(id: $id) {
+    id
+    blocks_count
+    blocks_success
+    blocks_failed
+    edges
+    started_at
+    finished_at
+    run {
+      graph
+    }
+  }
+}

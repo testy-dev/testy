@@ -1,0 +1,24 @@
+query getOrganizations {
+  organization {
+    id
+    slug
+    name
+    projects {
+      id
+      slug
+      name
+    }
+  }
+}
+
+mutation createOrganization($input: organization_insert_input!) {
+  insert_organization_one(object: $input) {
+    id
+  }
+}
+
+mutation createProject($input: project_insert_input!) {
+  insert_project_one(object: $input) {
+    id
+  }
+}

@@ -1,0 +1,15 @@
+query getMeByFirebase($firebase_id: String!) {
+  user(where: { firebase_id: { _eq: $firebase_id } }) {
+    id
+    name
+  }
+}
+
+mutation createUser($name: String!) {
+  insert_user(objects: { name: $name }) {
+    returning {
+      id
+      name
+    }
+  }
+}

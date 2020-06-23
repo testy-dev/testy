@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 
 import { Box, Button, Heading, Layer, Text, TextInput } from "grommet";
 import { PlayFill, Trash } from "grommet-icons";
-import { Resolution, RunSettings } from "@testy/shared";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { Resolution } from "@testy/shared";
 import { useLocalStore, useObserver } from "mobx-react-lite";
+
+import {
+  useCreateRunMutation,
+  useProjectByIdQuery,
+} from "../../generated/graphql";
 
 interface Props {
   projectId: number | null;
@@ -22,49 +26,24 @@ const TriggerRunButton: React.FC<Props> = ({ projectId }) => {
     },
   }));
 
-  const { data } = useQuery(
-    gql`
-      query($id: Int!) {
-        project_by_pk(id: $id) {
-          settings
-        }
-      }
-    `,
-    { variables: { id: projectId }, skip: projectId === null || !show }
-  );
+  const [{ data }] = useProjectByIdQuery({
+    variables: { id: projectId as number },
+    pause: projectId === null || !show,
+  });
 
   useEffect(() => {
     if (data?.project_by_pk?.settings)
       settings.resolutions = data.project_by_pk.settings?.resolutions ?? [];
   }, [data?.project_by_pk?.settings, settings]);
 
-  const [runProject] = useMutation<
-    any,
-    { id: number; run_by_user: number; settings: RunSettings }
-  >(
-    gql`
-      mutation($id: Int!, $run_by_user: Int!, $settings: jsonb) {
-        insert_run_one(
-          object: {
-            project_id: $id
-            run_by_user: $run_by_user
-            settings: $settings
-          }
-        ) {
-          id
-        }
-      }
-    `
-  );
+  const [, runProject] = useCreateRunMutation();
 
   const handleRun = async () => {
     if (projectId) {
       await runProject({
-        variables: {
-          id: projectId,
-          run_by_user: 1,
-          settings: settings,
-        },
+        projectId,
+        run_by_user: 1,
+        settings: settings,
       });
       setShow(false);
     }
