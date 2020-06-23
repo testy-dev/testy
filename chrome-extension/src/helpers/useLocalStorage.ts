@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Block, Edge, RecState, UUID } from "@testy/shared";
 
-type Data = {
+export type Data = {
   blocks: Block[];
   edges: Edge[];
   activeBlock: UUID | null;
