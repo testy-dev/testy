@@ -1,4 +1,5 @@
 import { Block, Edge, RecState, UUID } from "@testy/shared";
+import { Data } from "@testy/chrome-ext/helpers/useLocalStorage";
 
 export interface StorageValues {
   projectName?: string;
@@ -54,7 +55,7 @@ export async function pushBlock(newBlock: Block): Promise<Block> {
     "activeBlock",
     "blocks",
     "edges",
-  ])) as { activeBlock: UUID | null; blocks: Block[]; edges: Edge[] };
+  ])) as Omit<Data, "status">;
 
   let last: Block | undefined;
 
