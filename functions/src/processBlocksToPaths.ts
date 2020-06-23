@@ -125,10 +125,13 @@ mutation ($objects: [run_path_insert_input!]!) {
         run_id,
         edges: path.edges,
         settings: path.settings,
-        blocks_count: path.edges.length,
       })),
     }
   );
+
+  if (mutation?.errors?.length) {
+    console.error("Insert path error", mutation.errors);
+  }
 
   return mutation?.data?.insert_run_path?.affected_rows;
 }
