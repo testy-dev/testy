@@ -106,7 +106,11 @@ const App: React.FC = () => {
       {
         project: activeProject,
         graph: { blocks, edges },
-        settings: { height: resolution?.height, width: resolution?.width },
+        settings: {
+          resolutions: [
+            { height: resolution?.height, width: resolution?.width },
+          ],
+        },
       }
     );
     if (result?.data?.update_project?.affected_rows === 1) {
