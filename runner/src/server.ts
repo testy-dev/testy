@@ -1,6 +1,7 @@
 import { Storage } from "@google-cloud/storage";
 import { createServer } from "http";
 import { emptyDir } from "fs-extra";
+import { v4 as uuid } from "uuid";
 import debug from "debug";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
@@ -29,6 +30,7 @@ const runnerDebug = debug("runner");
 const uploadDebug = runnerDebug.extend("upload");
 const requestDebug = runnerDebug.extend("http-server");
 const resultsDebug = runnerDebug.extend("results");
+const instanceID = uuid();
 
 (async function () {
   const storage = new Storage();
@@ -38,7 +40,7 @@ const resultsDebug = runnerDebug.extend("results");
     let body = [];
     req
       .on("data", chunk => {
-        requestDebug("Connection opened");
+        requestDebug("Connection opened, instance %s", instanceID);
         body.push(chunk);
       })
       .on("end", async () => {
@@ -139,6 +141,8 @@ const resultsDebug = runnerDebug.extend("results");
           },
         };
 
+        await page.close();
+
         resultsDebug(
           "Send results to hasura endpoint %s %O",
           GRAPHQL_ENDPOINT,
@@ -160,14 +164,25 @@ const resultsDebug = runnerDebug.extend("results");
           resultsDebug("done, response %O", resultJson);
         }
 
-        await page.close();
+        body = [];
 
+        // Send result on end
         resp.statusCode = 200;
-        resp.end(() => {
-          body = [];
-          requestDebug("connection closed");
-        });
+        await new Promise(resolve =>
+          resp.write(
+            JSON.stringify({
+              status: "OK",
+              path: path.id,
+              instance: instanceID,
+              started_at: new Date(tsBeforeTests),
+              finished_at: new Date(tsAfterTests),
+            }),
+            resolve
+          )
+        );
+        await new Promise(resolve => resp.end(resolve));
+        requestDebug("connection closed, instance %s", instanceID);
       });
   }).listen(8080);
-  requestDebug("Ready to request on port 8080");
+  requestDebug("Instance %s, ready to request on port 8080", instanceID);
 })();
