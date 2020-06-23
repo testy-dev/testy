@@ -50,16 +50,16 @@ export async function reset() {
  * @param newBlock
  */
 export async function pushBlock(newBlock: Block): Promise<Block> {
-  const { active = null, blocks = [], edges = [] } = (await read([
-    "active",
+  const { activeBlock = null, blocks = [], edges = [] } = (await read([
+    "activeBlock",
     "blocks",
     "edges",
-  ])) as { active: UUID | null; blocks: Block[]; edges: Edge[] };
+  ])) as { activeBlock: UUID | null; blocks: Block[]; edges: Edge[] };
 
   let last: Block | undefined;
 
-  if (active) {
-    last = blocks.find(b => b.id === active);
+  if (activeBlock) {
+    last = blocks.find(b => b.id === activeBlock);
 
     // If last and actual block is type to same element => add type value to previous block
     if (
@@ -75,7 +75,7 @@ export async function pushBlock(newBlock: Block): Promise<Block> {
     }
 
     // If last block is click and actual is type to same element => remove click and add type
-    const edgesToLast = edges.filter(e => e[1] === active);
+    const edgesToLast = edges.filter(e => e[1] === activeBlock);
     if (
       last &&
       last.command === "click" &&

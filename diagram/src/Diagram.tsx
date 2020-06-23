@@ -207,9 +207,7 @@ const Diagram: React.FC<DiagramProps> = ({
               hover={hoverBlock === block.id}
               onClick={() => {
                 onSelectBlock(block.id);
-                if (edgeFrom) {
-                  handleCreateEdge(block.id);
-                }
+                if (edgeFrom) handleCreateEdge(block.id);
               }}
               onMouseEnter={() => onMouseEnter(block.id)}
               onMouseLeave={() => onMouseLeave()}
@@ -301,7 +299,7 @@ interface RenderBlockProps
   extends Partial<Konva.CircleConfig>,
     KonvaNodeEvents {
   active: boolean;
-  block: Block & { state?: DiagramBlockState };
+  block: Block & { status?: DiagramBlockState };
   position: dagre.Node;
   onClick: () => void;
   hover: boolean;
@@ -321,8 +319,8 @@ const RenderBlock: React.FC<RenderBlockProps> = ({
       y={position.y}
       radius={active ? 12 : 10}
       fill={
-        block?.state
-          ? getStateColor(block.state)
+        block?.status
+          ? getStateColor(block.status)
           : getCommandColor(block.command)
       }
       strokeWidth={hover || active ? 3 : 0}
