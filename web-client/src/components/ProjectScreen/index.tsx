@@ -15,6 +15,7 @@ import {
 import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
 import ProjectSettings from "./ProjectSettings";
+import ResultsChart from "./ResultsChart";
 import TriggerRunButton from "./TriggerRunButton";
 import getDiagramBlocksState from "./getDiagramBlocksState";
 
@@ -39,6 +40,7 @@ const ProjectScreen: React.FC = () => {
         <Logo />
         <Suspense fallback="Loading ...">
           <ProjectHeader orgSlug={orgSlug} projectSlug={projectSlug} />
+          <ResultsChart orgSlug={orgSlug} projectSlug={projectSlug} />
           <ProjectHistory
             orgSlug={orgSlug}
             projectSlug={projectSlug}
