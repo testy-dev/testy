@@ -2,8 +2,11 @@ import { Storage } from "@google-cloud/storage";
 import { createServer } from "http";
 import { emptyDir } from "fs-extra";
 import debug from "debug";
+import dotenv from "dotenv";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer";
+
+dotenv.config();
 
 import { Block, BlockResult, PathSettings } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
@@ -46,8 +49,6 @@ const resultsDebug = runnerDebug.extend("results");
         const path = JSON.parse(data).event.data.new;
         const edges: Block[] = path.edges;
         requestDebug("Edges %O", edges);
-
-        resp.statusCode = 200;
 
         const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
         const page = await newPageWithNewContext(browser);
@@ -135,13 +136,6 @@ const resultsDebug = runnerDebug.extend("results");
             edges: statedResults,
             started_at: new Date(tsBeforeTests),
             finished_at: new Date(tsAfterTests),
-            credits: Math.ceil((tsAfterTests - tsBeforeTests) / 1000),
-            blocks_count: statedResults.length,
-            blocks_success: statedResults.filter(r => r.status === "success")
-              .length,
-            blocks_failed: statedResults.filter(r => r.status === "failed")
-              .length,
-            blocks_blocked: 0,
           },
         };
 
@@ -160,11 +154,15 @@ const resultsDebug = runnerDebug.extend("results");
         });
 
         const resultJson = await gqlResult.json();
-
-        resultsDebug("done, response %O", resultJson);
+        if (resultJson && resultJson.errors) {
+          console.error("Cannot save results", resultJson.errors);
+        } else {
+          resultsDebug("done, response %O", resultJson);
+        }
 
         await page.close();
 
+        resp.statusCode = 200;
         resp.end(() => {
           body = [];
           requestDebug("connection closed");

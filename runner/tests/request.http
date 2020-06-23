@@ -1,0 +1,45 @@
+POST http://localhost:8080/
+Content-Type: application/json
+
+{
+  "event": {
+    "session_variables": {
+      "x-hasura-role": "admin"
+    },
+    "op": "INSERT",
+    "data": {
+      "old": null,
+      "new": {
+        "settings": {
+          "resolution": {
+            "height": 1080,
+            "width": 1920
+          }
+        },
+        "finished_at": null,
+        "id": 475,
+        "edges": [
+          {
+            "command": "visit",
+            "id": "d3323d5f-9efc-406f-8768-69e2fd23f1fd",
+            "parameter": "http://todomvc.com/examples/vanilladart/build/web/#/active"
+          },
+          {
+            "command": "visit",
+            "id": "92bbfd67-5f71-4914-8032-fc3d821c6494",
+            "parameter": "http://todomvc.com/examples/vanilladart/build/web/#/active"
+          },
+          {
+            "command": "click",
+            "selector": "h1",
+            "id": "923d160a-83ba-465c-8149-08e11dcafbd9"
+          }
+        ],
+        "started_at": "2020-06-23T14:19:28.330913+00:00",
+        "run_id": 98
+      }
+    }
+  }
+}
+
+###
