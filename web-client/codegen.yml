@@ -1,0 +1,16 @@
+overwrite: true
+schema: "../graphql-user/schema.graphql"
+documents: "src/**/*.graphql"
+generates:
+  src/generated/graphql.ts:
+    config:
+      withComponent: false
+      withHooks: true
+      documentMode: documentNodeImportFragments
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-urql"
+#  ./graphql.schema.json:
+#    plugins:
+#      - "introspection"

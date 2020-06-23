@@ -16,6 +16,7 @@ subscription projectRuns($projectSlug: String!, $orgSlug: String!) {
       id
       started_at
       graph
+      blocks_runned
       paths(order_by: { id: asc }) {
         id
         edges

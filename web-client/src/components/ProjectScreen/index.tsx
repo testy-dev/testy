@@ -7,11 +7,12 @@ import { Link, useParams } from "react-router-dom";
 import TimeAgo from "react-timeago";
 import styled from "styled-components";
 
-import { usePrevious } from "../../hooks";
 import {
+  ProjectRunsSubscription,
   useProjectBySlugQuery,
   useProjectRunsSubscription,
 } from "../../generated/graphql";
+import { usePrevious } from "../../hooks";
 import Logo from "../Logo";
 import ProjectSettings from "./ProjectSettings";
 import TriggerRunButton from "./TriggerRunButton";
@@ -101,7 +102,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
   onOpenRun,
   onHoverPath,
 }) => {
-  const [{ data, fetching }] = useProjectRunsSubscription({
+  const [{ data }] = useProjectRunsSubscription({
     variables: { orgSlug, projectSlug },
   });
   const previousData = usePrevious(data);
@@ -131,7 +132,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
     }
   }, [onOpenRun, openedRun, previousProject?.graph, project?.graph]);
 
-  if (fetching) return <Text>Loading...</Text>;
+  // if (fetching) return <Text>Loading...</Text>;
   if (!project) return <Text>Not found</Text>;
 
   return (
@@ -144,32 +145,32 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
       >
         Actual blocks
       </Box>
-      {project.run.map((run: any) => {
+      {project.run.map(run => {
         const opened = run.id === openedRun;
-        const sum = run?.paths_aggregate?.aggregate?.sum;
         return (
           <Box
             key={run.id}
             background="light-1"
             pad="small"
             onClick={() => handleOpen(run)}
-            border={{
-              side: "left",
-              size: "medium",
-              color: getStatus(
-                sum.blocks_success,
-                sum.blocks_failed,
-                sum.blocks_count
-              ),
-            }}
+            // border={{
+            //   side: "left",
+            //   size: "medium",
+            //   color: getStatus(
+            //     sum.blocks_success,
+            //     sum.blocks_failed,
+            //     sum.blocks_count
+            //   ),
+            // }}
           >
             <Box direction="row" justify="between">
+              {/*<Text>*/}
+              {/*  {Math.round((sum?.blocks_success / sum?.blocks_count) * 100)}% -{" "}*/}
+              {/*  {sum?.blocks_failed} fails*/}
+              {/*</Text>*/}
               <Text>
-                {Math.round((sum?.blocks_success / sum?.blocks_count) * 100)}% -{" "}
-                {sum?.blocks_failed} fails
-              </Text>
-              <Text>
-                {sum?.credits ?? 0} credits, <TimeAgo date={run.started_at} />
+                {run.blocks_runned} runned blocks,{" "}
+                <TimeAgo date={run.started_at} />
               </Text>
             </Box>
             <Text>
@@ -186,7 +187,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
 };
 
 const RunPaths: React.FC<{
-  run: any;
+  run: ProjectRunsSubscription["project"][0]["run"][0];
   onHoverPath: (path: string[]) => void;
 }> = ({ run, onHoverPath }) => {
   const { orgSlug, projectSlug } = useParams<{
@@ -195,14 +196,14 @@ const RunPaths: React.FC<{
   }>();
 
   const blocks: Block[] = run.graph?.blocks ?? [];
-  const failingBlocks: (Block & BlockResult)[] = run.paths
-    .flatMap((path: any) => {
+  const failingBlocks = run.paths
+    .flatMap(path => {
       const edges = JSONparse(path.edges);
       return (
         edges.find((result: BlockResult) => result?.status === "failed") || []
       );
     })
-    .map((result: BlockResult) => ({
+    .map(result => ({
       ...result,
       ...blocks.find(b => b.id === result.id),
     }));
@@ -213,29 +214,31 @@ const RunPaths: React.FC<{
           {result.command} {result?.parameter} {result?.selector} {result?.msg}
         </Text>
       ))}
-      {run.paths.map((path: any) => (
-        <Link
-          key={path.id + "path"}
-          to={`/${orgSlug}/${projectSlug}/${path.id}`}
-        >
-          <PathLine
-            color={getStatus(
-              path.blocks_success,
-              path.blocks_failed,
-              path.blocks_count
-            )}
-            onMouseEnter={() =>
-              onHoverPath(
-                JSONparse(path.edges).map((result: BlockResult) => result.id)
-              )
-            }
+      {run.paths.map(path => {
+        const success = path.blocks_success ?? 0;
+        const failed = path.blocks_failed ?? 0;
+        const count = path.blocks_count ?? 0;
+        const executed = success + failed;
+        const blocked = count - executed;
+        return (
+          <Link
+            key={path.id + "path"}
+            to={`/${orgSlug}/${projectSlug}/${path.id}`}
           >
-            path #{path.id} - {path?.blocks_count} blocks (
-            {path?.blocks_success} success, {path?.blocks_failed} failed,{" "}
-            {path?.blocks_blocked} blocked), {path?.credits} credits
-          </PathLine>
-        </Link>
-      ))}
+            <PathLine
+              color={getStatus(success, failed, count)}
+              onMouseEnter={() =>
+                onHoverPath(
+                  JSONparse(path.edges).map((result: BlockResult) => result.id)
+                )
+              }
+            >
+              path #{path.id} - {path?.blocks_count} blocks ({success} success,{" "}
+              {failed} failed, {blocked} blocked), {executed} executed blocks
+            </PathLine>
+          </Link>
+        );
+      })}
     </div>
   );
 };

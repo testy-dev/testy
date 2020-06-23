@@ -27,3 +27,4 @@ schema.graphql
 /.parcel-cache
 
 .env
+/src/generated
