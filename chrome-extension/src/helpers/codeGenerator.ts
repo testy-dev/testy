@@ -1,6 +1,16 @@
 import { Block, EventType, ParsedEvent } from "@testy/shared";
 import { v4 } from "uuid";
 
+const SpecialKeys = new Map([
+  ["Backspace", "backspace"],
+  ["Escape", "esc"],
+  ["ArrowUp", "uparrow"],
+  ["ArrowRight", "rightarrow"],
+  ["ArrowDown", "downarrow"],
+  ["ArrowLeft", "leftarrow"],
+  ["Enter", "enter"],
+]);
+
 /**
  * Helper functions that handle each action type.
  * @param event
@@ -12,18 +22,9 @@ function handleClick(event: ParsedEvent): Block {
     command: "click",
     selector: event.selector,
     parentsSelectors: event.parentSelectors,
+    dimensions: event.dimensions,
   };
 }
-
-const SpecialKeys = new Map([
-  ["Backspace", "backspace"],
-  ["Escape", "esc"],
-  ["ArrowUp", "uparrow"],
-  ["ArrowRight", "rightarrow"],
-  ["ArrowDown", "downarrow"],
-  ["ArrowLeft", "leftarrow"],
-  ["Enter", "enter"],
-]);
 
 function handleKeydown(event: ParsedEvent): Block | null {
   const key = event.key ?? "";
@@ -35,6 +36,7 @@ function handleKeydown(event: ParsedEvent): Block | null {
     selector: event.selector,
     parameter: SpecialKeys.has(key) ? `{${SpecialKeys.get(key)}}` : key,
     parentsSelectors: event.parentSelectors,
+    dimensions: event.dimensions,
   };
 }
 
@@ -48,6 +50,7 @@ function handleChange(event: ParsedEvent): Block | null {
     selector: event.selector,
     parameter: event.value.replace(/'/g, "\\'"),
     parentsSelectors: event.parentSelectors,
+    dimensions: event.dimensions,
   };
 }
 
@@ -57,6 +60,7 @@ function handleDoubleclick(event: ParsedEvent): Block {
     command: "dblclick",
     selector: event.selector,
     parentsSelectors: event.parentSelectors,
+    dimensions: event.dimensions,
   };
 }
 
@@ -66,6 +70,7 @@ function handleSubmit(event: ParsedEvent): Block {
     command: "submit",
     selector: event.selector,
     parentsSelectors: event.parentSelectors,
+    dimensions: event.dimensions,
   };
 }
 
@@ -77,6 +82,7 @@ function handleSelect(event: ParsedEvent): Block | null {
     selector: event.selector,
     parameter: event.selectedText,
     parentsSelectors: event.parentSelectors,
+    dimensions: event.dimensions,
   };
 }
 
