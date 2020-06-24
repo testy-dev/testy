@@ -8,6 +8,7 @@ import fetch from "node-fetch";
 import puppeteer from "puppeteer";
 
 dotenv.config();
+debug.enable(process.env.DEBUG || "");
 
 import { Block, BlockResult, PathSettings } from "@testy/shared";
 import { checkContainsText, click, type, visit } from "./modules";
