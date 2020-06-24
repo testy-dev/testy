@@ -1,5 +1,8 @@
 overwrite: true
-schema: "../graphql-user/schema.graphql"
+schema:
+  - ${REACT_APP_GRAPHQL_ENDPOINT}:
+      headers:
+        x-hasura-admin-secret: ${HASURA_ADMIN_SECRET}
 documents: "src/**/*.graphql"
 generates:
   src/generated/graphql.ts:
@@ -11,6 +14,6 @@ generates:
       - "typescript"
       - "typescript-operations"
       - "typescript-urql"
-#  ./graphql.schema.json:
-#    plugins:
-#      - "introspection"
+  ./schema.graphql:
+    plugins:
+      - "schema-ast"

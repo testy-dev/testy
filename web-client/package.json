@@ -35,14 +35,16 @@
     "uuid": "^8.1.0"
   },
   "scripts": {
-    "start": "parcel public/index.html",
-    "build": "node build.js",
+    "start": "concurrently npm:generate:watch npm:build:watch",
+    "build": "yarn generate && yarn build:parcel",
     "build:parcel": "parcel build public/index.html",
+    "build:watch": "parcel public/index.html",
+    "build:esbuild": "node build.js",
     "deploy": "yarn build && yarn firebase deploy --only hosting",
     "test": "react-scripts test",
     "lint": "yarn eslint src/**",
     "lint:fix": "yarn eslint --fix src/**",
-    "generate": "graphql-codegen --config codegen.yml",
+    "generate": "graphql-codegen -r dotenv/config --config codegen.yml",
     "generate:watch": "graphql-codegen --config codegen.yml -w"
   },
   "browserslist": {
@@ -58,9 +60,8 @@
     ]
   },
   "devDependencies": {
-    "@gqless/cli": "^0.0.1-alpha.30",
     "@graphql-codegen/cli": "1.15.4",
-    "@graphql-codegen/introspection": "1.15.4",
+    "@graphql-codegen/schema-ast": "^1.15.4",
     "@graphql-codegen/typescript": "^1.15.4",
     "@graphql-codegen/typescript-operations": "1.15.4",
     "@graphql-codegen/typescript-urql": "^1.15.4",
@@ -69,6 +70,7 @@
     "@types/react-timeago": "^4.1.1",
     "@types/recharts": "^1.8.12",
     "@types/uuid": "^8.0.0",
+    "concurrently": "^5.2.0",
     "dotenv": "^8.2.0",
     "esbuild": "^0.5.12",
     "parcel": "^1.12.4"
