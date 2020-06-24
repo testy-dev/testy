@@ -50,6 +50,7 @@ const App: React.FC = () => {
   const storage = useLocalStorage();
   const [path, setPath] = useState<string[]>([]);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
+  const [screen, setScreen] = useState<string | null>(null);
   const authState = useFirebaseAuthState();
 
   // Update path on change incoming data
@@ -65,7 +66,20 @@ const App: React.FC = () => {
   }, [path, storage]);
 
   const handleSelectBlock = async (blockID: UUID | null) => {
-    if (blockID) setPath(createPath(storage.edges, path, blockID));
+    if (blockID) {
+      setPath(createPath(storage.edges, path, blockID));
+
+      const pathId = (pastRuns?.project_by_pk?.run ?? []).find((run: any) =>
+        (run?.paths ?? []).find((path: any) =>
+          (path?.edges ?? []).find((edge: any) => edge?.id === blockID)
+        )
+      );
+      setScreen(
+        `https://storage.googleapis.com/testyx.appspot.com/paths/${
+          pathId?.paths[0]?.id ?? ""
+        }/${blockID}.jpg`
+      );
+    }
     await write({ activeBlock: blockID });
   };
 
@@ -132,6 +146,7 @@ const App: React.FC = () => {
                   run {
                     id
                     paths {
+                      id
                       edges
                     }
                   }
@@ -147,6 +162,7 @@ const App: React.FC = () => {
       }
     } else {
       setViewType("draft");
+      setScreen(null);
       setPastEdges(undefined);
       setPastBlocks(undefined);
     }
@@ -229,6 +245,10 @@ const App: React.FC = () => {
                 id #{run.id} - no. of paths: {run.paths.length}
               </div>
             ))}
+        <img
+          src={screen ?? ""}
+          style={{ maxWidth: "100%", maxHeight: "100%" }}
+        />
       </Column>
     </Root>
   );

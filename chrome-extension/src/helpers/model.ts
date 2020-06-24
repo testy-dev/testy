@@ -7,6 +7,7 @@ export interface StorageValues {
   activeBlock?: UUID | null;
   blocks?: Block[];
   edges?: Edge[];
+  resolution?: { width: number; height: number };
 }
 
 export function read(

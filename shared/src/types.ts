@@ -62,6 +62,7 @@ export interface Block {
   parameter?: string;
   selector?: string;
   parentsSelectors?: string[];
+  dimensions?: { width: number; height: number; x?: number; y?: number };
 }
 
 export interface Selector {

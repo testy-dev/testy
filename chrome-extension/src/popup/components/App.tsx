@@ -89,12 +89,16 @@ const App: React.FC = () => {
   };
 
   const handleSave = async () => {
-    const { blocks = [], edges = [] } = await read(["blocks", "edges"]);
+    const { blocks = [], edges = [], resolution } = await read([
+      "blocks",
+      "edges",
+      "resolution",
+    ]);
     // language=graphql
     const result = await callGraphql(
-      `
-        mutation($project: Int!, $graph: jsonb) {
-          update_project(where: {id: {_eq: $project}}, _set: {graph: $graph}) {
+      `          
+        mutation($project: Int!, $graph: jsonb, $settings:jsonb) {
+          update_project(where: {id: {_eq: $project}}, _set: {graph: $graph, settings: $settings}) {
             affected_rows
           }
         }
@@ -102,6 +106,11 @@ const App: React.FC = () => {
       {
         project: activeProject,
         graph: { blocks, edges },
+        settings: {
+          resolutions: [
+            { height: resolution?.height, width: resolution?.width },
+          ],
+        },
       }
     );
     if (result?.data?.update_project?.affected_rows === 1) {

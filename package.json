@@ -9,10 +9,7 @@
     "chrome-extension"
   ],
   "scripts": {
-    "stats": "cloc --exclude-dir=node_modules,lib,out,dist,build ."
-  },
-  "dependencies": {
-    "typescript": "^3.9.2"
+    "stats": "npx cloc --exclude-dir=node_modules,lib,out,dist,build ."
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.32.0",

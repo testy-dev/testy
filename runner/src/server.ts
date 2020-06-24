@@ -87,6 +87,7 @@ const instanceID = uuid();
                 break;
             }
             statedResults[i] = {
+              ...edges[i],
               id,
               started_at,
               finished_at: now(),
@@ -94,6 +95,7 @@ const instanceID = uuid();
             };
           } catch (e) {
             statedResults[i] = {
+              ...edges[i],
               id,
               started_at,
               finished_at: now(),

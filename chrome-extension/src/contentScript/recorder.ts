@@ -11,6 +11,7 @@ import {
   ParsedEvent,
 } from "@testy/shared";
 import { finder } from "@medv/finder";
+import { write } from "../helpers/model";
 
 let port: chrome.runtime.Port;
 let listening = false;
@@ -177,8 +178,14 @@ export default {
   onConnect(p: chrome.runtime.Port) {
     port = p;
   },
-  onMessage(message: ActionWithPayload) {
+  async onMessage(message: ActionWithPayload) {
     if (message.type === ControlAction.START && !listening) {
+      await write({
+        resolution: {
+          height: document.documentElement.clientHeight,
+          width: document.documentElement.clientWidth,
+        },
+      });
       addDOMListeners();
       listening = true;
     }
