@@ -46,6 +46,10 @@ query projectBySlug($projectSlug: String!, $orgSlug: String!) {
     id
     name
     settings
+    organization {
+      id
+      name
+    }
   }
 }
 

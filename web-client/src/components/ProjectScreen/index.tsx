@@ -1,10 +1,11 @@
 import React, { Suspense, useEffect, useState } from "react";
 
 import { Block, BlockResult, Graph, JSONparse } from "@testy/shared";
-import { Box, Heading, Text } from "grommet";
+import { Box, Button, Heading, Text } from "grommet";
 import { Diagram } from "@testy/diagram";
 import { Link, useParams } from "react-router-dom";
 import TimeAgo from "react-timeago";
+import firebase from "firebase/app";
 import styled from "styled-components";
 
 import {
@@ -13,7 +14,6 @@ import {
   useProjectRunsSubscription,
 } from "../../generated/graphql";
 import { usePrevious } from "../../hooks";
-import Logo from "../Logo";
 import ProjectSettings from "./ProjectSettings";
 import ResultsChart from "./ResultsChart";
 import TriggerRunButton from "./TriggerRunButton";
@@ -28,41 +28,72 @@ const ProjectScreen: React.FC = () => {
   const [openedRun, setOpenedRun] = useState<number>(0);
   const [hoverBlock, setHoverBlock] = useState<string | null>(null);
   const [hoverPath, setHoverPath] = useState<string[]>([]);
-  return (
-    <Box direction="row" fill>
-      <Box
-        basis="1/3"
-        flex={false}
-        pad="medium"
-        background="light-3"
-        overflow={{ vertical: "auto" }}
-      >
-        <Logo />
-        <Suspense fallback="Loading ...">
-          <ProjectHeader orgSlug={orgSlug} projectSlug={projectSlug} />
-          <ResultsChart orgSlug={orgSlug} projectSlug={projectSlug} />
-          <ProjectHistory
-            orgSlug={orgSlug}
-            projectSlug={projectSlug}
-            openedRun={openedRun}
-            onOpenRun={(id, graph) => {
-              setOpenedRun(id);
-              setGraph(graph);
-            }}
-            onHoverPath={setHoverPath}
-          />
-        </Suspense>
-      </Box>
 
-      <Diagram
-        blocks={graph?.blocks ?? []}
-        edges={graph?.edges ?? []}
-        hoverBlock={hoverBlock}
-        path={hoverPath}
-        setHoverBlock={setHoverBlock}
-        selected={null}
-        onSelectBlock={() => null}
-      />
+  const [{ data }] = useProjectBySlugQuery({
+    variables: { orgSlug, projectSlug },
+  });
+  const project = data?.project?.[0];
+
+  return (
+    <Box fill>
+      <Box
+        direction="row"
+        background="light-4"
+        pad={{ vertical: "xsmall", horizontal: "small" }}
+        align="center"
+        justify="between"
+      >
+        <Box gap="small" direction="row" align="center">
+          <Heading color="#0B74C2" level={2} margin="none">
+            Testy
+          </Heading>
+          <Heading level={3} margin="none" style={{ fontWeight: "normal" }}>
+            {project?.organization?.name}
+            {" / "}
+            {project?.name}
+          </Heading>
+          <ProjectSettings projectId={project?.id ?? null} />
+          <TriggerRunButton projectId={project?.id ?? null} />
+        </Box>
+        <Button
+          primary
+          label="Log Out"
+          onClick={async () => firebase.auth().signOut()}
+        />
+      </Box>
+      <Box direction="row" fill>
+        <Box
+          basis="1/3"
+          flex={false}
+          pad="medium"
+          background="light-3"
+          overflow={{ vertical: "auto" }}
+        >
+          <Suspense fallback="Loading ...">
+            <ResultsChart orgSlug={orgSlug} projectSlug={projectSlug} />
+            <ProjectHistory
+              orgSlug={orgSlug}
+              projectSlug={projectSlug}
+              openedRun={openedRun}
+              onOpenRun={(id, graph) => {
+                setOpenedRun(id);
+                setGraph(graph);
+              }}
+              onHoverPath={setHoverPath}
+            />
+          </Suspense>
+        </Box>
+
+        <Diagram
+          blocks={graph?.blocks ?? []}
+          edges={graph?.edges ?? []}
+          hoverBlock={hoverBlock}
+          path={hoverPath}
+          setHoverBlock={setHoverBlock}
+          selected={null}
+          onSelectBlock={() => null}
+        />
+      </Box>
     </Box>
   );
 };
@@ -71,25 +102,6 @@ interface SlugInput {
   orgSlug: string;
   projectSlug: string;
 }
-
-const ProjectHeader = ({ projectSlug, orgSlug }: SlugInput) => {
-  const [{ data }] = useProjectBySlugQuery({
-    variables: { orgSlug, projectSlug },
-  });
-  const project = data?.project?.[0];
-  const name = project?.name;
-  const id = project?.id;
-  if (!id) {
-    return <>Project not found</>;
-  }
-  return (
-    <Box direction="row" align="center" justify="between" flex={false}>
-      <Heading level={1}>Project {name}</Heading>
-      <ProjectSettings projectId={id} />
-      <TriggerRunButton projectId={id} />
-    </Box>
-  );
-};
 
 interface ProjectHistoryProps extends SlugInput {
   openedRun: number | null;
