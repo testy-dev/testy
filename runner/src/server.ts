@@ -84,6 +84,7 @@ const resultsDebug = runnerDebug.extend("results");
                 break;
             }
             statedResults[i] = {
+              ...edges[i],
               id,
               started_at,
               finished_at: now(),
@@ -91,6 +92,7 @@ const resultsDebug = runnerDebug.extend("results");
             };
           } catch (e) {
             statedResults[i] = {
+              ...edges[i],
               id,
               started_at,
               finished_at: now(),
