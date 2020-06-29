@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { Anchor, Box } from "grommet";
 import { Block, BlockResult, JSONparse } from "@testy/shared";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
+import useComponentSize from "@rehooks/component-size";
 
 import { useGetPathByIdQuery } from "../../generated/graphql";
 import BlockDetail from "./BlockDetail";
@@ -20,7 +21,15 @@ const PathResultsScreen: React.FC = () => {
   }>();
   const pathId = +params.runPathId;
   const [{ data }] = useGetPathByIdQuery({ variables: { id: pathId } });
-  const [active, setActive] = useState<string>("");
+  const [activeBlock, setActiveBlock] = useState<string>("");
+  const imgRef = useRef<HTMLImageElement>(null);
+  const { width, height } = useComponentSize(imgRef);
+  const widthRatio =
+    width / (data?.run_path_by_pk?.settings?.resolution?.width ?? 0);
+  const heightRatio =
+    height / (data?.run_path_by_pk?.settings?.resolution?.height ?? 0);
+  const [imgX, setImgX] = useState<number>(0);
+  const [imgY, setImgY] = useState<number>(0);
 
   const edges: BlockWithAllData[] = useMemo(() => {
     const results = JSONparse(data?.run_path_by_pk?.edges ?? []);
@@ -38,10 +47,15 @@ const PathResultsScreen: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (!active && edges.length > 0) {
-      setActive(edges[0].id);
+    if (!activeBlock && edges.length > 0) {
+      setActiveBlock(edges[0].id);
     }
-  }, [active, edges]);
+  }, [activeBlock, edges]);
+
+  useEffect(() => {
+    setImgX(imgRef.current?.offsetLeft ?? 0);
+    setImgY(imgRef.current?.offsetTop ?? 0);
+  }, [height, width]);
 
   return (
     <Root>
@@ -54,19 +68,40 @@ const PathResultsScreen: React.FC = () => {
           pad="small"
         >
           <img
-            src={edges?.find(e => e.id === active)?.screenshot}
+            ref={imgRef}
+            src={edges?.find(e => e.id === activeBlock)?.screenshot}
             style={{ maxWidth: "100%", maxHeight: "100%" }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              borderStyle: "solid",
+              width:
+                (edges?.find(e => e.id === activeBlock)?.dimensions?.width ??
+                  0) * widthRatio,
+              height:
+                (edges?.find(e => e.id === activeBlock)?.dimensions?.height ??
+                  0) * heightRatio,
+              top:
+                imgY +
+                (edges?.find(e => e.id === activeBlock)?.dimensions?.y ?? 0) *
+                  heightRatio,
+              left:
+                imgX +
+                (edges?.find(e => e.id === activeBlock)?.dimensions?.x ?? 0) *
+                  widthRatio,
+            }}
           />
         </Box>
         <Box direction="row">
           {edges.map(e => (
             <Box
               key={e.id}
-              onClick={() => setActive(e.id)}
+              onClick={() => setActiveBlock(e.id)}
               pad="medium"
               style={{
                 color: e.status === "success" ? "green" : "red",
-                fontWeight: active === e.id ? "bold" : "normal",
+                fontWeight: activeBlock === e.id ? "bold" : "normal",
               }}
             >
               {e.command}
@@ -79,7 +114,11 @@ const PathResultsScreen: React.FC = () => {
           <Anchor as="span">Back to project overview</Anchor>
         </Link>
         <h1>Testy</h1>
-        <Blocks blocks={edges} active={active} setActive={setActive} />
+        <Blocks
+          blocks={edges}
+          active={activeBlock}
+          setActive={setActiveBlock}
+        />
       </Column>
     </Root>
   );
