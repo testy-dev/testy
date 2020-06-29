@@ -42,11 +42,11 @@ function parseEvent(event: Event): ParsedEvent | null {
   }
 
   const {
-    x,
-    y,
-    height,
-    width,
-  } = (event.target as Element).getBoundingClientRect();
+    offsetLeft: x,
+    offsetTop: y,
+    offsetHeight: height,
+    offsetWidth: width,
+  } = event.target as HTMLElement;
 
   const parsedEvent: ParsedEvent = {
     selector,
