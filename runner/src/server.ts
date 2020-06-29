@@ -66,12 +66,24 @@ const instanceID = uuid();
 
         const tsBeforeTests = now();
         const statedResults: BlockResult[] = [];
+        let blockFailed = false;
 
         for (const [
           i,
           { id, command, parameter, selector, parentsSelectors },
         ] of edges.entries()) {
           const started_at = now();
+
+          if (blockFailed) {
+            statedResults[i] = {
+              ...edges[i],
+              status: "blocked",
+              started_at,
+              finished_at: now(),
+            };
+            continue;
+          }
+
           try {
             switch (command) {
               case "visit":
@@ -101,6 +113,7 @@ const instanceID = uuid();
               status: "failed",
               msg: e.message,
             };
+            blockFailed = true;
           } finally {
             try {
               const pageBody = await page.$("body");

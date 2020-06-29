@@ -48,7 +48,7 @@ export type CommandKey =
 
 export type BlockResult = {
   id: string;
-  status: "failed" | "success";
+  status: "blocked" | "failed" | "success";
   started_at: number;
   finished_at: number;
   msg?: string;
