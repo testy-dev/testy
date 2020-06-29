@@ -89,7 +89,6 @@ const instanceID = uuid();
             }
             statedResults[i] = {
               ...edges[i],
-              id,
               started_at,
               finished_at: now(),
               status: "success",
@@ -97,7 +96,6 @@ const instanceID = uuid();
           } catch (e) {
             statedResults[i] = {
               ...edges[i],
-              id,
               started_at,
               finished_at: now(),
               status: "failed",
@@ -105,10 +103,10 @@ const instanceID = uuid();
             };
           } finally {
             try {
-              await page.screenshot({
+              const pageBody = await page.$("body");
+              await pageBody.screenshot({
                 path: `screenshots/${id}.jpg`,
                 type: "jpeg",
-                fullPage: true,
               });
               await bucket.upload(`screenshots/${id}.jpg`, {
                 destination: `paths/${path.id}/${id}.jpg`,

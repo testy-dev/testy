@@ -74,6 +74,7 @@ const App: React.FC = () => {
           (path?.edges ?? []).find((edge: any) => edge?.id === blockID)
         )
       );
+      console.log(pathId?.paths[0]);
       setScreen(
         `https://storage.googleapis.com/testyx.appspot.com/paths/${
           pathId?.paths[0]?.id ?? ""
@@ -148,6 +149,7 @@ const App: React.FC = () => {
                     paths {
                       id
                       edges
+                      settings
                     }
                   }
                 }
@@ -249,6 +251,7 @@ const App: React.FC = () => {
           src={screen ?? ""}
           style={{ maxWidth: "100%", maxHeight: "100%" }}
         />
+        <div>Resolution is: {}</div>
       </Column>
     </Root>
   );
