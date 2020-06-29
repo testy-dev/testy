@@ -29,6 +29,24 @@ subscription projectRuns($projectSlug: String!, $orgSlug: String!) {
   }
 }
 
+query projectFailedBlocks($projectSlug: String!, $orgSlug: String!) {
+  project(
+    where: {
+      slug: { _eq: $projectSlug }
+      organization: { slug: { _eq: $orgSlug } }
+    }
+  ) {
+    id
+    run(order_by: { started_at: desc }, limit: 1) {
+      id
+      started_at
+      graph
+      blocks_runned
+      failed_blocks
+    }
+  }
+}
+
 query projectByID($id: Int!) {
   project_by_pk(id: $id) {
     id

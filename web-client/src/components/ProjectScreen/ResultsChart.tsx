@@ -68,20 +68,20 @@ const ResultsChart: React.FC<IProps> = ({ orgSlug, projectSlug }) => {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" reversed />
-        <YAxis unit="%" ticks={[0, 25, 50, 75, 100]} />
+        <YAxis unit="%" ticks={[0, 25, 50, 75, 100]} domain={[0, 100]} />
         <YAxis orientation="right" />
         <Tooltip />
         <Area dataKey="failed" fill="#ff0000" stroke="#ff0000" {...lineProps} />
         <Area
-          dataKey="success"
-          fill="#2edd49"
-          stroke="#2edd49"
-          {...lineProps}
-        />
-        <Area
           dataKey="blocked"
           fill="#515552"
           stroke="#515552"
+          {...lineProps}
+        />
+        <Area
+          dataKey="success"
+          fill="#2edd49"
+          stroke="#2edd49"
           {...lineProps}
         />
         <Area dataKey="notRun" fill="#e1e9e3" stroke="#b0b8b2" {...lineProps} />
