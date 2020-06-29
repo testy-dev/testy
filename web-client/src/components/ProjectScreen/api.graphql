@@ -42,7 +42,10 @@ query projectFailedBlocks($projectSlug: String!, $orgSlug: String!) {
       started_at
       graph
       blocks_runned
-      failed_blocks
+      paths {
+        id
+        edges
+      }
     }
   }
 }

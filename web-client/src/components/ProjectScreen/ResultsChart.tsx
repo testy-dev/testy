@@ -40,7 +40,7 @@ const ResultsChart: React.FC<IProps> = ({ orgSlug, projectSlug }) => {
   return (
     <ResponsiveContainer width="50%" minWidth={300} height={300}>
       <AreaChart
-        data={data?.project?.[0].run.map(run => {
+        data={data?.project?.[0]?.run?.map(run => {
           const success: number = run.paths.reduce(
             (acc, path) => acc + (path.blocks_success ?? 0),
             0

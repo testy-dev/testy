@@ -2,6 +2,7 @@ import React from "react";
 
 import { Block, BlockResult } from "@testy/shared";
 import { Box, Text } from "grommet";
+import { useHistory } from "react-router-dom";
 import TimeAgo from "react-timeago";
 import styled from "styled-components";
 
@@ -9,7 +10,7 @@ import { SlugInput } from "./index";
 import { useProjectFailedBlocksQuery } from "../../generated/graphql";
 
 export const FailedBlocks: React.FC<SlugInput> = ({ orgSlug, projectSlug }) => {
-  // const history = useHistory();
+  const history = useHistory();
   const [{ data }] = useProjectFailedBlocksQuery({
     variables: { orgSlug, projectSlug },
   });
@@ -20,34 +21,42 @@ export const FailedBlocks: React.FC<SlugInput> = ({ orgSlug, projectSlug }) => {
   return (
     <Box>
       <Text>
-        {run?.failed_blocks?.length || 0} fails in last run,{" "}
-        <TimeAgo date={run?.started_at} />
+        {run?.paths?.flatMap(path =>
+          path.edges?.filter(edge => edge.status === "failed")
+        )?.length || 0}{" "}
+        fails in last run, <TimeAgo date={run?.started_at} />
       </Text>
       <Box flex={false} direction="row" wrap>
-        {run?.failed_blocks?.map((block: BlockResult) => {
-          const inputBlock: Block = run?.graph?.blocks?.find(
-            (b: Block) => b.id === block.id
-          );
-          return (
-            <FailedBlock
-              key={run.id}
-              // onClick={() => {
-              //   history.push(`${orgSlug}/${projectSlug}/`);
-              // }}
-            >
-              <Text color="#e20b0b" margin={{ bottom: "small" }}>
-                {block.msg}
-              </Text>
-              <Text>Command: {inputBlock.command}</Text>
-              {!!inputBlock?.parameter && (
-                <Text>Parameter: {inputBlock.parameter}</Text>
-              )}
-              {!!inputBlock?.selector && (
-                <Text>Selector: {inputBlock.selector}</Text>
-              )}
-            </FailedBlock>
-          );
-        })}
+        {run?.paths?.flatMap(path =>
+          path.edges
+            ?.filter(edge => edge.status === "failed")
+            .map((block: BlockResult) => {
+              const inputBlock: Block = run?.graph?.blocks?.find(
+                (b: Block) => b.id === block.id
+              );
+              return (
+                <FailedBlock
+                  key={run.id}
+                  onClick={() => {
+                    history.push(
+                      `/${orgSlug}/${projectSlug}/${path.id}#block=${block.id}`
+                    );
+                  }}
+                >
+                  <Text color="#e20b0b" margin={{ bottom: "small" }}>
+                    {block.msg}
+                  </Text>
+                  <Text>Command: {inputBlock?.command}</Text>
+                  {!!inputBlock?.parameter && (
+                    <Text>Parameter: {inputBlock.parameter}</Text>
+                  )}
+                  {!!inputBlock?.selector && (
+                    <Text>Selector: {inputBlock.selector}</Text>
+                  )}
+                </FailedBlock>
+              );
+            })
+        )}
       </Box>
     </Box>
   );
