@@ -10,6 +10,7 @@ import styled from "styled-components";
 
 import {
   ProjectRunsSubscription,
+  useLastRunQuery,
   useProjectBySlugQuery,
   useProjectRunsSubscription,
 } from "../../generated/graphql";
@@ -61,6 +62,10 @@ const ProjectScreen: React.FC = () => {
           onClick={async () => firebase.auth().signOut()}
         />
       </Box>
+      <Box flex={false} align="center" background="light-3" direction="row">
+        <ResultsChart orgSlug={orgSlug} projectSlug={projectSlug} />
+        <SuccessRate orgSlug={orgSlug} projectSlug={projectSlug} />
+      </Box>
       <Box direction="row" fill>
         <Box
           basis="1/3"
@@ -70,7 +75,6 @@ const ProjectScreen: React.FC = () => {
           overflow={{ vertical: "auto" }}
         >
           <Suspense fallback="Loading ...">
-            <ResultsChart orgSlug={orgSlug} projectSlug={projectSlug} />
             <ProjectHistory
               orgSlug={orgSlug}
               projectSlug={projectSlug}
@@ -134,7 +138,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
       console.log("effect update run", run.id);
       onOpenRun(run.id, getDiagramBlocksState(run));
     }
-  }, [onOpenRun, openedRun, previousProject?.run, project?.run]);
+  }, [onOpenRun, openedRun, previousProject, project]);
 
   const handleOpen = (run: any) => {
     onOpenRun(run.id, getDiagramBlocksState(run));
@@ -144,7 +148,7 @@ const ProjectHistory: React.FC<ProjectHistoryProps> = ({
     if (openedRun === 0 && previousProject?.graph !== project?.graph) {
       onOpenRun(0, JSONparse(project?.graph));
     }
-  }, [onOpenRun, openedRun, previousProject?.graph, project?.graph]);
+  }, [onOpenRun, openedRun, previousProject, project]);
 
   // if (fetching) return <Text>Loading...</Text>;
   if (!project) return <Text>Not found</Text>;
@@ -266,5 +270,23 @@ const PathLine = styled(Text)`
 
 const getStatus = (pass: number, fail: number, total: number) =>
   fail > 0 ? "status-error" : pass === total ? "status-ok" : "status-unknown";
+
+const SuccessRate: React.FC<SlugInput> = ({ orgSlug, projectSlug }) => {
+  const [{ data }] = useLastRunQuery({ variables: { orgSlug, projectSlug } });
+  const success = data?.run?.[0]?.paths?.reduce(
+    (acc, path) => acc + (path.blocks_success ?? 0),
+    0
+  );
+  const count = data?.run?.[0]?.paths.reduce(
+    (acc, path) => acc + (path.blocks_count ?? 0),
+    0
+  );
+  return (
+    <span>
+      Last success rate:{" "}
+      {success && count && count > 0 ? Math.round((success * 100) / count) : 0}%
+    </span>
+  );
+};
 
 export default ProjectScreen;
