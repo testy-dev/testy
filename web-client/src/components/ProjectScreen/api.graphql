@@ -12,7 +12,7 @@ subscription projectRuns($projectSlug: String!, $orgSlug: String!) {
         count
       }
     }
-    run(order_by: { started_at: desc }, limit: 5) {
+    run(order_by: { started_at: desc }, limit: 10) {
       id
       started_at
       graph
@@ -23,6 +23,28 @@ subscription projectRuns($projectSlug: String!, $orgSlug: String!) {
         blocks_count
         blocks_success
         blocks_failed
+        finished_at
+      }
+    }
+  }
+}
+
+query projectFailedBlocks($projectSlug: String!, $orgSlug: String!) {
+  project(
+    where: {
+      slug: { _eq: $projectSlug }
+      organization: { slug: { _eq: $orgSlug } }
+    }
+  ) {
+    id
+    run(order_by: { started_at: desc }, limit: 1) {
+      id
+      started_at
+      graph
+      blocks_runned
+      paths {
+        id
+        edges
       }
     }
   }
@@ -46,6 +68,31 @@ query projectBySlug($projectSlug: String!, $orgSlug: String!) {
     id
     name
     settings
+    organization {
+      id
+      name
+    }
+  }
+}
+
+query lastRun($projectSlug: String!, $orgSlug: String!) {
+  run(
+    where: {
+      project: {
+        slug: { _eq: $projectSlug }
+        organization: { slug: { _eq: $orgSlug } }
+      }
+    }
+    order_by: { started_at: desc }
+    limit: 1
+  ) {
+    id
+    paths {
+      id
+      blocks_count
+      blocks_success
+      blocks_failed
+    }
   }
 }
 
