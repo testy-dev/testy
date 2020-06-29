@@ -153,8 +153,6 @@ function executeBlockLocally(block: Block): void {
         }
       }
       break;
-    case "submit":
-      break;
     case "check-contains-text":
       doc = document.querySelector(block.selector as string);
       const result =

@@ -34,7 +34,6 @@ export const Commands = {
   click: "Click",
   dblclick: "Double click",
   type: "Type",
-  submit: "Submit",
   "check-contains-text": "Contains text",
 };
 
@@ -43,7 +42,6 @@ export type CommandKey =
   | "click"
   | "dblclick"
   | "type"
-  | "submit"
   | "check-contains-text";
 
 export type BlockResult = {

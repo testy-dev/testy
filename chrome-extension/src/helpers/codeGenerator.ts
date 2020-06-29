@@ -64,16 +64,6 @@ function handleDoubleclick(event: ParsedEvent): Block {
   };
 }
 
-function handleSubmit(event: ParsedEvent): Block {
-  return {
-    id: v4(),
-    command: "submit",
-    selector: event.selector,
-    parentsSelectors: event.parentSelectors,
-    dimensions: event.dimensions,
-  };
-}
-
 function handleSelect(event: ParsedEvent): Block | null {
   if (!event.selectedText) return null;
   return {
@@ -97,8 +87,6 @@ export default {
         return handleChange(event);
       case EventType.DBCLICK:
         return handleDoubleclick(event);
-      case EventType.SUBMIT:
-        return handleSubmit(event);
       case EventType.MOUSEUP:
         return handleSelect(event);
       default:
