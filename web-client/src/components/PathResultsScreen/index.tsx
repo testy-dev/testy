@@ -40,11 +40,7 @@ const PathResultsScreen: React.FC = () => {
       ...blocks.find((block: Block) => block.id === result.id),
       screenshot: `https://storage.googleapis.com/testyx.appspot.com/paths/${pathId}/${result.id}.jpg`,
     }));
-  }, [
-    data?.run_path_by_pk?.edges,
-    data?.run_path_by_pk?.run?.graph?.blocks,
-    pathId,
-  ]);
+  }, [data, pathId]);
 
   useEffect(() => {
     if (!activeBlock && edges.length > 0) {
@@ -59,7 +55,7 @@ const PathResultsScreen: React.FC = () => {
 
   return (
     <Root>
-      <Box flex="shrink">
+      <Box flex={true}>
         <Box
           flex="grow"
           justify="center"
