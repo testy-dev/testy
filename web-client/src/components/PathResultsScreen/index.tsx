@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { Anchor, Box } from "grommet";
 import { Block, BlockResult, JSONparse } from "@testy/shared";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import useComponentSize from "@rehooks/component-size";
 
@@ -19,6 +19,7 @@ const PathResultsScreen: React.FC = () => {
     projectSlug: string;
     runPathId: string;
   }>();
+  const { hash } = useLocation();
   const pathId = +params.runPathId;
   const [{ data }] = useGetPathByIdQuery({ variables: { id: pathId } });
   const [activeBlock, setActiveBlock] = useState<string>("");
@@ -56,6 +57,13 @@ const PathResultsScreen: React.FC = () => {
     setImgX(imgRef.current?.offsetLeft ?? 0);
     setImgY(imgRef.current?.offsetTop ?? 0);
   }, [height, width]);
+
+  useEffect(() => {
+    if (hash.startsWith("#block=")) {
+      const [, hashBlockId] = hash.split("=");
+      setActiveBlock(hashBlockId);
+    }
+  }, [hash]);
 
   return (
     <Root>

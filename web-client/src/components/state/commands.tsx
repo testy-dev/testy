@@ -4,7 +4,7 @@ import { CommandKey } from "@testy/shared/types";
 import { useLocalStore } from "mobx-react-lite";
 
 const CommandsContext = React.createContext<{
-  commands: CommandKey;
+  commands: CommandKey[];
 } | null>(null);
 
 export const CommandsProvider: React.FC = ({ children }) => {
