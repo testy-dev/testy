@@ -71,11 +71,13 @@ const PathResultsScreen: React.FC = () => {
           background="dark-4"
           pad="small"
         >
-          <img
-            ref={imgRef}
-            src={edges?.find(e => e.id === activeBlock)?.screenshot}
-            style={{ maxWidth: "100%", maxHeight: "100%" }}
-          />
+          {edges?.find(e => e.id === activeBlock)?.status !== "blocked" && (
+            <img
+              ref={imgRef}
+              src={edges?.find(e => e.id === activeBlock)?.screenshot}
+              style={{ maxWidth: "100%", maxHeight: "100%" }}
+            />
+          )}
           <div
             style={{
               position: "absolute",
@@ -104,7 +106,12 @@ const PathResultsScreen: React.FC = () => {
               onClick={() => setActiveBlock(e.id)}
               pad="medium"
               style={{
-                color: e.status === "success" ? "green" : "red",
+                color:
+                  e.status === "success"
+                    ? "green"
+                    : e.status === "blocked"
+                    ? "gray"
+                    : "red",
                 fontWeight: activeBlock === e.id ? "bold" : "normal",
               }}
             >

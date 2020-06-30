@@ -22,14 +22,14 @@ export const FailedBlocks: React.FC<SlugInput> = ({ orgSlug, projectSlug }) => {
     <Box>
       <Text>
         {run?.paths?.flatMap(path =>
-          path.edges?.filter(edge => edge.status === "failed")
+          path.edges?.filter((edge: BlockResult) => edge.status === "failed")
         )?.length || 0}{" "}
         fails in last run, <TimeAgo date={run?.started_at} />
       </Text>
       <Box flex={false} direction="row" wrap>
         {run?.paths?.flatMap(path =>
           path.edges
-            ?.filter(edge => edge.status === "failed")
+            ?.filter((edge: BlockResult) => edge.status === "failed")
             .map((block: BlockResult) => {
               const inputBlock: Block = run?.graph?.blocks?.find(
                 (b: Block) => b.id === block.id

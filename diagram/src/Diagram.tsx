@@ -282,8 +282,6 @@ const getCommandColor = (command: Block["command"]): string => {
   switch (command) {
     case "click":
     case "dblclick":
-    case "submit":
-      return "#48d760";
     case "check-contains-text":
       return "#4e90d5";
     case "type":
