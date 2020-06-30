@@ -28,7 +28,6 @@ function handleClick(event: ParsedEvent): Block {
 
 function handleKeydown(event: ParsedEvent): Block | null {
   const key = event.key ?? "";
-  console.log("Key is", event.key);
   if (key.length > 1 && !SpecialKeys.has(key)) return null; // Ignore tab, ctrl, shift, ...
   return {
     id: v4(),
@@ -54,7 +53,7 @@ function handleChange(event: ParsedEvent): Block | null {
   };
 }
 
-function handleDoubleclick(event: ParsedEvent): Block {
+function handleDoubleClick(event: ParsedEvent): Block {
   return {
     id: v4(),
     command: "dblclick",
@@ -86,7 +85,7 @@ export default {
       case EventType.CHANGE:
         return handleChange(event);
       case EventType.DBCLICK:
-        return handleDoubleclick(event);
+        return handleDoubleClick(event);
       case EventType.MOUSEUP:
         return handleSelect(event);
       default:

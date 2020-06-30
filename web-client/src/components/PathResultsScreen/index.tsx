@@ -43,6 +43,8 @@ const PathResultsScreen: React.FC = () => {
     }));
   }, [data, pathId]);
 
+  const actualBlock = edges?.find(e => e.id === activeBlock);
+
   useEffect(() => {
     if (!activeBlock && edges.length > 0) {
       setActiveBlock(edges[0].id);
@@ -71,33 +73,25 @@ const PathResultsScreen: React.FC = () => {
           background="dark-4"
           pad="small"
         >
-          {edges?.find(e => e.id === activeBlock)?.status !== "blocked" && (
-            <img
-              ref={imgRef}
-              src={edges?.find(e => e.id === activeBlock)?.screenshot}
-              style={{ maxWidth: "100%", maxHeight: "100%" }}
-            />
+          {actualBlock?.status !== "blocked" && (
+            <>
+              <img
+                ref={imgRef}
+                src={actualBlock?.screenshot}
+                style={{ maxWidth: "100%", maxHeight: "100%" }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  borderStyle: "solid",
+                  width: (actualBlock?.dimensions?.width ?? 0) * widthRatio,
+                  height: (actualBlock?.dimensions?.height ?? 0) * heightRatio,
+                  top: imgY + (actualBlock?.dimensions?.y ?? 0) * heightRatio,
+                  left: imgX + (actualBlock?.dimensions?.x ?? 0) * widthRatio,
+                }}
+              />
+            </>
           )}
-          <div
-            style={{
-              position: "absolute",
-              borderStyle: "solid",
-              width:
-                (edges?.find(e => e.id === activeBlock)?.dimensions?.width ??
-                  0) * widthRatio,
-              height:
-                (edges?.find(e => e.id === activeBlock)?.dimensions?.height ??
-                  0) * heightRatio,
-              top:
-                imgY +
-                (edges?.find(e => e.id === activeBlock)?.dimensions?.y ?? 0) *
-                  heightRatio,
-              left:
-                imgX +
-                (edges?.find(e => e.id === activeBlock)?.dimensions?.x ?? 0) *
-                  widthRatio,
-            }}
-          />
         </Box>
         <Box direction="row">
           {edges.map(e => (
