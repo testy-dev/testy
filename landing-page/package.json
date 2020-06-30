@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "gatsby develop",
-    "build": "gatsby build"
+    "build": "gatsby build",
+    "deploy": "yarn build && firebase deploy --only hosting:landing-page"
   },
   "dependencies": {
     "gatsby": "^2.18.18",

@@ -41,7 +41,7 @@
     "build:parcel": "parcel build public/index.html",
     "build:watch": "parcel public/index.html",
     "build:esbuild": "node build.js",
-    "deploy": "yarn build && yarn firebase deploy --only hosting",
+    "deploy": "yarn build && yarn firebase deploy --only hosting:app",
     "test": "react-scripts test",
     "lint": "yarn eslint src/**",
     "lint:fix": "yarn eslint --fix src/**",
