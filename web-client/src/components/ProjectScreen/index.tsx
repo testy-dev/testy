@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Box, Button, Heading } from "grommet";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import firebase from "firebase/app";
 
 import { FailedBlocks } from "./FailedBlocks";
@@ -37,7 +37,7 @@ const ProjectScreen: React.FC = () => {
             Testy
           </Heading>
           <Heading level={3} margin="none" style={{ fontWeight: "normal" }}>
-            {project?.organization?.name}
+            <Link to="/">{project?.organization?.name}</Link>
             {" / "}
             {project?.name}
           </Heading>
