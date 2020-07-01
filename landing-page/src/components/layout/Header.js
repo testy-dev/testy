@@ -12,13 +12,18 @@ const Header = () => (
         {/* </div> */}
         Testy
       </div>
-      <div className="flex mt-4 sm:mt-0">
+      <div className="flex items-center mt-4 sm:mt-0">
         <AnchorLink className="px-4" href="#pricing">
           Pricing
         </AnchorLink>
         <AnchorLink className="px-4" href="#features">
           Features
         </AnchorLink>
+        <div className="px-4 md:hidden">
+          <Button className="text-sm" size="small" href="https://app.testy.dev">
+            Try now
+          </Button>
+        </div>
       </div>
       <div className="hidden md:block">
         <Button className="text-sm" href="https://app.testy.dev">

@@ -19,6 +19,7 @@ export default () => (
   <Layout>
     <Helmet>
       <title>Testy: all-in-1 tool for test websites</title>
+      <meta name="description" content="Record tests, run, analyse results. Without programming." />
     </Helmet>
     <section className="pt-20 md:pt-40">
       <div className="container mx-auto px-8 lg:flex">
@@ -36,13 +37,13 @@ export default () => (
           </p>
           {/* <p className="mt-4 text-gray-600"></p> */}
         </div>
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 p-8">
           {/* <HeroImage /> */}
           <UsabilityTesting />
         </div>
       </div>
     </section>
-    <section id="pricing" className="py-20 lg:pb-30 lg:pt-40">
+    <section id="pricing" className="pt-32 lg:pb-30 lg:pt-40">
       <div className="container mx-auto text-center">
         <h2 className="text-3xl lg:text-5xl font-semibold">Pricing</h2>
         <p className="text-xl">Pay as you go (for runned steps)</p>
@@ -62,10 +63,10 @@ export default () => (
         </div>
       </div>
     </section>
-    <section id="features" className="py-20 lg:pb-40 lg:pt-48">
+    <section id="features" className="pt-32 lg:pb-40 lg:pt-48">
       <div className="container mx-auto text-center">
         <h2 className="text-3xl lg:text-5xl font-semibold">Features</h2>
-        <div className="flex flex-col sm:flex-row sm:-mx-3 mt-12">
+        <div className="flex flex-col flex-wrap sm:flex-row sm:-mx-3 mt-12">
           <div className="flex-1 px-3">
             <Card className="mb-8">
               <p className="font-semibold text-xl">Recorder</p>
