@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "testyx"
+  },
+  "targets": {
+    "testyx": {
+      "hosting": {
+        "landing-page": [
+          "testyx-landing-page"
+        ],
+        "app": [
+          "testyx"
+        ]
+      }
+    }
   }
 }
