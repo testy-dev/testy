@@ -11,6 +11,8 @@ import {
   ParsedEvent,
 } from "@testy/shared";
 import { finder } from "@medv/finder";
+
+import { fixClassIdArguments } from "../helpers/utils";
 import { write } from "../helpers/model";
 
 let port: chrome.runtime.Port;
@@ -20,9 +22,7 @@ let listening = false;
 function parseEvent(event: Event): ParsedEvent | null {
   const attributes = ["data-cy", "data-test", "data-testid", "data-qa"];
 
-  let selector = finder(event.target as Element, {
-    attr: name => !["class", "id"].includes(name),
-  });
+  let selector = finder(event.target as Element, { attr: fixClassIdArguments });
   for (const attribute in attributes) {
     if ((event.target as Element).hasAttribute(attribute)) {
       selector = `[${attribute}=${(event.target as Element).getAttribute(
@@ -35,9 +35,7 @@ function parseEvent(event: Event): ParsedEvent | null {
   const parentSelectors: string[] = [];
   let parentNode = (event.target as Element).parentElement;
   while (parentNode) {
-    parentSelectors.push(
-      finder(parentNode, { attr: name => !["class", "id"].includes(name) })
-    );
+    parentSelectors.push(finder(parentNode, { attr: fixClassIdArguments }));
     parentNode = parentNode.parentElement;
   }
 

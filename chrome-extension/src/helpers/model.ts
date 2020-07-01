@@ -76,7 +76,7 @@ export async function pushBlock(newBlock: Block): Promise<Block> {
       return last;
     }
 
-    // If last block is click and actual is type to same element => remove click and add type
+    // Save click to input as "type" command
     const edgesToLast = edges.filter(e => e[1] === activeBlock);
     if (
       last &&
@@ -90,6 +90,18 @@ export async function pushBlock(newBlock: Block): Promise<Block> {
 
       const lastID = edgesToLast[0][0];
       last = blocks.find(b => b.id === lastID);
+    }
+
+    // To avoid clicks saved as check-contains-text when text in other element is still selected
+    // TODO: Handle selecting multiple same texts
+    if (
+      last?.command === "check-contains-text" &&
+      newBlock.command === "check-contains-text" &&
+      newBlock.selector !== last?.selector &&
+      newBlock.parameter === last?.parameter
+    ) {
+      newBlock.command = "click";
+      newBlock.parameter = undefined;
     }
   }
 

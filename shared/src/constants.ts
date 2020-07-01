@@ -3,7 +3,6 @@ export enum EventType {
   CHANGE = "change",
   DBCLICK = "dbclick",
   KEYDOWN = "keydown",
-  SUBMIT = "submit",
   MOUSEUP = "mouseup",
 }
 
