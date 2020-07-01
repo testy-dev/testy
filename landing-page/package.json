@@ -10,7 +10,9 @@
     "deploy": "yarn build && firebase deploy --only hosting:landing-page"
   },
   "dependencies": {
+    "firebase": "^7.15.5",
     "gatsby": "^2.18.18",
+    "gatsby-plugin-firebase": "^0.2.0-beta.4",
     "gatsby-plugin-react-helmet": "^3.3.6",
     "gatsby-theme-codebushi": "1.0.0",
     "react": "^16.12.0",
