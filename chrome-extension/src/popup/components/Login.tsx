@@ -13,7 +13,7 @@ const Login: React.FC = () => {
 
   const handleLogin = React.useCallback(async () => {
     try {
-      firebase.auth().signInWithEmailAndPassword(email, password);
+      await firebase.auth().signInWithEmailAndPassword(email, password);
     } catch (e) {
       setError(e.message);
       console.warn(e);

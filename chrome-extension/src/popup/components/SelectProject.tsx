@@ -17,17 +17,17 @@ const SelectProject: React.FC<IProps> = ({
 
   useEffect(() => {
     // language=graphql
-    callGraphql(`
-{
-  organization {
-    id
-    name
-    projects {
-      id
-      name
-    }
-  }
-}
+    callGraphql(`        
+      {
+        organization {
+          id
+          name
+          projects {
+            id
+            name
+          }
+        }
+      }
     `)
       .then(response =>
         response?.data

@@ -104,7 +104,6 @@ export async function pushBlock(newBlock: Block): Promise<Block> {
       newBlock.parameter = undefined;
     }
   }
-
   // Else add block
   blocks.push(newBlock);
   if (last) edges.push([last.id, newBlock.id]);

@@ -138,7 +138,10 @@ const App: React.FC = () => {
         }
       );
 
-      const graph = result?.data?.project?.[0]?.graph;
+      const graph = result?.data?.project?.[0]?.graph ?? {
+        blocks: [],
+        edges: [],
+      };
       const projectName = result?.data?.project?.[0]?.name;
       const { blocks, edges } = JSONparse(graph);
       await write({ blocks, edges, projectName });
