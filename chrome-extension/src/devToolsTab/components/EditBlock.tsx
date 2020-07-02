@@ -3,6 +3,7 @@ import React, { forwardRef, useEffect, useRef, useState } from "react";
 import {
   ActionWithPayload,
   Block,
+  CommandKey,
   Commands,
   ControlAction,
 } from "@testy/shared";
@@ -31,14 +32,14 @@ const CommandsList = [
     icon: Subscript,
   },
   {
-    key: "visit",
-    title: "Visit",
-    icon: Language,
-  },
-  {
     key: "check-contains-text",
     title: "Check",
     icon: View,
+  },
+  {
+    key: "visit",
+    title: "Visit",
+    icon: Language,
   },
 ];
 
@@ -141,6 +142,20 @@ const EditBlock: React.FC<IProps> = ({
             </Command>
           ))}
         </CommandsBar>
+        {command.startsWith("check") && (
+          <select
+            value={command}
+            onChange={e => setCommand(e.target.value as CommandKey)}
+          >
+            {(Object.keys(Commands) as CommandKey[])
+              .filter(key => key.startsWith("check"))
+              .map(key => (
+                <option key={key} value={key}>
+                  {Commands[key]}
+                </option>
+              ))}
+          </select>
+        )}
       </Line>
       <Line>
         <Label>Parameter</Label>
@@ -230,7 +245,7 @@ const Command = styled.div`
 `;
 
 const Line = (props: any) => (
-  <Box direction="row" gap="xsmall" align="baseline" {...props} />
+  <Box direction="row" gap="xsmall" align="center" {...props} />
 );
 
 const Input = styled.input`
