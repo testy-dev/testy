@@ -35,14 +35,11 @@ export const Commands = {
   dblclick: "Double click",
   type: "Type",
   "check-contains-text": "Contains text",
+  "check-not-exists": "Element doesn't exists",
+  "check-not-contains-text": "Doesn't contains text",
 };
 
-export type CommandKey =
-  | "visit"
-  | "click"
-  | "dblclick"
-  | "type"
-  | "check-contains-text";
+export type CommandKey = keyof typeof Commands;
 
 export type BlockResult = {
   id: string;
