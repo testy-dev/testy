@@ -21,7 +21,9 @@ import ToggleButton from "../../components/ToggleButton";
 import callGraphql from "../../helpers/callGraphql";
 import useLocalStorage from "../../helpers/useLocalStorage";
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 enum Screen {
   home,
@@ -56,7 +58,7 @@ const App: React.FC = () => {
         if (result?.activeProject) setActiveProject(result.activeProject);
       }
     );
-    chrome.tabs.query({ active: true, currentWindow: true }, activeTab => {
+    chrome.tabs?.query({ active: true, currentWindow: true }, activeTab => {
       if (activeTab[0].url?.startsWith("chrome://")) setIsValidTab(false);
     });
   }, []);

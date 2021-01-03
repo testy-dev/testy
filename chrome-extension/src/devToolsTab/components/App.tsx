@@ -31,12 +31,14 @@ function getStraightPath(edges: Block[]): UUID[][] {
 const debugDiagram = debug("devtools:diagram");
 debug.enable("*");
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const App: React.FC = () => {
   // Register tab in dev tools
   useEffect(() => {
-    chrome.devtools.panels.create(
+    chrome.devtools?.panels.create(
       "Testy",
       "cypresscone16.png",
       "devToolsTab/index.html"
@@ -263,8 +265,8 @@ const MoreOutgoing = () => <div>Outgoing connections</div>;
 const Root = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 `;
 const Column = styled.div`
   flex: 350px 0 0;

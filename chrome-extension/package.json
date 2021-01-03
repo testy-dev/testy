@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "start": "npx tsc --noEmit && npx parcel --no-hmr ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.ts ./src/devToolsTab/index.html",
+    "start": "npx tsc --noEmit && npx parcel --no-hmr ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.tsx ./src/devToolsTab/index.html",
     "build": "npx tsc --noEmit && npx parcel build --no-source-maps --no-autoinstall ./src/popup/index.html ./src/background/index.ts ./src/contentScript/index.ts ./src/devToolsTab/index.html",
     "test": "jest --verbose",
     "clean": "rm -rf dist .cache && mkdir dist && cp ./src/manifest.json dist && cp -r ./src/assets/images/. dist",
